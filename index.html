@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krishna Ramos Jain, Pipeline Developer & Animator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:        #f4f1ed;
+    --surface:   #ffffff;
+    --blue:      #5bafd6;
+    --blue-dk:   #2a7ca8;
+    --blue-lt:   #d6eef8;
+    --blue-bg:   #eaf5fb;
+    --brown:     #7a4520;
+    --brown-lt:  #f5ebe0;
+    --tan:       #c4854a;
+    --text:      #1a0f08;
+    --muted:     #6b5c52;
+    --rule:      #e0d8d0;
+    --font-d:    'Outfit', system-ui, sans-serif;
+    --font-b:    'DM Sans', system-ui, sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-b); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+  #root { min-height: 100vh; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg); border-bottom: 1.5px solid var(--rule);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 58px;
+  }
+  .nav-logo { font-family: var(--font-d); font-size: 19px; font-weight: 800; color: var(--text); text-decoration: none; letter-spacing: -0.03em; }
+  .nav-logo span { color: var(--blue-dk); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--blue-dk); }
+
+  /* HERO */
+  .hero {
+    display: grid; grid-template-columns: 1fr 400px; gap: 48px;
+    align-items: center; padding: 64px 48px 72px;
+    max-width: 1300px; margin: 0 auto;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--blue-lt); color: var(--blue-dk);
+    font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 100px; margin-bottom: 20px;
+  }
+  .hero-badge-dot { width: 7px; height: 7px; background: var(--blue); border-radius: 50%; }
+  .hero-name { font-family: var(--font-d); font-size: clamp(52px, 6vw, 84px); font-weight: 900; line-height: 0.97; letter-spacing: -0.04em; color: var(--text); margin-bottom: 4px; }
+  .hero-subtitle { font-family: var(--font-d); font-size: clamp(20px, 2.5vw, 32px); font-weight: 500; color: var(--blue-dk); letter-spacing: -0.02em; margin-bottom: 24px; }
+  .hero-desc { font-size: 16px; color: var(--muted); line-height: 1.8; max-width: 500px; margin-bottom: 36px; font-weight: 300; }
+  .hero-desc strong { color: var(--text); font-weight: 600; }
+  .hero-ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 12px 26px; font-family: var(--font-b); font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 7px; cursor: pointer; transition: all 0.15s; display: inline-block; border: none; }
+  .btn-blue { background: var(--blue-dk); color: #fff; }
+  .btn-blue:hover { background: #1f6a90; transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--text); border: 1.5px solid var(--rule); }
+  .btn-ghost:hover { border-color: var(--blue-dk); color: var(--blue-dk); }
+
+  .hero-right { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .hero-avatar {
+    width: 340px; height: 340px; border-radius: 50%;
+    overflow: hidden; border: 5px solid var(--blue);
+    box-shadow: 0 8px 40px oklch(55% 0.1 210 / 0.18);
+  }
+  .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-quick-links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .hero-quick-link {
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    border: 1.5px solid var(--rule); border-radius: 100px;
+    padding: 5px 13px; text-decoration: none; transition: all 0.15s;
+    background: var(--surface);
+  }
+  .hero-quick-link:hover { border-color: var(--blue); color: var(--blue-dk); }
+
+  /* STATS STRIP */
+  .stats-strip {
+    background: var(--blue-dk); color: #fff;
+    display: flex; justify-content: center; flex-wrap: wrap;
+  }
+  .stat-item {
+    padding: 28px 48px; text-align: center;
+    border-right: 1px solid oklch(100% 0 0 / 0.15);
+    flex: 1; min-width: 160px;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num { font-family: var(--font-d); font-size: 48px; font-weight: 900; line-height: 1; letter-spacing: -0.04em; margin-bottom: 4px; }
+  .stat-label { font-size: 12px; font-weight: 500; opacity: 0.75; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* SECTIONS */
+  .section-wrap { max-width: 1300px; margin: 0 auto; padding: 72px 48px; }
+  .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 44px; }
+  .section-pill { font-family: var(--font-d); font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 13px; border-radius: 5px; flex-shrink: 0; }
+  .pill-blue { background: var(--blue-lt); color: var(--blue-dk); }
+  .pill-brown { background: var(--brown-lt); color: var(--brown); border: 1px solid #e0cfc4; }
+  .section-title { font-family: var(--font-d); font-size: clamp(26px, 3vw, 42px); font-weight: 800; letter-spacing: -0.03em; }
+  .section-rule { flex: 1; height: 1.5px; background: var(--rule); max-width: 180px; }
+  .divider { height: 1.5px; background: var(--rule); }
+
+  /* REEL */
+  .reel-outer { background: var(--surface); }
+  .reel-container { max-width: 960px; margin: 0 auto; }
+  .reel-thumb {
+    position: relative; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 6px 40px oklch(0% 0 0 / 0.12); cursor: pointer;
+    background: #000;
+  }
+  .reel-thumb img { width: 100%; display: block; transition: opacity 0.2s; }
+  .reel-thumb:hover img { opacity: 0.85; }
+  .reel-play-btn {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 72px; height: 72px; background: oklch(100% 0 0 / 0.92);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 24px oklch(0% 0 0 / 0.25); transition: transform 0.15s, background 0.15s;
+    pointer-events: none;
+  }
+  .reel-thumb:hover .reel-play-btn { transform: translate(-50%, -50%) scale(1.08); }
+  .reel-play-icon { width: 0; height: 0; border-style: solid; border-width: 14px 0 14px 26px; border-color: transparent transparent transparent var(--blue-dk); margin-left: 4px; }
+  .reel-caption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align: center; }
+
+  /* CREDITS */
+  .employers-list { display: flex; flex-direction: column; gap: 12px; }
+  .employer-card {
+    background: var(--surface); border: 1.5px solid var(--rule); border-radius: 12px;
+    overflow: hidden;
+  }
+  .employer-header {
+    display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px 20px;
+    padding: 20px 28px 18px; border-bottom: 1.5px solid var(--rule);
+    background: var(--bg);
+  }
+  .employer-name { font-family: var(--font-d); font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+  .employer-role { font-size: 13px; color: var(--blue-dk); font-weight: 600; }
+  .employer-tenure { margin-left: auto; font-size: 12px; color: var(--muted); font-weight: 400; }
+  .employer-projects { display: flex; flex-wrap: wrap; gap: 0; }
+  .project-item {
+    padding: 14px 28px; border-right: 1.5px solid var(--rule);
+    min-width: 200px; flex: 1;
+  }
+  .project-item:last-child { border-right: none; }
+  .project-client { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue-dk); margin-bottom: 3px; }
+  .project-title { font-family: var(--font-d); font-size: 15px; font-weight: 700; }
+
+  /* PIPELINE */
+  .pipeline-bg { background: var(--blue-bg); }
+  .pipeline-intro { max-width: 620px; font-size: 16px; line-height: 1.8; color: var(--muted); margin-bottom: 40px; }
+  .pipeline-intro strong { color: var(--text); font-weight: 600; }
+  .pipeline-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+  .pipeline-card {
+    background: var(--surface); border: 1.5px solid #cce4f2; border-radius: 10px;
+    padding: 26px 30px; transition: all 0.15s;
+  }
+  .pipeline-card:hover { border-color: var(--blue); box-shadow: 0 2px 16px oklch(55% 0.1 210 / 0.1); transform: translateY(-2px); }
+  .p-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-dk); background: var(--blue-lt); padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 14px; }
+  .p-title { font-family: var(--font-d); font-size: 20px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+  .p-body { font-size: 14px; line-height: 1.75; color: var(--muted); }
+  .p-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+  .tool-chip { font-size: 11px; padding: 3px 9px; border: 1px solid var(--rule); border-radius: 100px; color: var(--muted); font-weight: 500; background: var(--bg); }
+
+  /* SKILLS */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 36px 52px; }
+  .skill-group-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue-dk); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid var(--blue-lt); }
+  .skill-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .skill-list li { font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 9px; }
+  .skill-list li::before { content: ''; width: 7px; height: 7px; background: var(--blue-lt); border: 2px solid var(--blue); border-radius: 50%; flex-shrink: 0; }
+  .skill-primary { color: var(--text) !important; font-weight: 600 !important; }
+  .skill-primary::before { background: var(--blue) !important; }
+
+  /* ABOUT */
+  .about-bg { background: var(--brown-lt); }
+  .about-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .about-text p { font-size: 15px; line-height: 1.85; color: var(--muted); margin-bottom: 18px; }
+  .about-text p strong { color: var(--text); font-weight: 600; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .about-stat { background: var(--surface); border: 1.5px solid #e0cfc4; border-radius: 10px; padding: 22px; text-align: center; }
+  .about-stat-num { font-family: var(--font-d); font-size: 46px; font-weight: 900; color: var(--blue-dk); line-height: 1; margin-bottom: 6px; letter-spacing: -0.04em; }
+  .about-stat-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* ILLUSTRATION GALLERY */
+  .gallery-grid {
+    columns: 3; column-gap: 12px;
+  }
+  .gallery-grid .gal-item {
+    break-inside: avoid; margin-bottom: 12px;
+    border-radius: 10px; overflow: hidden;
+    cursor: zoom-in; position: relative;
+    border: 1.5px solid var(--rule);
+    background: var(--surface);
+  }
+  .gallery-grid .gal-item img { display: block; width: 100%; transition: opacity 0.15s; }
+  .gallery-grid .gal-item:hover img { opacity: 0.9; }
+  .gal-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, oklch(0% 0 0 / 0.55));
+    color: #fff; padding: 24px 14px 12px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.03em;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .gal-item:hover .gal-label { opacity: 1; }
+
+  /* LIGHTBOX */
+  .lightbox-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: oklch(0% 0 0 / 0.88);
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px;
+  }
+  .lightbox-overlay img {
+    max-width: 90vw; max-height: 88vh;
+    border-radius: 10px; box-shadow: 0 20px 80px oklch(0% 0 0 / 0.5);
+    object-fit: contain;
+  }
+  .lightbox-close {
+    position: fixed; top: 20px; right: 28px;
+    color: #fff; font-size: 32px; cursor: pointer;
+    background: none; border: none; line-height: 1;
+    opacity: 0.8; transition: opacity 0.15s;
+  }
+  .lightbox-close:hover { opacity: 1; }
+  .lightbox-caption {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    color: oklch(85% 0.02 50); font-size: 13px; font-weight: 500;
+    background: oklch(0% 0 0 / 0.5); padding: 6px 18px; border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  /* DEVLOG */
+  .devlog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+  .devlog-card {
+    background: var(--surface); border: 1.5px solid var(--rule); border-radius: 10px;
+    overflow: hidden; transition: all 0.15s;
+  }
+  .devlog-card:hover { border-color: var(--blue); box-shadow: 0 2px 16px oklch(55% 0.1 210 / 0.1); transform: translateY(-2px); }
+  .devlog-media { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; background: var(--bg); }
+  .devlog-media-placeholder {
+    width: 100%; aspect-ratio: 16/9; background: repeating-linear-gradient(
+      45deg, var(--blue-lt), var(--blue-lt) 10px, var(--bg) 10px, var(--bg) 20px
+    ); display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .devlog-body { padding: 20px 22px; }
+  .devlog-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .devlog-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-dk); background: var(--blue-lt); padding: 3px 9px; border-radius: 4px; }
+  .devlog-date { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .devlog-title { font-family: var(--font-d); font-size: 17px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+  .devlog-desc { font-size: 13px; line-height: 1.7; color: var(--muted); }
+
+  /* FOOTER */
+  footer { background: var(--text); color: #e0d4cc; padding: 60px 48px 36px; }
+  .footer-inner { max-width: 1300px; margin: 0 auto; }
+  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 36px; padding-bottom: 36px; border-bottom: 1px solid oklch(30% 0.02 50); margin-bottom: 28px; }
+  .footer-name { font-family: var(--font-d); font-size: 32px; font-weight: 900; letter-spacing: -0.04em; color: #fff; margin-bottom: 4px; }
+  .footer-tagline { font-size: 13px; color: oklch(60% 0.02 55); }
+  .footer-email a { font-size: 18px; font-weight: 600; color: var(--blue); text-decoration: none; transition: color 0.15s; }
+  .footer-email a:hover { color: #8dd2ef; }
+  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 28px; }
+  .footer-links a { font-size: 13px; font-weight: 500; color: oklch(60% 0.02 55); text-decoration: none; transition: color 0.15s; }
+  .footer-links a:hover { color: var(--blue); }
+  .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 12px; color: oklch(42% 0.02 55); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "showProfilePic": true,
+  "showAbout": true,
+  "showPipeline": true,
+  "avatarShape": "circle"
+}/*EDITMODE-END*/;
+
+const YT_ID = "79AOg9Q983I";
+
+const employers = [
+  {
+    studio: "Powerhouse Animation Studios",
+    role: "Lead Technical Artist",
+    tenure: "2014 – 2025",
+    projects: [
+      { client: "Netflix", title: "Castlevania" },
+      { client: "Netflix", title: "Masters of the Universe: Revelation" },
+      { client: "Netflix", title: "Blood of Zeus" },
+      { client: "Netflix", title: "Tomb Raider" },
+      { client: "Square Enix", title: "Final Fantasy XV: A King's Tale" },
+      { client: "Deep Silver", title: "Dead Island: Retro Revenge" },
+      { client: "Stoic Studio", title: "The Banner Saga" },
+    ]
+  },
+  {
+    studio: "Zynga",
+    role: "Senior Artist",
+    tenure: "2010 – 2012",
+    projects: [
+      { client: "Facebook", title: "Kingdoms and Quests" },
+      { client: "Facebook", title: "The Ville" },
+    ]
+  },
+  {
+    studio: "Team Chaos LLC",
+    role: "Freelance Animator",
+    tenure: "2012 – 2013",
+    projects: [
+      { client: "iOS", title: "Dragon Academy" },
+      { client: "iOS", title: "Elements: Broken Lands" },
+    ]
+  },
+  {
+    studio: "Powerhouse Animation Studios",
+    role: "Lead Flash Developer",
+    tenure: "2006 – 2010",
+    projects: [
+      { client: "Sony / Red 5", title: "Freerealms" },
+      { client: "Hothead Games", title: "Penny Arcade Adventures" },
+    ]
+  },
+];
+
+const pipelineWork = [
+  {
+    tag: "After Effects scripting",
+    title: "Keylighting Automation",
+    selfInitiated: true,
+    body: "Retrieves preset character compositions from a database and applies them based on scene and character. Also enables bulk saving of new, location-specific comps. Eliminated manual searching and setup across hundreds of shots.",
+    tools: ["ExtendScript", "After Effects", "JSON Database"]
+  },
+  {
+    tag: "Toon Boom + AE scripting",
+    title: "Lighting Pass System",
+    selfInitiated: true,
+    body: "Replaced frame-by-frame manual tone coloring with a fully automated pipeline. Exports separate light and shadow sequences from Harmony, then imports and composites them in After Effects with correct timing. No re-coloring needed for lighting adjustments.",
+    tools: ["Qt Script", "ExtendScript", "Toon Boom Harmony", "After Effects"]
+  },
+  {
+    tag: "Animate scripting",
+    title: "Chain Animation Tool",
+    selfInitiated: true,
+    body: "A JSFL tool that automates chain link placement along a drawn path with controls for scaling and twisting. What was once a tedious manual process for Castlevania became a one-click workflow.",
+    tools: ["JSFL", "Adobe Animate"]
+  },
+  {
+    tag: "Toon Boom + Python",
+    title: "Import/Export Scripts",
+    selfInitiated: false,
+    body: "A suite of scripts built across productions to move assets and scene data between software without losing information. The largest example exports Storyboard Pro scenes to Photoshop and Clip Studio Paint with camera movements intact, with render farm network integration. Many others handle similar cross-software handoffs throughout the pipeline.",
+    tools: ["Qt Script", "Python", "Storyboard Pro", "Photoshop", "Clip Studio Paint"]
+  },
+  {
+    tag: "Google Apps Script",
+    title: "Production Tracking Dashboard",
+    selfInitiated: false,
+    body: "Task-tracking tools built in Google Sheets and Apps Script, giving managers real-time visibility into deadlines and tasks across departments. No additional software licenses required.",
+    tools: ["Google Apps Script", "Google Sheets", "ftrack API"]
+  },
+  {
+    tag: "ActionScript / AIR",
+    title: "Sprite Sheet Export Tool",
+    selfInitiated: true,
+    body: "An Adobe AIR application that automated sprite sheet exports for a Zynga game team, reducing manual asset prep and accelerating delivery cycles for live social games.",
+    tools: ["ActionScript 3", "Adobe AIR"]
+  },
+];
+
+const galleryItems = [
+  // Children's book group
+  { src: "uploads/bear_morning_final.png", label: "Bear Morning, children's book illustration" },
+  { src: "uploads/moon_slice.png", label: "Moon slice, children's book mood thumbnail" },
+  { src: "uploads/night_final.png", label: "Night scene, children's book mood thumbnail" },
+  // Leaf group
+  { src: "uploads/leaf.png", label: "Leaf, illustration" },
+  { src: "uploads/leaf2_color.png", label: "Creature with lantern, illustration" },
+  // Character illustrations
+  { src: "uploads/kaz_adjust.png", label: "Kaz, character illustration" },
+  { src: "uploads/tumblr_pbw4ybI3XY1sdhohdo1_1280.png", label: "Character illustration" },
+  { src: "uploads/tumblr_a686e794901f372fa6ca7331199b8825_836389cb_2048-89dd0062.jpg", label: "Dragon, character illustration" },
+  { src: "uploads/LunaAndZoey.png", label: "Luna and Zoey" },
+  { src: "uploads/Zoey.png", label: "Zoey, character illustration" },
+  { src: "uploads/Irene.png", label: "Irene, character illustration" },
+  // Portraits
+  { src: "uploads/EmmaAndSophie2025.png", label: "Portrait studies" },
+  // Character design sheets
+  { src: "uploads/kavosDesign_v04.png", label: "Kavos, character design sheet" },
+  { src: "uploads/467400476_10104319138214587_2662206578446222923_n.jpg", label: "Roppu-kun, inspired by Yoh Yoshinari's Tezuka tribute" },
+];
+
+const devlogEntries = [
+  {
+    tag: "Spine rigging",
+    date: "Apr 17, 2026",
+    title: "Miya rig in Spine",
+    desc: "Rigged Miya in Spine for a side-by-side comparison with the original After Effects version. Spine opens up smooth transitions between animations that frame-by-frame can't do as cleanly. Another version is in progress.",
+    media: "uploads/miya_spine.gif",
+    mediaType: "gif",
+    extraMedia: [
+      { src: "uploads/miya_spine_bones-b5dcb3d4.gif", label: "Spine skeleton view" },
+    ],
+  },
+  {
+    tag: "Experiment",
+    date: "Apr 13, 2026",
+    title: "Sprite stacking for isometric character animation",
+    desc: "Investigated sprite stacking as a way to get isometric character rotations for free. Large shapes looked great and moved convincingly in 3D, with precise rotation at any angle. Even experimented with building poses in MagicaVoxel. The catch: fine details flickered badly on export. The idea is probably shelved for now, but the large-form results were genuinely impressive.",
+    media: "uploads/1776125472648.gif",
+    mediaType: "gif",
+    itchUrl: "https://bluebeezle.itch.io/mitama-ji/devlog/1488963/sprite-stacking",
+  },
+  {
+    tag: "Unity 2D",
+    date: "Nov 29, 2025",
+    title: "Dynamic lighting and shadows in Unity",
+    desc: "Ghost story games require ghost story lighting. Isometric pixel game with a dynamic shadow and lighting system. Normal maps work for front-lighting, but when the player walks in front of a light, a naive setup lights her up as if the light is shining through her body. The fix: an auto-generated backlit rimlight normal map, with a shader that blends between the two based on the player's position relative to each light.",
+    media: "uploads/1764452070779.gif",
+    mediaType: "gif",
+    itchUrl: "https://bluebeezle.itch.io/mitama-ji/devlog/1129446/lighting-shaders-and-normal-maps",
+  },
+  {
+    tag: "Normal map pipeline",
+    date: "Nov 27, 2025",
+    title: "Auto-generated normal maps from layer data",
+    desc: "Updated my Python Aseprite sprite sheet exporter to automatically generate normal maps by detecting edges on each layer's silhouette and creating gradients that approximate surface normals. It won't be perfect since the script doesn't know the actual geometry, but it's a solid starting point. Since every body part is already on its own layer, the top of the arm reads as north-facing even when it's halfway down the sprite.",
+    media: "uploads/Miya_walk.png",
+    mediaType: "img",
+    extraMedia: [
+      { src: "uploads/Miya_walk_nm_Backlit.png", label: "Back-lit normal map" },
+      { src: "uploads/Miya_walk_nm_Frontlit.png", label: "Front-lit normal map" },
+    ],
+    itchUrl: "https://bluebeezle.itch.io/mitama-ji/devlog/1129446/lighting-shaders-and-normal-maps",
+  },
+  {
+    tag: "Aseprite scripting",
+    date: "Sep 27, 2025",
+    title: "Self-colored outline script",
+    desc: "A script for Aseprite that automatically adds self-colored outlines across all frames, based on a palette layer that maps each color to its outline equivalent. Outlines are added on a separate layer, so you can erase selectively where they don't work. The character above looks fine without outlines because of his thin design, but the approach is flexible enough to dial in per-character.",
+    media: "uploads/1764258252977.jpg",
+    mediaType: "img",
+    extraMedia: [
+      { src: "uploads/1764258253022.jpg", label: "After, Self-Colored Outline layer active" },
+    ],
+  },
+  {
+    tag: "Photoshop scripting",
+    date: "Feb 19, 2024",
+    title: "Walk cycle consistency checker",
+    desc: "A Photoshop script that pulls the same frame of animation from all directional walk cycle PSDs and puts them side by side, so inconsistencies between views are immediately visible. The before/after above shows exactly the kind of discrepancies it surfaces.",
+    media: "uploads/before.gif",
+    mediaType: "gif",
+    extraMedia: [
+      { src: "uploads/after.gif", label: "After edit pass" },
+    ],
+  },
+  {
+    tag: "Character Design",
+    date: "Jan 31, 2022",
+    title: "Ghost character, rig and final",
+    desc: "Character design for a ghost fairy NPC. The left version shows the puppet rig structure; the right is the clean final version. The transparency and glow effects are baked into the design rather than added in compositing.",
+    media: "uploads/tumblr_c76845c7ca4d68ea9ee46e8f31609b99_808a25d2_2048.jpg",
+    mediaType: "img",
+  },
+  {
+    tag: "After Effects animation",
+    date: "Feb 8, 2021",
+    title: "RPG portrait animation, Miya (angry)",
+    desc: "A looping RPG-style dialogue portrait built entirely in After Effects. Angry blink, wind-driven hair, anime speed lines in fore and background, broom held menacingly, subtle head rotation. Illustrated and animated from scratch.",
+    media: "uploads/1776388138058.gif",
+    mediaType: "gif",
+  },
+];
+
+const skillGroups = [
+  {
+    title: "Animation Software",
+    skills: [
+      { name: "Adobe Animate", primary: true },
+      { name: "Toon Boom Harmony", primary: true },
+      { name: "Toon Boom Storyboard Pro", primary: true },
+      { name: "Adobe After Effects" },
+      { name: "Adobe Photoshop" },
+      { name: "Aseprite / Pixquare" },
+    ]
+  },
+  {
+    title: "Scripting Languages",
+    skills: [
+      { name: "ExtendScript (AE, Photoshop)", primary: true },
+      { name: "JSFL (Adobe Animate)", primary: true },
+      { name: "Qt Script (Toon Boom suite)", primary: true },
+      { name: "Python 3", primary: true },
+      { name: "Google Apps Script" },
+      { name: "ActionScript 2 / 3" },
+    ]
+  },
+  {
+    title: "Pipeline Coverage",
+    skills: [
+      { name: "Preproduction to delivery", primary: true },
+      { name: "Asset management systems", primary: true },
+      { name: "Cross-software workflows", primary: true },
+      { name: "Render farm integration" },
+      { name: "ftrack API" },
+      { name: "Production tracking tools" },
+    ]
+  },
+  {
+    title: "Animation Specialties",
+    skills: [
+      { name: "Character animation", primary: true },
+      { name: "Effects animation", primary: true },
+      { name: "Puppet / rigging", primary: true },
+      { name: "Pixel / 8-bit animation" },
+      { name: "Motion comic styles" },
+      { name: "Traditional frame-by-frame" },
+    ]
+  },
+];
+
+function IllustrationGallery() {
+  const [lightbox, setLightbox] = React.useState(null);
+  React.useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') setLightbox(null); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+  return (
+    <>
+      <div className="gallery-grid">
+        {galleryItems.map((item, i) => (
+          <div className="gal-item" key={i} onClick={() => setLightbox(item)}>
+            <img src={item.src} alt={item.label} loading="lazy" />
+            <div className="gal-label">{item.label}</div>
+          </div>
+        ))}
+      </div>
+      {lightbox && (
+        <div className="lightbox-overlay" onClick={() => setLightbox(null)}>
+          <button className="lightbox-close" onClick={() => setLightbox(null)}>×</button>
+          <img src={lightbox.src} alt={lightbox.label} onClick={e => e.stopPropagation()} />
+          <div className="lightbox-caption">{lightbox.label}</div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function Devlog() {
+  return (
+    <div className="devlog-grid">
+      {devlogEntries.map((entry, i) => (
+        <div className="devlog-card" key={i}>
+          {entry.mediaType === 'gif' || entry.mediaType === 'img'
+            ? <img className="devlog-media" src={entry.media} alt={entry.title} loading="lazy" />
+            : <div className="devlog-media-placeholder">Image coming soon</div>
+          }
+          {entry.extraMedia && (
+            <div style={{ display: 'flex', gap: '2px' }}>
+              {entry.extraMedia.map((m, j) => (
+                <img key={j} src={m.src} alt={m.label} style={{ flex: 1, width: 0, display: 'block', objectFit: 'cover', maxHeight: '100px' }} loading="lazy" />
+              ))}
+            </div>
+          )}
+          <div className="devlog-body">
+            <div className="devlog-meta">
+              <span className="devlog-tag">{entry.tag}</span>
+              <span className="devlog-date">{entry.date}</span>
+            </div>
+            <div className="devlog-title">{entry.title}</div>
+            <p className="devlog-desc">{entry.desc}</p>
+            {entry.itchUrl && (
+              <a href={entry.itchUrl} target="_blank" rel="noopener" style={{ display: 'inline-block', marginTop: '14px', fontSize: '12px', fontWeight: 600, color: 'var(--blue-dk)', textDecoration: 'none', borderBottom: '1px solid var(--blue-lt)', paddingBottom: '1px' }}>
+                Read full devlog on itch.io
+              </a>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  return (
+    <>
+      <Nav />
+      <Hero tweaks={tweaks} />
+      <StatsStrip />
+      <div className="divider" />
+      <div className="reel-outer" id="reel">
+        <div className="section-wrap">
+          <div className="section-header">
+            <span className="section-pill pill-blue">01 Reel</span>
+            <h2 className="section-title">Demo Reel</h2>
+          </div>
+          <ReelPlayer />
+        </div>
+      </div>
+      <div className="divider" />
+      <div id="credits">
+        <div className="section-wrap">
+          <div className="section-header">
+            <span className="section-pill pill-blue">02 Credits</span>
+            <h2 className="section-title">Select Credits</h2>
+          </div>
+          <Credits />
+        </div>
+      </div>
+      {tweaks.showPipeline && (
+        <>
+          <div className="divider" />
+          <div className="pipeline-bg" id="pipeline">
+            <div className="section-wrap">
+              <div className="section-header">
+                <span className="section-pill pill-blue">03 Pipeline</span>
+                <h2 className="section-title">Pipeline Work</h2>
+              </div>
+              <p className="pipeline-intro">
+                When I spot a repetitive task, I <strong>build a tool,</strong> often without being asked.
+                When I'm assigned a problem, I look for the solution that helps the whole pipeline, not just the immediate task.
+                The scripts below are a sample of that work across 18 years of production.
+              </p>
+              <div className="pipeline-grid">
+                {pipelineWork.map((p, i) => (
+                  <div className="pipeline-card" key={i}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '14px' }}>
+                      <div className="p-tag">{p.tag}</div>
+                      {p.selfInitiated && <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--brown)', background: 'var(--brown-lt)', border: '1px solid #e0cfc4', padding: '3px 8px', borderRadius: '4px', flexShrink: 0, whiteSpace: 'nowrap' }}>Self-initiated</span>}
+                    </div>
+                    <div className="p-title">{p.title}</div>
+                    <p className="p-body">{p.body}</p>
+                    <div className="p-tools">{p.tools.map((t, j) => <span className="tool-chip" key={j}>{t}</span>)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      <div className="divider" />
+      <div id="skills">
+        <div className="section-wrap">
+          <div className="section-header">
+            <span className="section-pill pill-blue">04 Skills</span>
+            <h2 className="section-title">Skills &amp; Tools</h2>
+          </div>
+          <div className="skills-grid">
+            {skillGroups.map((g, i) => (
+              <div key={i}>
+                <div className="skill-group-title">{g.title}</div>
+                <ul className="skill-list">
+                  {g.skills.map((s, j) => (
+                    <li key={j} className={s.primary ? 'skill-primary' : ''}>{s.name}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="divider" />
+      <div id="illustration">
+        <div className="section-wrap">
+          <div className="section-header">
+            <span className="section-pill pill-brown">05 Art</span>
+            <h2 className="section-title">Illustration &amp; Personal Work</h2>
+          </div>
+          <IllustrationGallery />
+        </div>
+      </div>
+      <div className="divider" />
+      <div id="devlog">
+        <div className="section-wrap">
+          <div className="section-header">
+            <span className="section-pill pill-blue">06 Lab</span>
+            <h2 className="section-title">Experiments &amp; Devlog</h2>
+          </div>
+          <Devlog />
+        </div>
+      </div>
+      {tweaks.showAbout && (
+        <>
+          <div className="divider" />
+          <div className="about-bg">
+            <div className="section-wrap">
+              <div className="section-header">
+                <span className="section-pill pill-brown">07 About</span>
+                <h2 className="section-title">About Me</h2>
+              </div>
+              <About />
+            </div>
+          </div>
+        </>
+      )}
+      <Footer />
+      <TweaksPanel>
+        <TweakSection label="Hero">
+          <TweakToggle id="showProfilePic" label="Show profile photo" value={tweaks.showProfilePic} onChange={v => setTweak('showProfilePic', v)} />
+          <TweakRadio id="avatarShape" label="Avatar shape" value={tweaks.avatarShape} options={['circle','square']} onChange={v => setTweak('avatarShape', v)} />
+        </TweakSection>
+        <TweakSection label="Sections">
+          <TweakToggle id="showPipeline" label="Pipeline section" value={tweaks.showPipeline} onChange={v => setTweak('showPipeline', v)} />
+          <TweakToggle id="showAbout" label="About section" value={tweaks.showAbout} onChange={v => setTweak('showAbout', v)} />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+function Nav() {
+  return (
+    <nav>
+      <a href="#" className="nav-logo">KRJ<span>.</span></a>
+      <ul className="nav-links">
+        <li><a href="#reel">Reel</a></li>
+        <li><a href="#credits">Credits</a></li>
+        <li><a href="#pipeline">Pipeline</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#illustration">Art</a></li>
+        <li><a href="#devlog">Lab</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  );
+}
+
+function Hero({ tweaks }) {
+  return (
+    <div className="hero">
+      <div>
+        <div className="hero-badge"><div className="hero-badge-dot"></div>Available for work</div>
+        <h1 className="hero-name">Krishna<br />Ramos Jain</h1>
+        <div className="hero-subtitle">Pipeline Developer &amp; Animator</div>
+        <p className="hero-desc">
+          18 years animating and <strong>automating</strong> 2D pipelines.
+          I've shipped work for Netflix, Square Enix, and Stoic,
+          and written the scripts that made those productions faster.
+          My tools cover the entire pipeline, from preproduction through delivery.
+        </p>
+        <div className="hero-ctas">
+          <a href="#reel" className="btn btn-blue">Watch My Reel</a>
+          <a href="#pipeline" className="btn btn-ghost">See Pipeline Work</a>
+          <a href="#contact" className="btn btn-ghost">Get In Touch</a>
+        </div>
+      </div>
+      {tweaks.showProfilePic && (
+        <div className="hero-right">
+          <div className="hero-avatar" style={{ borderRadius: tweaks.avatarShape === 'circle' ? '50%' : '16px' }}>
+            <img src="uploads/profile_pic-1777356795791.jpg" alt="Krishna Ramos Jain" />
+          </div>
+          <div className="hero-quick-links">
+            <a href="https://www.linkedin.com/in/krishna-jain-938b7222/" target="_blank" rel="noopener" className="hero-quick-link">LinkedIn</a>
+            <a href="https://github.com/kj-art/developer-portfolio" target="_blank" rel="noopener" className="hero-quick-link">GitHub</a>
+            <a href="https://itch.io/profile/bluebeezle" target="_blank" rel="noopener" className="hero-quick-link">Itch.io</a>
+            <a href="https://www.instagram.com/krishnarjain/" target="_blank" rel="noopener" className="hero-quick-link">Instagram</a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatsStrip() {
+  return (
+    <div className="stats-strip">
+      <div className="stat-item">
+        <div className="stat-num">18</div>
+        <div className="stat-label">Years in industry</div>
+      </div>
+      <div className="stat-item">
+        <div className="stat-num">9+</div>
+        <div className="stat-label">Major productions</div>
+      </div>
+      <div className="stat-item" style={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ fontSize: '22px', fontFamily: 'var(--font-d)', fontWeight: 700, letterSpacing: '-0.02em', opacity: 0.9 }}>
+          I animate. I automate. I make everyone else faster.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReelPlayer() {
+  return (
+    <div className="reel-container">
+      <div style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 6px 40px oklch(0% 0 0 / 0.12)', position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+        <iframe
+          src={`https://www.youtube.com/embed/${YT_ID}?rel=0&modestbranding=1`}
+          title="Krishna Jain Demo Reel"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+        ></iframe>
+      </div>
+      <p className="reel-caption">Animation reel · character, effects, and pipeline work · Powerhouse Animation Studios 2006-2025</p>
+    </div>
+  );
+}
+
+function Credits() {
+  return (
+    <div className="employers-list">
+      {employers.map((e, i) => (
+        <div className="employer-card" key={i}>
+          <div className="employer-header">
+            <span className="employer-name">{e.studio}</span>
+            <span className="employer-role">{e.role}</span>
+            <span className="employer-tenure">{e.tenure}</span>
+          </div>
+          <div className="employer-projects">
+            {e.projects.map((p, j) => (
+              <div className="project-item" key={j}>
+                <div className="project-client">{p.client}</div>
+                <div className="project-title">{p.title}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function About() {
+  return (
+    <div className="about-layout">
+      <div className="about-text">
+        <p>
+          I graduated from <strong>SCAD with a BFA in Animation</strong> and spent the early part of my career
+          building a programming department at Powerhouse Animation from scratch,
+          making games, tools, and pipelines in ActionScript.
+        </p>
+        <p>
+          Over 18 years I grew into a genuinely rare combination: someone who can <strong>animate at a professional level
+          and write production scripts that change how a studio operates.</strong> I've done both
+          on Netflix originals, Square Enix titles, and indie games.
+        </p>
+        <p>
+          I'm looking for roles where that combination matters. <strong>2D pipeline developer, pipeline TD,
+          or automation-focused animation work.</strong> If your studio has a list of "we really should fix this someday" tasks,
+          I've probably already built something like the fix.
+        </p>
+        <div style={{ marginTop: '28px' }}>
+          <a href="mailto:krishna@krishnajain.com" className="btn btn-blue">krishna@krishnajain.com</a>
+        </div>
+      </div>
+      <div className="about-stats">
+        {[
+          { num: "18", label: "Years in 2D animation" },
+          { num: "9+", label: "Major productions shipped" },
+          { num: "BFA", label: "Animation, SCAD" },
+        ].map((s, i) => (
+          <div className="about-stat" key={i}>
+            <div className="about-stat-num">{s.num}</div>
+            <div className="about-stat-label">{s.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Footer() {
+  return (
+    <footer id="contact">
+      <div className="footer-inner">
+        <div className="footer-top">
+          <div>
+            <div className="footer-name">Krishna Ramos Jain</div>
+            <div className="footer-tagline">Pipeline Developer · Animator · Woodbury, MN</div>
+          </div>
+          <div className="footer-email">
+            <a href="mailto:krishna@krishnajain.com">krishna@krishnajain.com</a>
+          </div>
+        </div>
+        <div className="footer-links">
+          <a href="https://www.youtube.com/watch?v=79AOg9Q983I" target="_blank" rel="noopener">Demo Reel</a>
+          <a href="https://www.linkedin.com/in/krishna-jain-938b7222/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://github.com/kj-art/developer-portfolio" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://itch.io/profile/bluebeezle" target="_blank" rel="noopener">Itch.io</a>
+          <a href="https://www.instagram.com/krishnarjain/" target="_blank" rel="noopener">Instagram</a>
+        </div>
+        <div className="footer-bottom">
+          <span>2026 Krishna Ramos Jain. All rights reserved.</span>
+          <span>Available for hire · Pipeline Developer &amp; Animator</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
