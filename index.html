@@ -7,11 +7,37 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta property="og:title" content="Krishna Ramos Jain — Pipeline Developer & Animator" />
+<meta property="og:description" content="18 years animating and automating 2D pipelines. Scripts that powered Castlevania, Blood of Zeus, and Masters of the Universe." />
+<meta property="og:image" content="https://krishnajain.com/assets/og-preview.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://krishnajain.com" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
 <style>
+[data-theme="dark"] {
+  --bg:        #1c1510;
+  --surface:   #251d16;
+  --blue:      #5bafd6;
+  --blue-dk:   #7ecde8;
+  --blue-lt:   #1a3545;
+  --blue-bg:   #141e26;
+  --brown:     #c4854a;
+  --brown-lt:  #2a1a0e;
+  --tan:       #c4854a;
+  --text:      #f0e6dc;
+  --muted:     #9e8e82;
+  --rule:      #362a20;
+}
+[data-theme="dark"] nav { background: var(--bg); }
+[data-theme="dark"] .stats-strip { background: #1a3a50; }
+[data-theme="dark"] footer { background: #0e0a07; }
+[data-theme="dark"] .employer-header { background: var(--bg); }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --bg:        #f4f1ed;
@@ -345,7 +371,16 @@ if (typeof TweakToggle === 'undefined')  window.TweakToggle  = () => null;
 if (typeof TweakRadio === 'undefined')   window.TweakRadio   = () => null;
 // ────────────────────────────────────────────────────────────────────────────
 const { useState } = React;
-
+function useDarkMode() {
+  const [dark, setDark] = React.useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  }, [dark]);
+  return [dark, setDark];
+}
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "showProfilePic": true,
   "showAbout": true,
@@ -730,9 +765,10 @@ function Devlog() {
 
 function App() {
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [dark, setDark] = useDarkMode();
   return (
     <>
-      <Nav />
+      <Nav dark={dark} setDark={setDark} />
       <Hero tweaks={tweaks} />
       <StatsStrip />
       <div className="divider" />
@@ -856,7 +892,7 @@ function App() {
   );
 }
 
-function Nav() {
+function Nav({ dark, setDark }) {
   return (
     <nav>
       <a href="#" className="nav-logo">KRJ<span>.</span></a>
@@ -869,6 +905,19 @@ function Nav() {
         <li><a href="#devlog">Lab</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
+      <button
+        onClick={() => setDark(d => !d)}
+        title="Toggle dark mode"
+        style={{
+          background: 'none', border: '1.5px solid var(--rule)',
+          borderRadius: '100px', cursor: 'pointer',
+          padding: '5px 12px', display: 'flex', alignItems: 'center',
+          gap: '6px', fontSize: '13px', fontWeight: 600,
+          color: 'var(--muted)', transition: 'all 0.15s', flexShrink: 0,
+        }}
+      >
+        {dark ? '☀︎' : '☾'} {dark ? 'Light' : 'Dark'}
+      </button>
     </nav>
   );
 }
