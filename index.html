@@ -21,24 +21,6 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
 <style>
-[data-theme="dark"] {
-  --bg:        #1c1510;
-  --surface:   #251d16;
-  --blue:      #5bafd6;
-  --blue-dk:   #7ecde8;
-  --blue-lt:   #1a3545;
-  --blue-bg:   #141e26;
-  --brown:     #c4854a;
-  --brown-lt:  #2a1a0e;
-  --tan:       #c4854a;
-  --text:      #f0e6dc;
-  --muted:     #9e8e82;
-  --rule:      #362a20;
-}
-[data-theme="dark"] nav { background: var(--bg); }
-[data-theme="dark"] .stats-strip { background: #1a3a50; }
-[data-theme="dark"] footer { background: #0e0a07; }
-[data-theme="dark"] .employer-header { background: var(--bg); }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --bg:        #f4f1ed;
@@ -53,9 +35,33 @@
     --text:      #1a0f08;
     --muted:     #6b5c52;
     --rule:      #e0d8d0;
+    --pipeline-card-border: #cce4f2;
+    --about-stat-border:    #e0cfc4;
+    --pill-brown-border:    #e0cfc4;
     --font-d:    'Outfit', system-ui, sans-serif;
     --font-b:    'DM Sans', system-ui, sans-serif;
   }
+  /* Dark theme — must come AFTER :root to win the cascade */
+  [data-theme="dark"] {
+    --bg:        #1c1510;
+    --surface:   #251d16;
+    --blue:      #5bafd6;
+    --blue-dk:   #7ecde8;
+    --blue-lt:   #1a3545;
+    --blue-bg:   #141e26;
+    --brown:     #c4854a;
+    --brown-lt:  #2a1a0e;
+    --tan:       #c4854a;
+    --text:      #f0e6dc;
+    --muted:     #9e8e82;
+    --rule:      #362a20;
+    --pipeline-card-border: #1e3f55;
+    --about-stat-border:    #3a2510;
+    --pill-brown-border:    #3a2510;
+  }
+  [data-theme="dark"] nav         { background: var(--bg); }
+  [data-theme="dark"] .stats-strip { background: #1a3a50; }
+  [data-theme="dark"] footer       { background: #0e0a07; }
   html { scroll-behavior: smooth; }
   body { background: var(--bg); color: var(--text); font-family: var(--font-b); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
   #root { min-height: 100vh; }
@@ -132,7 +138,7 @@
   .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 44px; }
   .section-pill { font-family: var(--font-d); font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 13px; border-radius: 5px; flex-shrink: 0; }
   .pill-blue { background: var(--blue-lt); color: var(--blue-dk); }
-  .pill-brown { background: var(--brown-lt); color: var(--brown); border: 1px solid #e0cfc4; }
+  .pill-brown { background: var(--brown-lt); color: var(--brown); border: 1px solid var(--pill-brown-border); }
   .section-title { font-family: var(--font-d); font-size: clamp(26px, 3vw, 42px); font-weight: 800; letter-spacing: -0.03em; }
   .section-rule { flex: 1; height: 1.5px; background: var(--rule); max-width: 180px; }
   .divider { height: 1.5px; background: var(--rule); }
@@ -187,7 +193,7 @@
   .pipeline-intro strong { color: var(--text); font-weight: 600; }
   .pipeline-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
   .pipeline-card {
-    background: var(--surface); border: 1.5px solid #cce4f2; border-radius: 10px;
+    background: var(--surface); border: 1.5px solid var(--pipeline-card-border); border-radius: 10px;
     padding: 26px 30px; transition: all 0.15s;
   }
   .pipeline-card:hover { border-color: var(--blue); box-shadow: 0 2px 16px oklch(55% 0.1 210 / 0.1); transform: translateY(-2px); }
@@ -212,7 +218,7 @@
   .about-text p { font-size: 15px; line-height: 1.85; color: var(--muted); margin-bottom: 18px; }
   .about-text p strong { color: var(--text); font-weight: 600; }
   .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .about-stat { background: var(--surface); border: 1.5px solid #e0cfc4; border-radius: 10px; padding: 22px; text-align: center; }
+  .about-stat { background: var(--surface); border: 1.5px solid var(--about-stat-border); border-radius: 10px; padding: 22px; text-align: center; }
   .about-stat-num { font-family: var(--font-d); font-size: 46px; font-weight: 900; color: var(--blue-dk); line-height: 1; margin-bottom: 6px; letter-spacing: -0.04em; }
   .about-stat-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
 
