@@ -506,6 +506,8 @@ const galleryItems = [
   // Character design sheets
   { src: "assets/kavos_design_sheet.png", label: "Kavos, character design sheet" },
   { src: "assets/roppu_kun.jpg", label: "Roppu-kun, inspired by Yoh Yoshinari's Tezuka tribute" },
+  // Animation
+  { src: "assets/StrikeThereAndBackAgain_fb.mp4", type: "video", label: "Strike There and Back Again, D&D animation" },
 ];
 
 const devlogEntries = [
@@ -650,7 +652,10 @@ function IllustrationGallery() {
       <div className="gallery-grid">
         {galleryItems.map((item, i) => (
           <div className="gal-item" key={i} onClick={() => setLightbox(item)}>
-            <img src={item.src} alt={item.label} loading="lazy" />
+            {item.type === 'video'
+              ? <video src={item.src} autoPlay loop muted playsInline style={{ display: 'block', width: '100%' }} />
+              : <img src={item.src} alt={item.label} loading="lazy" />
+            }
             <div className="gal-label">{item.label}</div>
           </div>
         ))}
@@ -658,7 +663,10 @@ function IllustrationGallery() {
       {lightbox && (
         <div className="lightbox-overlay" onClick={() => setLightbox(null)}>
           <button className="lightbox-close" onClick={() => setLightbox(null)}>×</button>
-          <img src={lightbox.src} alt={lightbox.label} onClick={e => e.stopPropagation()} />
+          {lightbox.type === 'video'
+            ? <video src={lightbox.src} autoPlay loop muted playsInline controls onClick={e => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '88vh', borderRadius: '10px', boxShadow: '0 20px 80px oklch(0% 0 0 / 0.5)' }} />
+            : <img src={lightbox.src} alt={lightbox.label} onClick={e => e.stopPropagation()} />
+          }
           <div className="lightbox-caption">{lightbox.label}</div>
         </div>
       )}
