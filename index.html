@@ -38,6 +38,10 @@
     --pipeline-card-border: #cce4f2;
     --about-stat-border:    #e0cfc4;
     --pill-brown-border:    #e0cfc4;
+    /* Magenta accent — echoes the rim light in the hero illustration */
+    --accent:        #c63ca8;
+    --accent-lt:     #fae3f2;
+    --accent-border: #ecc8de;
     --font-d:    'Outfit', system-ui, sans-serif;
     --font-b:    'DM Sans', system-ui, sans-serif;
   }
@@ -58,6 +62,9 @@
     --pipeline-card-border: #1e3f55;
     --about-stat-border:    #3a2510;
     --pill-brown-border:    #3a2510;
+    --accent:        #ee82d8;
+    --accent-lt:     #3a1a30;
+    --accent-border: #4a2540;
   }
   [data-theme="dark"] nav         { background: var(--bg); }
   [data-theme="dark"] .stats-strip { background: #1a3a50; }
@@ -91,7 +98,7 @@
     font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
     padding: 6px 14px; border-radius: 100px; margin-bottom: 20px;
   }
-  .hero-badge-dot { width: 7px; height: 7px; background: var(--blue); border-radius: 50%; }
+  .hero-badge-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.18); }
   .hero-name { font-family: var(--font-d); font-size: clamp(52px, 6vw, 84px); font-weight: 900; line-height: 0.97; letter-spacing: -0.04em; color: var(--text); margin-bottom: 4px; }
   .hero-subtitle { font-family: var(--font-d); font-size: clamp(20px, 2.5vw, 32px); font-weight: 500; color: var(--blue-dk); letter-spacing: -0.02em; margin-bottom: 24px; }
   .hero-desc { font-size: 16px; color: var(--muted); line-height: 1.8; max-width: 500px; margin-bottom: 36px; font-weight: 300; }
@@ -748,7 +755,7 @@ function Devlog() {
               <div className="post-modal-title">{openPost.title}</div>
               <p className="post-modal-desc">{openPost.desc}</p>
               {openPost.itchUrl && (
-                <a href={openPost.itchUrl} target="_blank" rel="noopener" style={{ display: 'inline-block', marginBottom: '24px', fontSize: '13px', fontWeight: 600, color: 'var(--blue-dk)', textDecoration: 'none', borderBottom: '1px solid var(--blue-lt)', paddingBottom: '2px' }}>
+                <a href={openPost.itchUrl} target="_blank" rel="noopener" style={{ display: 'inline-block', marginBottom: '24px', fontSize: '13px', fontWeight: 600, color: 'var(--accent)', textDecoration: 'none', borderBottom: '1px solid var(--accent-border)', paddingBottom: '2px' }}>
                   Read full devlog on itch.io →
                 </a>
               )}
@@ -823,7 +830,7 @@ function App() {
                   <div className="pipeline-card" key={i}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '14px' }}>
                       <div className="p-tag">{p.tag}</div>
-                      {p.selfInitiated && <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--brown)', background: 'var(--brown-lt)', border: '1px solid #e0cfc4', padding: '3px 8px', borderRadius: '4px', flexShrink: 0, whiteSpace: 'nowrap' }}>Self-initiated</span>}
+                      {p.selfInitiated && <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', background: 'var(--accent-lt)', border: '1px solid var(--accent-border)', padding: '3px 8px', borderRadius: '4px', flexShrink: 0, whiteSpace: 'nowrap' }}>Self-initiated</span>}
                     </div>
                     <div className="p-title">{p.title}</div>
                     <p className="p-body">{p.body}</p>
