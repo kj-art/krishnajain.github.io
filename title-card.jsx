@@ -510,7 +510,7 @@ function About() {
 			<p>
 			Over 18 years I grew into a genuinely rare combination: someone who can <b>animate at a professional level and write production scripts that change how a studio operates.</b> I've done both across major streaming, console, and indie game productions at Powerhouse Animation.
 			</p>
-			</p>
+			<p>
 			I'm looking for roles where that combination matters. <b>2D pipeline developer, pipeline TD, or character and effects animation work.</b> If your studio has a list of "we really should fix this someday" tasks, I've probably already built something for it.
             </p>
           </div>
