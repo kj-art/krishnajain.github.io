@@ -266,9 +266,8 @@ function Hero() {
       </div>
       <div className="stats-strip">
         <div className="stat"><div className="n">18</div><div className="l">Yrs in production</div></div>
-        <div className="stat"><div className="n">7+</div><div className="l">Productions credited</div></div>
+        <div className="stat"><div className="n">9+</div><div className="l">Productions credited</div></div>
         <div className="stat"><div className="n">6</div><div className="l">Scripting languages</div></div>
-        <div className="stat"><div className="n">'06</div><div className="l">Since Powerhouse Anim.</div></div>
       </div>
     </section>
   );
@@ -524,8 +523,7 @@ function About() {
           <div className="about-stats">
             <div className="about-stat"><div className="n">18</div><div className="l">Years in 2D animation production</div></div>
             <div className="about-stat"><div className="n">40+</div><div className="l">Pipeline tools written</div></div>
-            <div className="about-stat"><div className="n">7</div><div className="l">Productions credited</div></div>
-            <div className="about-stat"><div className="n">2</div><div className="l">Disciplines, one career</div></div>
+            <div className="about-stat"><div className="n">9+</div><div className="l">Productions credited</div></div>
           </div>
         </div>
       </div>
