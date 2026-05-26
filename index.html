@@ -1,21 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" type="image/png" sizes="48x48" href="/favicon.png" />
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon.png" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Krishna Ramos Jain, Pipeline Developer &amp; Animator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<meta property="og:title" content="Krishna Ramos Jain — Pipeline Developer & Animator" />
-<meta property="og:description" content="A page for all my credits, social links, and latest endeavors. Credits include 18 years animating and automating 2D pipelines. Scripts that powered Castlevania, Blood of Zeus, and Masters of the Universe." />
-<meta property="og:image" content="https://krishnajain.com/assets/og-preview.jpg" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="627" />
-<meta property="og:url" content="https://krishnajain.com" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -23,1105 +15,473 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg:        #f4f1ed;
-    --surface:   #ffffff;
-    --blue:      #5bafd6;
-    --blue-dk:   #2a7ca8;
-    --blue-lt:   #d6eef8;
-    --blue-bg:   #eaf5fb;
-    --brown:     #7a4520;
-    --brown-lt:  #f5ebe0;
-    --tan:       #c4854a;
-    --text:      #1a0f08;
-    --muted:     #6b5c52;
-    --rule:      #e0d8d0;
-    --pipeline-card-border: #cce4f2;
-    --about-stat-border:    #e0cfc4;
-    --pill-brown-border:    #e0cfc4;
-    /* Magenta accent — echoes the rim light in the hero illustration */
-    --accent:        #c63ca8;
-    --accent-lt:     #fae3f2;
-    --accent-border: #ecc8de;
-    --font-d:    'Outfit', system-ui, sans-serif;
-    --font-b:    'DM Sans', system-ui, sans-serif;
+    --cream:        #ede1c5;
+    --cream-2:      #f4ebd2;
+    --ink:          #1a1310;
+    --ink-soft:     #2a1f15;
+    --muted:        #6b5c52;
+    --cobalt:       #3f5d8a;
+    --cobalt-lt:    #c7d3e8;
+    --cobalt-deep:  #2a4570;
+    --tan:          #c4854a;
+    --tan-lt:       #f0d8b8;
+    --brown:        #7a4520;
+    --magenta:      #c63ca8;
+    --magenta-lt:   #fae3f2;
+    --font-d:       'Alfa Slab One', serif;
+    --font-b:       'DM Sans', system-ui, sans-serif;
   }
-  /* Dark theme — must come AFTER :root to win the cascade */
   [data-theme="dark"] {
-    --bg:        #1c1510;
-    --surface:   #251d16;
-    --blue:      #5bafd6;
-    --blue-dk:   #7ecde8;
-    --blue-lt:   #1a3545;
-    --blue-bg:   #141e26;
-    --brown:     #c4854a;
-    --brown-lt:  #2a1a0e;
-    --tan:       #c4854a;
-    --text:      #f0e6dc;
-    --muted:     #9e8e82;
-    --rule:      #362a20;
-    --pipeline-card-border: #1e3f55;
-    --about-stat-border:    #3a2510;
-    --pill-brown-border:    #3a2510;
-    --accent:        #ee82d8;
-    --accent-lt:     #3a1a30;
-    --accent-border: #4a2540;
+    --cream:        #1a1815;
+    --cream-2:      #251f1a;
+    --ink:          #f0e6cf;
+    --ink-soft:     #d8c8a8;
+    --muted:        #9e8e7a;
+    --cobalt-lt:    #1e2e4a;
+    --tan-lt:       #2a1f15;
+    --magenta-lt:   #2a1530;
   }
-  [data-theme="dark"] nav         { background: var(--bg); }
-  [data-theme="dark"] .stats-strip { background: #1a3a50; }
-  [data-theme="dark"] footer       { background: #0e0a07; }
   html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font-b); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
-  #root { min-height: 100vh; }
+  body { background: var(--cream); color: var(--ink); font-family: var(--font-b); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+  a { color: inherit; }
 
-  /* NAV */
-  nav {
+  /* ─── BANNER + NAV ──────────────────────────────────────────── */
+  .marquee {
     position: sticky; top: 0; z-index: 100;
-    background: var(--bg); border-bottom: 1.5px solid var(--rule);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 48px; height: 58px;
+    background: var(--cobalt); color: var(--cream-2);
+    border-bottom: 3px solid var(--ink);
+    box-shadow: 0 3px 0 var(--ink);
   }
-  .nav-logo { font-family: var(--font-d); font-size: 19px; font-weight: 800; color: var(--text); text-decoration: none; letter-spacing: -0.03em; }
-  .nav-logo span { color: var(--blue-dk); }
-  .nav-links { display: flex; gap: 32px; list-style: none; }
-  .nav-links a { font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.15s; }
-  .nav-links a:hover { color: var(--blue-dk); }
+  .marquee-top {
+    padding: 10px 32px; display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-d); font-size: 15px; letter-spacing: 0.04em;
+  }
+  .marquee-top .r {
+    font-family: var(--font-b); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.9;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .theme-toggle {
+    background: var(--cream-2); color: var(--ink); border: 2px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    padding: 4px 12px; font-family: var(--font-d); font-size: 11px;
+    letter-spacing: 0.1em; cursor: pointer; transition: transform 0.1s;
+  }
+  .theme-toggle:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+  .theme-toggle:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .marquee-nav {
+    background: var(--ink); color: var(--cream-2);
+    padding: 10px 16px; display: flex; gap: 4px; justify-content: center; align-items: center;
+    font-family: var(--font-d); font-size: 13px; letter-spacing: 0.08em;
+    flex-wrap: wrap;
+  }
+  .marquee-nav a {
+    color: var(--cream-2); text-decoration: none; padding: 2px 12px;
+    transition: color 0.12s;
+  }
+  .marquee-nav a:hover { color: var(--tan); }
+  .marquee-nav .star { color: var(--tan); font-size: 11px; }
 
-  /* HERO */
-  .hero {
-    display: grid; grid-template-columns: 1fr 550px; gap: 48px;
-    align-items: center; padding: 64px 48px 72px;
-    max-width: 1300px; margin: 0 auto;
+  /* ─── COMMON: PLAQUE, CARD, CHIP, BG SHADOW ─────────────────── */
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 80px 48px; }
+  .section { position: relative; }
+  .section.cobalt-wash { background: var(--cobalt-lt); }
+  .section.tan-wash    { background: var(--tan-lt); }
+  .section.magenta-wash{ background: var(--magenta-lt); }
+
+  .plaque {
+    display: inline-block;
+    font-family: var(--font-d); font-size: 18px; letter-spacing: 0.04em;
+    padding: 8px 22px;
+    background: var(--cream-2); color: var(--ink);
+    border: 3px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);
+    transform: rotate(-1.2deg);
+    margin-bottom: 36px;
   }
-  .hero-badge {
+  .plaque.cobalt   { background: var(--cobalt);       color: var(--cream-2); transform: rotate(-1.5deg); }
+  .plaque.brown    { background: var(--brown);        color: var(--cream-2); transform: rotate(1.5deg); }
+  .plaque.tan      { background: var(--tan);          color: var(--ink);     transform: rotate(-1deg); }
+  .plaque.magenta  { background: var(--magenta);      color: var(--cream-2); transform: rotate(1.2deg); }
+  .plaque.deep     { background: var(--cobalt-deep);  color: var(--cream-2); transform: rotate(-1deg); }
+
+  .plaque .n {
+    display: inline-block; background: var(--cream-2); color: var(--ink);
+    font-size: 12px; padding: 1px 7px; border: 2px solid var(--ink);
+    margin-right: 10px; vertical-align: middle; position: relative; top: -2px;
+  }
+  .plaque.cobalt .n, .plaque.brown .n, .plaque.magenta .n, .plaque.deep .n { background: var(--cream-2); color: var(--ink); }
+
+  .card {
+    background: var(--cream-2); color: var(--ink);
+    border: 3px solid var(--ink); box-shadow: 7px 7px 0 var(--ink);
+    padding: 28px 32px;
+  }
+  .card.tilt-l { transform: rotate(-0.6deg); }
+  .card.tilt-r { transform: rotate(0.6deg); }
+
+  .chip {
     display: inline-flex; align-items: center; gap: 8px;
-    background: var(--blue-lt); color: var(--blue-dk);
-    font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
-    padding: 6px 14px; border-radius: 100px; margin-bottom: 20px;
+    background: var(--cream-2); color: var(--ink);
+    border: 2.5px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+    font-family: var(--font-d); font-size: 12px; letter-spacing: 0.06em;
+    padding: 7px 14px; text-decoration: none;
+    transition: transform 0.1s, box-shadow 0.1s;
   }
-  .hero-badge-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.18); }
-  .hero-name { font-family: var(--font-d); font-size: clamp(52px, 6vw, 84px); font-weight: 900; line-height: 0.97; letter-spacing: -0.04em; color: var(--text); margin-bottom: 4px; }
-  .hero-subtitle { font-family: var(--font-d); font-size: clamp(20px, 2.5vw, 32px); font-weight: 500; color: var(--blue-dk); letter-spacing: -0.02em; margin-bottom: 24px; }
-  .hero-desc { font-size: 16px; color: var(--muted); line-height: 1.8; max-width: 500px; margin-bottom: 36px; font-weight: 300; }
-  .hero-desc strong { color: var(--text); font-weight: 600; }
-  .hero-ctas { display: flex; gap: 10px; flex-wrap: wrap; }
-  .btn { padding: 12px 26px; font-family: var(--font-b); font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 7px; cursor: pointer; transition: all 0.15s; display: inline-block; border: none; }
-  .btn-blue { background: var(--blue-dk); color: #fff; }
-  .btn-blue:hover { background: #1f6a90; transform: translateY(-1px); }
-  .btn-ghost { background: transparent; color: var(--text); border: 1.5px solid var(--rule); }
-  .btn-ghost:hover { border-color: var(--blue-dk); color: var(--blue-dk); }
+  .chip:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--ink); }
+  .chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .chip svg { width: 13px; height: 13px; flex-shrink: 0; }
+  .chip.cobalt  { background: var(--cobalt);  color: var(--cream-2); }
+  .chip.brown   { background: var(--brown);   color: var(--cream-2); }
+  .chip.magenta { background: var(--magenta); color: var(--cream-2); }
+  .chip.tan     { background: var(--tan);     color: var(--ink); }
 
-  .hero-right { display: flex; flex-direction: column; align-items: center; gap: 0px; }
-  .hero-avatar {
-    max-width: 1510px;
+  /* ─── HERO ──────────────────────────────────────────────────── */
+  .tc-bg-burst {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: repeating-conic-gradient(from -8deg at 78% 42%, var(--cream) 0deg 22deg, oklch(from var(--cream) calc(l - 0.04) c h) 22deg 44deg);
+    opacity: 0.55;
   }
-  .hero-avatar img { width: 100%; height: auto; }
-  .hero-quick-links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: -2px;}
-  .hero-quick-link {
-    font-size: 12px; font-weight: 600; color: var(--muted);
-    border: 1.5px solid var(--rule); border-radius: 100px;
-    padding: 5px 13px; text-decoration: none; transition: all 0.15s;
-    background: var(--surface);
+  .hero { position: relative; z-index: 1; padding: 64px 48px 56px; max-width: 1280px; margin: 0 auto; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 36px; align-items: center; }
+  .presenting {
+    font-family: var(--font-d); font-size: 22px; letter-spacing: 0.02em; color: var(--ink);
+    background: var(--cream-2); padding: 4px 18px;
+    border: 2.5px solid var(--ink); box-shadow: 5px 5px 0 var(--ink);
+    transform: rotate(-2deg); display: inline-block;
   }
-  .hero-quick-link:hover { border-color: var(--blue); color: var(--blue-dk); }
+  .hero-name {
+    font-family: var(--font-d); font-size: clamp(72px, 7.5vw, 116px);
+    line-height: 0.88; color: var(--ink); letter-spacing: -0.02em;
+    margin: 18px 0 14px;
+    text-shadow: 5px 5px 0 var(--cream-2), 5px 5px 0 var(--ink);
+  }
+  .hero-name span { color: var(--cobalt); }
+  .hero-role {
+    font-family: var(--font-d); font-size: 22px; color: var(--cream-2);
+    background: var(--ink); display: inline-block;
+    padding: 7px 18px; border: 2.5px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--cobalt); transform: rotate(1deg);
+    margin-bottom: 22px;
+  }
+  .hero-desc {
+    font-family: var(--font-b); font-size: 16px; font-weight: 500;
+    line-height: 1.65; color: var(--ink-soft); max-width: 48ch;
+    margin-bottom: 24px;
+  }
+  .hero-desc b {
+    font-weight: 700;
+    background: linear-gradient(transparent 62%, var(--tan) 62%, var(--tan) 92%, transparent 92%);
+    padding: 0 2px;
+  }
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+  .btn-big {
+    font-family: var(--font-d); font-size: 15px; letter-spacing: 0.04em;
+    padding: 10px 20px; text-decoration: none;
+    border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--ink);
+    transition: transform 0.1s, box-shadow 0.1s; cursor: pointer;
+  }
+  .btn-big:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 var(--ink); }
+  .btn-big:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+  .btn-big.cobalt  { background: var(--cobalt);  color: var(--cream-2); }
+  .btn-big.tan     { background: var(--tan);     color: var(--ink); }
+  .btn-big.cream   { background: var(--cream-2); color: var(--ink); }
+  .hero-socials { display: flex; gap: 10px; flex-wrap: wrap; }
 
-  /* STATS STRIP */
+  .portrait-wrap { position: relative; display: flex; align-items: center; justify-content: center; min-height: 460px; perspective: 1200px; }
+  .portrait-hex {
+    position: absolute; width: 92%; max-width: 460px; aspect-ratio: 1.05 / 1;
+    transform: translate(14px, 28px) rotateX(58deg) rotate(8deg);
+    transform-origin: 50% 50%;
+    z-index: 1;
+  }
+  .portrait-hex svg { width: 100%; height: 100%; }
+  .portrait {
+    position: relative; width: 100%; max-width: 460px; z-index: 2;
+  }
+  .portrait img { width: 100%; height: auto; display: block; }
+
   .stats-strip {
-    background: var(--blue-dk); color: #fff;
-    display: flex; justify-content: center; flex-wrap: wrap;
+    background: var(--ink); color: var(--cream-2);
+    display: flex; justify-content: space-around; padding: 18px 24px;
+    font-family: var(--font-d); border-top: 3px solid var(--ink);
+    flex-wrap: wrap; gap: 20px;
   }
-  .stat-item {
-    padding: 28px 48px; text-align: center;
-    border-right: 1px solid oklch(100% 0 0 / 0.15);
-    flex: 1; min-width: 160px;
+  .stat { text-align: center; }
+  .stat .n { font-size: 38px; color: var(--tan); line-height: 1; }
+  .stat .l { font-family: var(--font-b); font-size: 10.5px; font-weight: 700;
+             letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.8; margin-top: 4px; }
+
+  /* ─── REEL ──────────────────────────────────────────────────── */
+  .reel-frame {
+    background: var(--ink); padding: 22px;
+    border: 3px solid var(--ink); box-shadow: 10px 10px 0 var(--cobalt-deep);
+    max-width: 900px; margin: 0 auto;
   }
-  .stat-item:last-child { border-right: none; }
-  .stat-num { font-family: var(--font-d); font-size: 48px; font-weight: 900; line-height: 1; letter-spacing: -0.04em; margin-bottom: 4px; }
-  .stat-label { font-size: 12px; font-weight: 500; opacity: 0.75; letter-spacing: 0.06em; text-transform: uppercase; }
-
-  /* SECTIONS */
-  .section-wrap { max-width: 1300px; margin: 0 auto; padding: 72px 48px; }
-  .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 44px; }
-  .section-pill { font-family: var(--font-d); font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 13px; border-radius: 5px; flex-shrink: 0; }
-  .pill-blue { background: var(--blue-lt); color: var(--blue-dk); }
-  .pill-brown { background: var(--brown-lt); color: var(--brown); border: 1px solid var(--pill-brown-border); }
-  .section-title { font-family: var(--font-d); font-size: clamp(26px, 3vw, 42px); font-weight: 800; letter-spacing: -0.03em; }
-  .section-rule { flex: 1; height: 1.5px; background: var(--rule); max-width: 180px; }
-  .divider { height: 1.5px; background: var(--rule); }
-
-  /* REEL */
-  .reel-outer { background: var(--surface); }
-  .reel-container { max-width: 960px; margin: 0 auto; }
+  .reel-frame .marquee-strip {
+    background: var(--cream-2); color: var(--ink); padding: 8px 18px;
+    font-family: var(--font-d); font-size: 14px; letter-spacing: 0.08em;
+    border: 2.5px solid var(--cream-2); margin-bottom: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .reel-frame .marquee-strip .bulb {
+    display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+    background: var(--tan); box-shadow: 0 0 8px var(--tan);
+    margin-right: 6px;
+  }
   .reel-thumb {
-    position: relative; border-radius: 12px; overflow: hidden;
-    box-shadow: 0 6px 40px oklch(0% 0 0 / 0.12); cursor: pointer;
-    background: #000;
+    position: relative; background: #000; aspect-ratio: 16/9;
+    cursor: pointer; overflow: hidden;
   }
-  .reel-thumb img { width: 100%; display: block; transition: opacity 0.2s; }
+  .reel-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.2s; }
   .reel-thumb:hover img { opacity: 0.85; }
-  .reel-play-btn {
+  .reel-play {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 72px; height: 72px; background: oklch(100% 0 0 / 0.92);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 24px oklch(0% 0 0 / 0.25); transition: transform 0.15s, background 0.15s;
+    width: 86px; height: 86px; background: var(--cream-2);
+    border: 4px solid var(--ink); box-shadow: 5px 5px 0 var(--ink);
+    display: flex; align-items: center; justify-content: center;
     pointer-events: none;
   }
-  .reel-thumb:hover .reel-play-btn { transform: translate(-50%, -50%) scale(1.08); }
-  .reel-play-icon { width: 0; height: 0; border-style: solid; border-width: 14px 0 14px 26px; border-color: transparent transparent transparent var(--blue-dk); margin-left: 4px; }
-  .reel-caption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align: center; }
+  .reel-play::after {
+    content: ''; width: 0; height: 0;
+    border-style: solid; border-width: 14px 0 14px 24px;
+    border-color: transparent transparent transparent var(--cobalt);
+    margin-left: 4px;
+  }
+  .reel-caption {
+    margin-top: 18px; font-family: var(--font-b); font-size: 13px;
+    color: var(--cream-2); text-align: center; opacity: 0.85; letter-spacing: 0.06em;
+  }
 
-  /* CREDITS */
-  .employers-list { display: flex; flex-direction: column; gap: 12px; }
+  /* ─── CREDITS ───────────────────────────────────────────────── */
+  .employer-stack { display: flex; flex-direction: column; gap: 18px; }
   .employer-card {
-    background: var(--surface); border: 1.5px solid var(--rule); border-radius: 12px;
-    overflow: hidden;
+    background: var(--cream-2); border: 3px solid var(--ink);
+    box-shadow: 7px 7px 0 var(--ink);
   }
-  .employer-header {
-    display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px 20px;
-    padding: 20px 28px 18px; border-bottom: 1.5px solid var(--rule);
-    background: var(--bg);
+  .employer-head {
+    background: var(--cobalt); color: var(--cream-2);
+    padding: 16px 28px; border-bottom: 3px solid var(--ink);
+    display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
   }
-  .employer-name { font-family: var(--font-d); font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
-  .employer-role { font-size: 13px; color: var(--blue-dk); font-weight: 600; }
-  .employer-tenure { margin-left: auto; font-size: 12px; color: var(--muted); font-weight: 400; }
-  .employer-projects { display: flex; flex-wrap: wrap; gap: 0; }
-  .project-item {
-    padding: 14px 28px; border-right: 1.5px solid var(--rule);
-    min-width: 200px; flex: 1;
+  .employer-head .studio { font-family: var(--font-d); font-size: 22px; letter-spacing: -0.01em; }
+  .employer-head .role { font-family: var(--font-b); font-size: 13px; font-weight: 700;
+                         letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.92; }
+  .employer-head .tenure { margin-left: auto; font-family: var(--font-b);
+                           font-size: 12px; font-weight: 700; letter-spacing: 0.1em; opacity: 0.85; }
+  .employer-body { display: flex; flex-wrap: wrap; }
+  .project {
+    padding: 16px 24px; border-right: 2px solid var(--ink);
+    flex: 1 1 220px; min-width: 200px;
   }
-  .project-item:last-child { border-right: none; }
-  .project-client { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue-dk); margin-bottom: 3px; }
-  .project-title { font-family: var(--font-d); font-size: 15px; font-weight: 700; }
+  .project:last-child { border-right: none; }
+  .project .client { font-family: var(--font-d); font-size: 10px; letter-spacing: 0.16em;
+                     color: var(--magenta); margin-bottom: 4px; }
+  .project .title  { font-family: var(--font-d); font-size: 16px; color: var(--ink); }
 
-  /* PIPELINE */
-  .pipeline-bg { background: var(--blue-bg); }
-  .pipeline-intro { max-width: 620px; font-size: 16px; line-height: 1.8; color: var(--muted); margin-bottom: 40px; }
-  .pipeline-intro strong { color: var(--text); font-weight: 600; }
-  .pipeline-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+  /* ─── PIPELINE ──────────────────────────────────────────────── */
+  .pipeline-intro {
+    max-width: 640px; font-family: var(--font-b); font-size: 16px;
+    line-height: 1.7; color: var(--ink-soft); margin-bottom: 36px;
+  }
+  .pipeline-intro b { color: var(--ink); font-weight: 700;
+                      background: linear-gradient(transparent 62%, var(--tan) 62%, var(--tan) 92%, transparent 92%);
+                      padding: 0 2px; }
+  .pipeline-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
   .pipeline-card {
-    background: var(--surface); border: 1.5px solid var(--pipeline-card-border); border-radius: 10px;
-    padding: 26px 30px; transition: all 0.15s;
+    background: var(--cream-2); border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink); padding: 24px 26px;
+    transition: transform 0.1s, box-shadow 0.1s;
   }
-  .pipeline-card:hover { border-color: var(--blue); box-shadow: 0 2px 16px oklch(55% 0.1 210 / 0.1); transform: translateY(-2px); }
-  .p-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-dk); background: var(--blue-lt); padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 14px; }
-  .p-title { font-family: var(--font-d); font-size: 20px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
-  .p-body { font-size: 14px; line-height: 1.75; color: var(--muted); }
-  .p-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
-  .tool-chip { font-size: 11px; padding: 3px 9px; border: 1px solid var(--rule); border-radius: 100px; color: var(--muted); font-weight: 500; background: var(--bg); }
-
-  /* SKILLS */
-  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 36px 52px; }
-  .skill-group-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue-dk); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid var(--blue-lt); }
-  .skill-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-  .skill-list li { font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 9px; }
-  .skill-list li::before { content: ''; width: 7px; height: 7px; background: var(--blue-lt); border: 2px solid var(--blue); border-radius: 50%; flex-shrink: 0; }
-  .skill-primary { color: var(--text) !important; font-weight: 600 !important; }
-  .skill-primary::before { background: var(--blue) !important; }
-
-  /* ABOUT */
-  .about-bg { background: var(--brown-lt); }
-  .about-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
-  .about-text p { font-size: 15px; line-height: 1.85; color: var(--muted); margin-bottom: 18px; }
-  .about-text p strong { color: var(--text); font-weight: 600; }
-  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .about-stat { background: var(--surface); border: 1.5px solid var(--about-stat-border); border-radius: 10px; padding: 22px; text-align: center; }
-  .about-stat-num { font-family: var(--font-d); font-size: 46px; font-weight: 900; color: var(--blue-dk); line-height: 1; margin-bottom: 6px; letter-spacing: -0.04em; }
-  .about-stat-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
-
-  /* ILLUSTRATION GALLERY */
-  .gallery-grid {
-    columns: 3; column-gap: 12px;
+  .pipeline-card:hover { transform: translate(-1px, -1px); box-shadow: 7px 7px 0 var(--ink); }
+  .pipeline-card .top { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+  .p-tag {
+    font-family: var(--font-d); font-size: 11px; letter-spacing: 0.08em;
+    color: var(--cream-2); background: var(--cobalt-deep);
+    padding: 3px 9px; border: 2px solid var(--ink);
   }
-  .gallery-grid .gal-item {
-    break-inside: avoid; margin-bottom: 12px;
-    border-radius: 10px; overflow: hidden;
+  .p-self {
+    font-family: var(--font-d); font-size: 10px; letter-spacing: 0.08em;
+    color: var(--cream-2); background: var(--magenta);
+    padding: 3px 8px; border: 2px solid var(--ink); white-space: nowrap;
+  }
+  .pipeline-card h3 { font-family: var(--font-d); font-size: 19px; margin-bottom: 10px; line-height: 1.15; }
+  .pipeline-card p { font-family: var(--font-b); font-size: 14px; line-height: 1.65;
+                     color: var(--ink-soft); margin-bottom: 16px; }
+  .p-tools { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tool-chip {
+    font-family: var(--font-b); font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border: 2px solid var(--ink);
+    background: var(--cream); color: var(--ink);
+  }
+
+  /* ─── SKILLS ────────────────────────────────────────────────── */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 28px; }
+  .skill-block {
+    background: var(--cream-2); border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink); padding: 22px 24px;
+  }
+  .skill-block h4 {
+    font-family: var(--font-d); font-size: 12px; letter-spacing: 0.12em;
+    color: var(--cream-2); background: var(--brown);
+    padding: 5px 12px; margin: -22px -24px 16px;
+    border-bottom: 3px solid var(--ink);
+  }
+  .skill-block ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .skill-block li { font-family: var(--font-b); font-size: 14px; color: var(--ink-soft);
+                    display: flex; align-items: center; gap: 9px; }
+  .skill-block li::before {
+    content: ''; width: 9px; height: 9px; background: var(--cream);
+    border: 2px solid var(--ink); flex-shrink: 0;
+  }
+  .skill-block li.primary { color: var(--ink); font-weight: 600; }
+  .skill-block li.primary::before { background: var(--tan); }
+
+  /* ─── ART GALLERY ───────────────────────────────────────────── */
+  .gallery-grid { columns: 3; column-gap: 16px; }
+  .gal-item {
+    break-inside: avoid; margin-bottom: 16px;
+    background: var(--cream-2); border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink); overflow: hidden;
     cursor: zoom-in; position: relative;
-    border: 1.5px solid var(--rule);
-    background: var(--surface);
+    transition: transform 0.1s;
   }
-  .gallery-grid .gal-item img { display: block; width: 100%; transition: opacity 0.15s; }
-  .gallery-grid .gal-item:hover img { opacity: 0.9; }
+  .gal-item:hover { transform: translate(-1px, -1px); }
+  .gal-item img, .gal-item video { display: block; width: 100%; }
   .gal-label {
     position: absolute; bottom: 0; left: 0; right: 0;
-    background: linear-gradient(transparent, oklch(0% 0 0 / 0.55));
-    color: #fff; padding: 24px 14px 12px;
-    font-size: 12px; font-weight: 600; letter-spacing: 0.03em;
+    background: linear-gradient(transparent, oklch(0% 0 0 / 0.6));
+    color: var(--cream-2); padding: 22px 12px 10px;
+    font-family: var(--font-d); font-size: 11px; letter-spacing: 0.04em;
     opacity: 0; transition: opacity 0.15s;
   }
   .gal-item:hover .gal-label { opacity: 1; }
 
-  /* LIGHTBOX */
-  .lightbox-overlay {
-    position: fixed; inset: 0; z-index: 999;
-    background: oklch(0% 0 0 / 0.88);
-    display: flex; align-items: center; justify-content: center;
-    padding: 40px;
+  /* ─── DEVLOG ────────────────────────────────────────────────── */
+  .devlog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
+  .devlog-card {
+    background: var(--cream-2); border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink); overflow: hidden;
+    cursor: pointer; transition: transform 0.1s, box-shadow 0.1s;
   }
-  .lightbox-overlay img {
-    max-width: 90vw; max-height: 88vh;
-    border-radius: 10px; box-shadow: 0 20px 80px oklch(0% 0 0 / 0.5);
-    object-fit: contain;
+  .devlog-card:hover { transform: translate(-1px, -1px); box-shadow: 7px 7px 0 var(--ink); }
+  .devlog-media { width: 100%; display: block; aspect-ratio: 16/9;
+                  object-fit: cover; background: var(--cream); border-bottom: 3px solid var(--ink); }
+  .devlog-media-placeholder {
+    aspect-ratio: 16/9; border-bottom: 3px solid var(--ink);
+    background: repeating-linear-gradient(45deg, var(--cobalt-lt), var(--cobalt-lt) 12px, var(--cream) 12px, var(--cream) 24px);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-d); font-size: 12px; letter-spacing: 0.12em; color: var(--muted);
+  }
+  .devlog-body { padding: 18px 22px; }
+  .devlog-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .devlog-tag {
+    font-family: var(--font-d); font-size: 10px; letter-spacing: 0.1em;
+    color: var(--cream-2); background: var(--cobalt-deep);
+    padding: 2px 8px; border: 2px solid var(--ink);
+  }
+  .devlog-date { font-family: var(--font-b); font-size: 11px; font-weight: 600;
+                 color: var(--muted); margin-left: auto; letter-spacing: 0.05em; }
+  .devlog-title { font-family: var(--font-d); font-size: 17px; margin-bottom: 8px; line-height: 1.25; }
+  .devlog-desc { font-family: var(--font-b); font-size: 13px; line-height: 1.65; color: var(--ink-soft); }
+
+  /* ─── ABOUT ─────────────────────────────────────────────────── */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .about-text p { font-family: var(--font-b); font-size: 15.5px; line-height: 1.8;
+                  color: var(--ink-soft); margin-bottom: 18px; }
+  .about-text p b { color: var(--ink); font-weight: 600; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .about-stat {
+    background: var(--cream-2); border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink); padding: 22px; text-align: center;
+  }
+  .about-stat .n {
+    font-family: var(--font-d); font-size: 48px; color: var(--cobalt); line-height: 1;
+    text-shadow: 3px 3px 0 var(--cream);
+  }
+  .about-stat .l {
+    font-family: var(--font-b); font-size: 12px; font-weight: 600;
+    color: var(--ink-soft); margin-top: 6px; line-height: 1.4;
+  }
+
+  /* ─── FOOTER ────────────────────────────────────────────────── */
+  footer {
+    background: var(--ink); color: var(--cream-2);
+    padding: 64px 48px 40px; position: relative;
+  }
+  .footer-inner { max-width: 1280px; margin: 0 auto; }
+  .footer-end {
+    font-family: var(--font-d); font-size: clamp(64px, 8vw, 124px);
+    line-height: 0.95; color: var(--cream-2); text-align: center;
+    margin-bottom: 36px; letter-spacing: -0.02em;
+    text-shadow: 6px 6px 0 var(--cobalt);
+  }
+  .footer-top {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 32px;
+    padding-bottom: 28px; border-bottom: 2px dashed var(--muted); margin-bottom: 24px;
+  }
+  .footer-top h3 { font-family: var(--font-d); font-size: 24px; color: var(--cream-2); margin-bottom: 4px; }
+  .footer-tagline { font-family: var(--font-b); font-size: 13px; color: var(--muted); }
+  .footer-email a { font-family: var(--font-d); font-size: 22px; color: var(--tan); text-decoration: none; }
+  .footer-email a:hover { color: var(--magenta); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    font-family: var(--font-b); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase;
+  }
+  .footer-socials { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* ─── LIGHTBOX + MODAL ──────────────────────────────────────── */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 999;
+    background: oklch(0% 0 0 / 0.9);
+    display: flex; align-items: center; justify-content: center; padding: 40px;
+  }
+  .lightbox img, .lightbox video {
+    max-width: 90vw; max-height: 88vh; border: 4px solid var(--cream-2);
+    box-shadow: 10px 10px 0 var(--cobalt); object-fit: contain;
   }
   .lightbox-close {
-    position: fixed; top: 20px; right: 28px;
-    color: #fff; font-size: 32px; cursor: pointer;
-    background: none; border: none; line-height: 1;
-    opacity: 0.8; transition: opacity 0.15s;
+    position: fixed; top: 24px; right: 28px;
+    background: var(--cream-2); color: var(--ink); border: 3px solid var(--ink);
+    width: 42px; height: 42px; cursor: pointer; font-size: 22px;
+    box-shadow: 4px 4px 0 var(--cobalt); font-family: var(--font-d);
   }
-  .lightbox-close:hover { opacity: 1; }
-  .lightbox-caption {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    color: oklch(85% 0.02 50); font-size: 13px; font-weight: 500;
-    background: oklch(0% 0 0 / 0.5); padding: 6px 18px; border-radius: 100px;
-    white-space: nowrap;
-  }
-
-  /* DEVLOG */
-  .devlog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
-  .devlog-card {
-    background: var(--surface); border: 1.5px solid var(--rule); border-radius: 10px;
-    overflow: hidden; transition: all 0.15s;
-  }
-  .devlog-card:hover { border-color: var(--blue); box-shadow: 0 2px 16px oklch(55% 0.1 210 / 0.1); transform: translateY(-2px); }
-  .devlog-media { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; background: var(--bg); }
-  .devlog-media-placeholder {
-    width: 100%; aspect-ratio: 16/9; background: repeating-linear-gradient(
-      45deg, var(--blue-lt), var(--blue-lt) 10px, var(--bg) 10px, var(--bg) 20px
-    ); display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
-  }
-  .devlog-body { padding: 20px 22px; }
-  .devlog-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .devlog-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-dk); background: var(--blue-lt); padding: 3px 9px; border-radius: 4px; }
-  .devlog-date { font-size: 11px; color: var(--muted); margin-left: auto; }
-  .devlog-title { font-family: var(--font-d); font-size: 17px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
-  .devlog-desc { font-size: 13px; line-height: 1.7; color: var(--muted); }
-  .devlog-card { cursor: pointer; }
-  .devlog-media-row { display: flex; flex-direction: row; gap: 4px; padding: 4px; background: var(--bg); width: 100%; }
-  .devlog-media-row > div { flex: 1 1 0; width: 0; min-width: 0; display: flex; align-items: center; justify-content: center; aspect-ratio: 1; overflow: hidden; }
-  .devlog-media-row.right > div { justify-content: flex-end; }
-  .devlog-media-row img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
-  /* Walk cycle: fill with image bg color, scale image to cell height */
-  .devlog-media-row.fill > div { background: rgb(70,130,90); aspect-ratio: auto; height: 200px; padding: 0; }
-  .devlog-media-row.fill img { height: 100%; max-height: 100%; width: auto; max-width: none; }
-  /* Outline script: scale up 125%, anchor top-right, crop overflow */
-  .devlog-media-row.zoom-tr > div { overflow: hidden; aspect-ratio: 1; }
-  .devlog-media-row.zoom-tr img { transform: scale(1.5); transform-origin: top right; }
-
-  /* DEVLOG MODAL */
-  .post-modal-overlay {
+  .modal-overlay {
     position: fixed; inset: 0; z-index: 998;
-    background: oklch(0% 0 0 / 0.75);
+    background: oklch(0% 0 0 / 0.78);
     display: flex; align-items: center; justify-content: center;
     padding: 40px 20px; overflow-y: auto;
   }
-  .post-modal {
-    background: var(--surface); border-radius: 14px;
-    max-width: 900px; width: 100%;
-    max-height: 90vh; overflow-y: auto;
-    box-shadow: 0 24px 80px oklch(0% 0 0 / 0.4);
-    position: relative;
+  .modal {
+    background: var(--cream-2); border: 3px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--cobalt);
+    max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto;
+    position: relative; padding: 40px 44px;
   }
-  .post-modal-close {
-    position: sticky; top: 16px; float: right; margin-right: 16px; margin-bottom: -40px;
-    background: var(--surface); border: 1.5px solid var(--rule);
-    width: 36px; height: 36px; border-radius: 50%;
-    font-size: 22px; line-height: 1; cursor: pointer; color: var(--text);
-    z-index: 2;
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--cream-2); border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    width: 38px; height: 38px; font-family: var(--font-d); font-size: 18px;
+    cursor: pointer; color: var(--ink);
   }
-  .post-modal-close:hover { border-color: var(--blue); color: var(--blue-dk); }
-  .post-modal-body { padding: 36px 44px 44px; }
-  .post-modal-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-  .post-modal-title { font-family: var(--font-d); font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 16px; }
-  .post-modal-desc { font-size: 15px; line-height: 1.75; color: var(--muted); margin-bottom: 28px; }
-  .post-modal-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
-  .post-modal-gallery .pmg-item { border-radius: 8px; overflow: hidden; border: 1.5px solid var(--rule); cursor: zoom-in; background: var(--bg); }
-  .post-modal-gallery .pmg-item img { display: block; width: 100%; height: auto; }
-  .post-modal-gallery .pmg-item:hover { border-color: var(--blue); }
-  .post-modal-gallery .pmg-caption { font-size: 11px; color: var(--muted); padding: 6px 10px; background: var(--bg); border-top: 1.5px solid var(--rule); }
-
-  /* SOCIAL ICONS */
-  .hero-quick-link.icon-link { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; }
-  .hero-quick-link.icon-link svg { width: 14px; height: 14px; flex-shrink: 0; }
-
-  /* FOOTER */
-  footer { background: var(--text); color: #e0d4cc; padding: 60px 48px 36px; }
-  .footer-inner { max-width: 1300px; margin: 0 auto; }
-  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 36px; padding-bottom: 36px; border-bottom: 1px solid oklch(30% 0.02 50); margin-bottom: 28px; }
-  .footer-name { font-family: var(--font-d); font-size: 32px; font-weight: 900; letter-spacing: -0.04em; color: #fff; margin-bottom: 4px; }
-  .footer-tagline { font-size: 13px; color: oklch(60% 0.02 55); }
-  .footer-email a { font-size: 18px; font-weight: 600; color: var(--blue); text-decoration: none; transition: color 0.15s; }
-  .footer-email a:hover { color: #8dd2ef; }
-  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 28px; }
-  .footer-links a { font-size: 13px; font-weight: 500; color: oklch(60% 0.02 55); text-decoration: none; transition: color 0.15s; }
-  .footer-links a:hover { color: var(--blue); }
-  .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 12px; color: oklch(42% 0.02 55); }
+  .modal-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .modal h2 { font-family: var(--font-d); font-size: 30px; line-height: 1.15; margin-bottom: 14px; }
+  .modal p { font-family: var(--font-b); font-size: 15px; line-height: 1.7;
+             color: var(--ink-soft); margin-bottom: 22px; }
+  .modal-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .modal-gallery .gi {
+    border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--cobalt);
+    cursor: zoom-in; background: var(--cream);
+  }
+  .modal-gallery .gi img { display: block; width: 100%; }
+  .modal-gallery .gi-cap { padding: 6px 10px; font-family: var(--font-b);
+                           font-size: 11px; font-weight: 600; color: var(--muted);
+                           border-top: 2px solid var(--ink); background: var(--cream); }
 </style>
-<template id="__bundler_thumbnail" data-bg-color="#f4f1ed">
-  <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
-    <rect width="120" height="80" fill="#f4f1ed"/>
-    <circle cx="60" cy="32" r="16" fill="none" stroke="#5bafd6" stroke-width="3"/>
-    <text x="60" y="37" font-family="sans-serif" font-size="14" font-weight="900" fill="#1a0f08" text-anchor="middle">KRJ</text>
-    <rect x="20" y="56" width="80" height="4" rx="2" fill="#5bafd6" opacity="0.4"/>
-    <rect x="32" y="65" width="56" height="3" rx="2" fill="#1a0f08" opacity="0.15"/>
-  </svg>
-</template>
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel">
-// ── Tweaks panel stubs (used when tweaks-panel.jsx isn't present) ──────────
-if (typeof useTweaks === 'undefined') {
-  window.useTweaks = function(defaults) {
-    const [state, setState] = React.useState(defaults);
-    const setTweak = (key, val) => setState(prev => ({ ...prev, [key]: val }));
-    return [state, setTweak];
-  };
-}
-if (typeof TweaksPanel === 'undefined') window.TweaksPanel = () => null;
-if (typeof TweakSection === 'undefined') window.TweakSection = () => null;
-if (typeof TweakToggle === 'undefined')  window.TweakToggle  = () => null;
-if (typeof TweakRadio === 'undefined')   window.TweakRadio   = () => null;
-// ────────────────────────────────────────────────────────────────────────────
-const { useState } = React;
-function useDarkMode() {
-  const [dark, setDark] = React.useState(() => {
-    return localStorage.getItem('theme') === 'dark';
-  });
-  React.useEffect(() => {
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-  }, [dark]);
-  return [dark, setDark];
-}
-const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "showProfilePic": true,
-  "showAbout": true,
-  "showPipeline": true,
-  "avatarShape": "circle"
-}/*EDITMODE-END*/;
-
-const YT_ID = "79AOg9Q983I";
-
-const employers = [
-  {
-    studio: "Powerhouse Animation Studios",
-    role: "Lead Technical Artist",
-    tenure: "2014 – 2025",
-    projects: [
-      { client: "Netflix", title: "Castlevania" },
-      { client: "Netflix", title: "Masters of the Universe: Revelation" },
-      { client: "Netflix", title: "Blood of Zeus" },
-      { client: "Netflix", title: "Tomb Raider" },
-      { client: "Platform / Square Enix", title: "Final Fantasy XV: A King's Tale" },
-      { client: "Platform / Deep Silver", title: "Dead Island: Retro Revenge" },
-      { client: "Stoic Studio", title: "The Banner Saga" },
-    ]
-  },
-  {
-    studio: "Zynga",
-    role: "Senior Artist",
-    tenure: "2010 – 2012",
-    projects: [
-      { client: "Facebook", title: "Kingdoms and Quests" },
-      { client: "Facebook", title: "The Ville" },
-    ]
-  },
-  {
-    studio: "Team Chaos LLC",
-    role: "Freelance Animator",
-    tenure: "2012 – 2013",
-    projects: [
-      { client: "iOS", title: "Dragon Academy" },
-      { client: "iOS", title: "Elements: Broken Lands" },
-    ]
-  },
-  {
-    studio: "Powerhouse Animation Studios",
-    role: "Lead Flash Developer",
-    tenure: "2006 – 2010",
-    projects: [
-      { client: "Sony / Red 5", title: "Freerealms" },
-      { client: "Hothead Games", title: "Penny Arcade Adventures" },
-    ]
-  },
-];
-
-const pipelineWork = [
-  {
-    tag: "After Effects scripting",
-    title: "Keylighting Automation",
-    selfInitiated: true,
-    body: "Retrieves preset character compositions from a database and applies them based on scene and character. Also enables bulk saving of new, location-specific comps. Eliminated manual searching and setup across hundreds of shots.",
-    tools: ["ExtendScript", "After Effects", "JSON Database"]
-  },
-  {
-    tag: "Toon Boom + AE scripting",
-    title: "Lighting Pass System",
-    selfInitiated: true,
-    body: "Replaced frame-by-frame manual tone coloring with a fully automated pipeline. Exports separate light and shadow sequences from Harmony, then imports and composites them in After Effects with correct timing. No re-coloring needed for lighting adjustments.",
-    tools: ["Qt Script", "ExtendScript", "Toon Boom Harmony", "After Effects"]
-  },
-  {
-    tag: "Animate scripting",
-    title: "Chain Animation Tool",
-    selfInitiated: true,
-    body: "A JSFL tool that automates chain link placement along a drawn path with controls for scaling and twisting. What was once a tedious manual process for Castlevania became a one-click workflow.",
-    tools: ["JSFL", "Adobe Animate"]
-  },
-  {
-    tag: "Toon Boom + Python",
-    title: "Import/Export Scripts",
-    selfInitiated: false,
-    body: "A suite of scripts built across productions to move assets and scene data between software without losing information. The largest example exports Storyboard Pro scenes to Photoshop and Clip Studio Paint with camera movements intact, with render farm network integration. Many others handle similar cross-software handoffs throughout the pipeline.",
-    tools: ["Qt Script", "Python", "Storyboard Pro", "Photoshop", "Clip Studio Paint"]
-  },
-  {
-    tag: "Google Apps Script",
-    title: "Production Tracking Dashboard",
-    selfInitiated: false,
-    body: "Task-tracking tools built in Google Sheets and Apps Script, giving managers real-time visibility into deadlines and tasks across departments. No additional software licenses required.",
-    tools: ["Google Apps Script", "Google Sheets", "ftrack API"]
-  },
-  {
-    tag: "ActionScript / AIR",
-    title: "Sprite Sheet Export Tool",
-    selfInitiated: true,
-    body: "An Adobe AIR application that automated sprite sheet exports for a Zynga game team, reducing manual asset prep and accelerating delivery cycles for live social games.",
-    tools: ["ActionScript 3", "Adobe AIR"]
-  },
-];
-
-const galleryItems = [
-  // Animation
-  { src: "assets/StrikeThereAndBackAgain_fb.mp4", type: "video", label: "Strike There and Back Again, D&D animation" },
-  // Children's book group
-  { src: "assets/bear_morning_final.png", label: "Bear Morning, children's book illustration" },
-  { src: "assets/moon_slice.png", label: "Moon slice, children's book mood thumbnail" },
-  { src: "assets/night_final.png", label: "Night scene, children's book mood thumbnail" },
-  // Leaf group
-  { src: "assets/leaf.png", label: "Leaf, illustration" },
-  { src: "assets/leaf2_color.png", label: "Leaf and the Twisted Root, illustration" },
-  // Character illustrations
-  { src: "assets/kaz_adjust.png", label: "Kaz, character illustration" },
-  { src: "assets/scorch_and_kavos.png", label: "Scorch and Kavos, D&D characters" },
-  { src: "assets/dragon_character.jpg", label: "Dragon, character illustration" },
-  { src: "assets/LunaAndZoey.png", label: "Luna and Zoey" },
-  { src: "assets/Zoey.png", label: "Zoey, character illustration" },
-  { src: "assets/Irene.png", label: "Irene, character illustration" },
-  // Portraits
-  { src: "assets/EmmaAndSophie2025.png", label: "Portrait studies" },
-  // Character design sheets
-  { src: "assets/kavos_design_sheet.png", label: "Kavos, character design sheet" },
-  { src: "assets/roppu_kun.jpg", label: "Roppu-kun, inspired by Yoh Yoshinari's Tezuka tribute" },
-];
-
-const devlogEntries = [
-  {
-    tag: "Spine rigging",
-    date: "Apr 17, 2026",
-    title: "Miya rig in Spine",
-    desc: "Rigged Miya in Spine for a side-by-side comparison with the original After Effects version. Spine opens up smooth transitions between animations that frame-by-frame can't do as cleanly. Another version is in progress.",
-    media: "assets/miya_spine.gif",
-    mediaType: "gif",
-    extraMedia: [
-      { src: "assets/miya_spine_bones.gif", label: "Spine skeleton view" },
-    ],
-  },
-  {
-    tag: "Experiment",
-    date: "Apr 13, 2026",
-    title: "Sprite stacking for isometric character animation",
-    desc: "Investigated sprite stacking as a way to get isometric character rotations for free. Large shapes looked great and moved convincingly in 3D, with precise rotation at any angle. Even experimented with building poses in MagicaVoxel. The catch: fine details flickered badly on export. The idea is probably shelved for now, but the large-form results were genuinely impressive.",
-    media: "assets/sprite_stacking_test.gif",
-    mediaType: "gif",
-    itchUrl: "https://bluebeezle.itch.io/mitama-ji/devlog/1488963/sprite-stacking",
-  },
-  {
-    tag: "Unity 2D",
-    date: "Nov 29, 2025",
-    title: "Dynamic lighting and shadows in Unity",
-    desc: "Ghost story games require ghost story lighting. Isometric pixel game with a dynamic shadow and lighting system. Normal maps work for front-lighting, but when the player walks in front of a light, a naive setup lights her up as if the light is shining through her body. The fix: an auto-generated backlit rimlight normal map, with a shader that blends between the two based on the player's position relative to each light.",
-    media: "assets/dynamic_lighting_test.gif",
-    mediaType: "gif",
-    itchUrl: "https://bluebeezle.itch.io/mitama-ji/devlog/1129446/lighting-shaders-and-normal-maps",
-  },
-  {
-    tag: "Normal map pipeline",
-    date: "Nov 27, 2025",
-    title: "Auto-generated normal maps from layer data",
-    desc: "Updated my Python Aseprite sprite sheet exporter to automatically generate normal maps by detecting edges on each layer's silhouette and creating gradients that approximate surface normals. It won't be perfect since the script doesn't know the actual geometry, but it's a solid starting point. Since every body part is already on its own layer, the top of the arm reads as north-facing even when it's halfway down the sprite.",
-    media: "assets/Miya_walk.png",
-    mediaType: "img",
-    extraMedia: [
-      { src: "assets/Miya_walk_nm_Backlit.png", label: "Back-lit normal map" },
-      { src: "assets/Miya_walk_nm_Frontlit.png", label: "Front-lit normal map" },
-    ],
-    itchUrl: "https://bluebeezle.itch.io/mitama-ji/devlog/1129446/lighting-shaders-and-normal-maps",
-  },
-  {
-    tag: "Aseprite scripting",
-    date: "Sep 27, 2025",
-    title: "Self-colored outline script",
-    desc: "A script for Aseprite that automatically adds self-colored outlines across all frames, based on a palette layer that maps each color to its outline equivalent. Outlines are added on a separate layer, so you can erase selectively where they don't work. The character above looks fine without outlines because of his thin design, but since the outlines are added as a separate layer, removing them where I see fit is trivial.",
-    media: "assets/self_colored_outline_before.jpg",
-    mediaType: "img",
-    extraMedia: [
-      { src: "assets/self_colored_outline_after.jpg", label: "After, Self-Colored Outline layer active" },
-    ],
-  },
-  {
-    tag: "Photoshop scripting",
-    date: "Feb 19, 2024",
-    title: "Walk cycle consistency checker",
-    desc: "A Photoshop script that pulls the same frame of animation from all directional walk cycle PSDs and puts them side by side, so inconsistencies between views are immediately visible. The before/after above shows exactly the kind of discrepancies it surfaces.",
-    media: "assets/before.gif",
-    mediaType: "gif",
-    extraMedia: [
-      { src: "assets/after.gif", label: "After edit pass" },
-    ],
-  },
-  {
-    tag: "Character Design",
-    date: "Jan 31, 2022",
-    title: "Ghost character, night and day",
-    desc: "Character design for a ghost fairy NPC. I was playing with an idea where the day version of ghosts would appear weaker with less detail. Considering the extra work that entailed, I dropped the idea pretty quickly.",
-    media: "assets/ghost_character_rig.jpg",
-    mediaType: "img",
-  },
-  {
-    tag: "After Effects animation",
-    date: "Feb 8, 2021",
-    title: "RPG portrait animation, Miya (angry)",
-    desc: "A looping RPG-style dialogue portrait built entirely in After Effects. Angry blink, wind-driven hair, anime speed lines in fore and background, broom held menacingly, subtle head rotation. Illustrated and animated from scratch.",
-    media: "assets/miya_portrait_animation.gif",
-    mediaType: "gif",
-  },
-];
-
-const skillGroups = [
-  {
-    title: "Animation Software",
-    skills: [
-      { name: "Adobe Animate", primary: true },
-      { name: "Toon Boom Harmony", primary: true },
-      { name: "Toon Boom Storyboard Pro", primary: true },
-      { name: "Adobe After Effects" },
-      { name: "Adobe Photoshop" },
-      { name: "Aseprite / Pixquare" },
-    ]
-  },
-  {
-    title: "Scripting Languages",
-    skills: [
-      { name: "ExtendScript (AE, Photoshop)", primary: true },
-      { name: "JSFL (Adobe Animate)", primary: true },
-      { name: "Qt Script (Toon Boom suite)", primary: true },
-      { name: "Python 3", primary: true },
-      { name: "Google Apps Script" },
-      { name: "ActionScript 2 / 3" },
-    ]
-  },
-  {
-    title: "Pipeline Coverage",
-    skills: [
-      { name: "Preproduction to delivery", primary: true },
-      { name: "Asset management systems", primary: true },
-      { name: "Cross-software workflows", primary: true },
-      { name: "Render farm integration" },
-      { name: "ftrack API" },
-      { name: "Production tracking tools" },
-    ]
-  },
-  {
-    title: "Animation Specialties",
-    skills: [
-      { name: "Character animation", primary: true },
-      { name: "Effects animation", primary: true },
-      { name: "Puppet / rigging", primary: true },
-      { name: "Pixel / 8-bit animation" },
-      { name: "Motion comic styles" },
-      { name: "Traditional frame-by-frame" },
-    ]
-  },
-];
-
-function IllustrationGallery() {
-  const [lightbox, setLightbox] = React.useState(null);
-  React.useEffect(() => {
-    const handler = (e) => { if (e.key === 'Escape') setLightbox(null); };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, []);
-  return (
-    <>
-      <div className="gallery-grid">
-        {galleryItems.map((item, i) => (
-          <div className="gal-item" key={i} onClick={() => setLightbox(item)}>
-            {item.type === 'video'
-              ? <video src={item.src} autoPlay loop muted playsInline style={{ display: 'block', width: '100%' }} />
-              : <img src={item.src} alt={item.label} loading="lazy" />
-            }
-            <div className="gal-label">{item.label}</div>
-          </div>
-        ))}
-      </div>
-      {lightbox && (
-        <div className="lightbox-overlay" onClick={() => setLightbox(null)}>
-          <button className="lightbox-close" onClick={() => setLightbox(null)}>×</button>
-          {lightbox.type === 'video'
-            ? <video src={lightbox.src} autoPlay loop muted playsInline controls onClick={e => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '88vh', borderRadius: '10px', boxShadow: '0 20px 80px oklch(0% 0 0 / 0.5)' }} />
-            : <img src={lightbox.src} alt={lightbox.label} onClick={e => e.stopPropagation()} />
-          }
-          <div className="lightbox-caption">{lightbox.label}</div>
-        </div>
-      )}
-    </>
-  );
-}
-
-// titles that get horizontally-arranged extraMedia, with custom alignment
-const extraAlign = {
-  'Walk cycle consistency checker': 'fill',
-  'Self-colored outline script': 'right zoom-tr',
-};
-
-function Devlog() {
-  const [openPost, setOpenPost] = React.useState(null);
-  const [lightbox, setLightbox] = React.useState(null);
-
-  React.useEffect(() => {
-    const handler = (e) => {
-      if (e.key === 'Escape') {
-        if (lightbox) setLightbox(null);
-        else if (openPost) setOpenPost(null);
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [openPost, lightbox]);
-
-  return (
-    <>
-      <div className="devlog-grid">
-        {devlogEntries.map((entry, i) => {
-          const align = extraAlign[entry.title];
-          const useSideBySide = !!align && entry.extraMedia;
-          return (
-            <div className="devlog-card" key={i} onClick={() => setOpenPost(entry)}>
-              {useSideBySide ? (
-                <div className={`devlog-media-row ${align}`}>
-                  <div><img src={entry.media} alt={entry.title} loading="lazy" /></div>
-                  {entry.extraMedia.map((m, j) => (
-                    <div key={j}><img src={m.src} alt={m.label} loading="lazy" /></div>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  {entry.mediaType === 'gif' || entry.mediaType === 'img'
-                    ? <img className="devlog-media" src={entry.media} alt={entry.title} loading="lazy" />
-                    : <div className="devlog-media-placeholder">Image coming soon</div>
-                  }
-                  {entry.extraMedia && (
-                    <div className="devlog-media-row">
-                      {entry.extraMedia.map((m, j) => (
-                        <div key={j}><img src={m.src} alt={m.label} loading="lazy" /></div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-              <div className="devlog-body">
-                <div className="devlog-meta">
-                  <span className="devlog-tag">{entry.tag}</span>
-                  <span className="devlog-date">{entry.date}</span>
-                </div>
-                <div className="devlog-title">{entry.title}</div>
-                <p className="devlog-desc">{entry.desc}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {openPost && (
-        <div className="post-modal-overlay" onClick={() => setOpenPost(null)}>
-          <div className="post-modal" onClick={e => e.stopPropagation()}>
-            <button className="post-modal-close" onClick={() => setOpenPost(null)}>×</button>
-            <div className="post-modal-body">
-              <div className="post-modal-meta">
-                <span className="devlog-tag">{openPost.tag}</span>
-                <span className="devlog-date">{openPost.date}</span>
-              </div>
-              <div className="post-modal-title">{openPost.title}</div>
-              <p className="post-modal-desc">{openPost.desc}</p>
-              {openPost.itchUrl && (
-                <a href={openPost.itchUrl} target="_blank" rel="noopener" style={{ display: 'inline-block', marginBottom: '24px', fontSize: '13px', fontWeight: 600, color: 'var(--accent)', textDecoration: 'none', borderBottom: '1px solid var(--accent-border)', paddingBottom: '2px' }}>
-                  Read full devlog on itch.io →
-                </a>
-              )}
-              <div className="post-modal-gallery">
-                {[{ src: openPost.media, label: openPost.title }, ...(openPost.extraMedia || [])].map((m, j) => (
-                  <div key={j} className="pmg-item" onClick={() => setLightbox(m)}>
-                    <img src={m.src} alt={m.label} loading="lazy" />
-                    {m.label && j > 0 && <div className="pmg-caption">{m.label}</div>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {lightbox && (
-        <div className="lightbox-overlay" onClick={() => setLightbox(null)} style={{ zIndex: 1000 }}>
-          <button className="lightbox-close" onClick={() => setLightbox(null)}>×</button>
-          <img src={lightbox.src} alt={lightbox.label} onClick={e => e.stopPropagation()} />
-          {lightbox.label && <div className="lightbox-caption">{lightbox.label}</div>}
-        </div>
-      )}
-    </>
-  );
-}
-
-function App() {
-  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  const [dark, setDark] = useDarkMode();
-  return (
-    <>
-      <Nav dark={dark} setDark={setDark} />
-      <Hero tweaks={tweaks} />
-      <StatsStrip />
-      <div className="divider" />
-      <div className="reel-outer" id="reel">
-        <div className="section-wrap">
-          <div className="section-header">
-            <span className="section-pill pill-blue">01 Reel</span>
-            <h2 className="section-title">Demo Reel</h2>
-          </div>
-          <ReelPlayer />
-        </div>
-      </div>
-      <div className="divider" />
-      <div id="credits">
-        <div className="section-wrap">
-          <div className="section-header">
-            <span className="section-pill pill-blue">02 Credits</span>
-            <h2 className="section-title">Select Credits</h2>
-          </div>
-          <Credits />
-        </div>
-      </div>
-      {tweaks.showPipeline && (
-        <>
-          <div className="divider" />
-          <div className="pipeline-bg" id="pipeline">
-            <div className="section-wrap">
-              <div className="section-header">
-                <span className="section-pill pill-blue">03 Pipeline</span>
-                <h2 className="section-title">Pipeline Work</h2>
-              </div>
-              <p className="pipeline-intro">
-                When I spot a repetitive task, I <strong>build a tool,</strong> often without being asked.
-                When I'm assigned a problem, I look for the solution that helps the whole pipeline, not just the immediate task.
-                The scripts below are a sample of that work across 18 years of production.
-              </p>
-              <div className="pipeline-grid">
-                {pipelineWork.map((p, i) => (
-                  <div className="pipeline-card" key={i}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '14px' }}>
-                      <div className="p-tag">{p.tag}</div>
-                      {p.selfInitiated && <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', background: 'var(--accent-lt)', border: '1px solid var(--accent-border)', padding: '3px 8px', borderRadius: '4px', flexShrink: 0, whiteSpace: 'nowrap' }}>Self-initiated</span>}
-                    </div>
-                    <div className="p-title">{p.title}</div>
-                    <p className="p-body">{p.body}</p>
-                    <div className="p-tools">{p.tools.map((t, j) => <span className="tool-chip" key={j}>{t}</span>)}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-      <div className="divider" />
-      <div id="skills">
-        <div className="section-wrap">
-          <div className="section-header">
-            <span className="section-pill pill-blue">04 Skills</span>
-            <h2 className="section-title">Skills &amp; Tools</h2>
-          </div>
-          <div className="skills-grid">
-            {skillGroups.map((g, i) => (
-              <div key={i}>
-                <div className="skill-group-title">{g.title}</div>
-                <ul className="skill-list">
-                  {g.skills.map((s, j) => (
-                    <li key={j} className={s.primary ? 'skill-primary' : ''}>{s.name}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="divider" />
-      <div id="illustration">
-        <div className="section-wrap">
-          <div className="section-header">
-            <span className="section-pill pill-brown">05 Art</span>
-            <h2 className="section-title">Illustration &amp; Personal Work</h2>
-          </div>
-          <IllustrationGallery />
-        </div>
-      </div>
-      <div className="divider" />
-      <div id="devlog">
-        <div className="section-wrap">
-          <div className="section-header">
-            <span className="section-pill pill-blue">06 Lab</span>
-            <h2 className="section-title">Experiments &amp; Devlog</h2>
-          </div>
-          <Devlog />
-        </div>
-      </div>
-      {tweaks.showAbout && (
-        <>
-          <div className="divider" />
-          <div className="about-bg">
-            <div className="section-wrap">
-              <div className="section-header">
-                <span className="section-pill pill-brown">07 About</span>
-                <h2 className="section-title">About Me</h2>
-              </div>
-              <About />
-            </div>
-          </div>
-        </>
-      )}
-      <Footer />
-      <TweaksPanel>
-        <TweakSection label="Hero">
-          <TweakToggle id="showProfilePic" label="Show profile photo" value={tweaks.showProfilePic} onChange={v => setTweak('showProfilePic', v)} />
-          <TweakRadio id="avatarShape" label="Avatar shape" value={tweaks.avatarShape} options={['circle','square']} onChange={v => setTweak('avatarShape', v)} />
-        </TweakSection>
-        <TweakSection label="Sections">
-          <TweakToggle id="showPipeline" label="Pipeline section" value={tweaks.showPipeline} onChange={v => setTweak('showPipeline', v)} />
-          <TweakToggle id="showAbout" label="About section" value={tweaks.showAbout} onChange={v => setTweak('showAbout', v)} />
-        </TweakSection>
-      </TweaksPanel>
-    </>
-  );
-}
-
-function Nav({ dark, setDark }) {
-  return (
-    <nav>
-      <a href="#" className="nav-logo">KRJ<span>.</span></a>
-      <ul className="nav-links">
-        <li><a href="#reel">Reel</a></li>
-        <li><a href="#credits">Credits</a></li>
-        <li><a href="#pipeline">Pipeline</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#illustration">Art</a></li>
-        <li><a href="#devlog">Lab</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-      <button
-        onClick={() => setDark(d => !d)}
-        title="Toggle dark mode"
-        style={{
-          background: 'none', border: '1.5px solid var(--rule)',
-          borderRadius: '100px', cursor: 'pointer',
-          padding: '5px 12px', display: 'flex', alignItems: 'center',
-          gap: '6px', fontSize: '13px', fontWeight: 600,
-          color: 'var(--muted)', transition: 'all 0.15s', flexShrink: 0,
-        }}
-      >
-        {dark ? '☀︎' : '☾'} {dark ? 'Light' : 'Dark'}
-      </button>
-    </nav>
-  );
-}
-
-function Hero({ tweaks }) {
-  return (
-    <div className="hero">
-      <div>
-        <div className="hero-badge"><div className="hero-badge-dot"></div>Available for work</div>
-        <h1 className="hero-name">Krishna<br />Ramos Jain</h1>
-        <div className="hero-subtitle">Pipeline Developer &amp; Animator</div>
-        <p className="hero-desc">
-          18 years animating and <strong>automating</strong> 2D pipelines
-          at Powerhouse Animation Studios.
-          I've written the scripts that made the pipelines for productions such as
-          Netflix's Castlevania, Blood of Zeus, and Masters of the Universe faster.
-          My tools cover the entire pipeline, from preproduction through delivery.
-        </p>
-        <div className="hero-ctas">
-          <a href="#reel" className="btn btn-blue">Watch My Reel</a>
-          <a href="#pipeline" className="btn btn-ghost">See Pipeline Work</a>
-          <a href="#contact" className="btn btn-ghost">Get In Touch</a>
-        </div>
-      </div>
-      {tweaks.showProfilePic && (
-        <div className="hero-right">
-          <div className="hero-avatar" style={{ borderRadius: tweaks.avatarShape === 'circle' ? '50%' : '16px' }}>
-            <img src="assets/cartoon_self_wrench.png" alt="Krishna Ramos Jain" />
-          </div>
-          <div className="hero-quick-links">
-            <a href="https://www.linkedin.com/in/krishna-jain-938b7222/" target="_blank" rel="noopener" className="hero-quick-link icon-link">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45C23.2 24 24 23.23 24 22.27V1.72C24 .77 23.2 0 22.22 0z"/></svg>
-              LinkedIn
-            </a>
-            <a href="https://github.com/kj-art/developer-portfolio" target="_blank" rel="noopener" className="hero-quick-link icon-link">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.4 3.6 1 .1-.8.4-1.4.8-1.7-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.4-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.6.2 2.8.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
-              GitHub
-            </a>
-            <a href="https://itch.io/profile/bluebeezle" target="_blank" rel="noopener" className="hero-quick-link icon-link">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.5 1.7C2.4 2.4.1 5 0 5.7v1c0 1.3 1.2 2.4 2.3 2.4 1.3 0 2.4-1.1 2.4-2.4 0 1.3 1 2.4 2.4 2.4 1.3 0 2.3-1.1 2.3-2.4 0 1.3 1.1 2.4 2.4 2.4h.4c1.3 0 2.4-1.1 2.4-2.4 0 1.3 1 2.4 2.3 2.4 1.4 0 2.4-1.1 2.4-2.4 0 1.3 1.2 2.4 2.4 2.4 1.2 0 2.3-1.1 2.3-2.4v-1c-.1-.7-2.4-3.3-3.5-4C20.7 1.6 16 1.5 12 1.5c-4 0-8.7.1-8.5.2zM10 9.6c-.5.7-1.4 1.2-2.3 1.2a3 3 0 0 1-2.4-1.2c-.6.7-1.4 1.2-2.4 1.2H3l1 4.7c.4 2.2 1 4.5 1.4 6 .8 1.4 5.6.9 6.6.9s5.8.5 6.6-.9c.4-1.5 1-3.8 1.4-6l1-4.7H21a3 3 0 0 1-2.4-1.2A3 3 0 0 1 16.3 11a3 3 0 0 1-2.3-1.2c-.6.7-1.2 1.2-2 1.2-.6 0-1.4-.5-2-1.2zm-1 3l1.4.1 1 .5c.3.3.5.6.5.9 0 .8-1 1.5-2.3 1.5-.4 0-.8 0-1.2-.2 0 0 1.7 2.5 4 2.6 2.2-.1 4-2.6 4-2.6-.4.2-.8.2-1.2.2-1.3 0-2.3-.7-2.3-1.5 0-.3.2-.6.4-.9.3-.2.7-.4 1.1-.5h1.3c1 0 1.7.5 1.7 1.6 0 2-2.4 4.6-5 4.6-2.6 0-5-2.6-5-4.6 0-1.1.7-1.6 1.7-1.6z"/></svg>
-              Itch.io
-            </a>
-            <a href="https://www.instagram.com/krishnarjain/" target="_blank" rel="noopener" className="hero-quick-link icon-link">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.86 5.86 0 0 0-2.13 1.38A5.86 5.86 0 0 0 .63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.73 1.46 1.38 2.13a5.86 5.86 0 0 0 2.13 1.38c.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.86 5.86 0 0 0 2.13-1.38 5.86 5.86 0 0 0 1.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.86 5.86 0 0 0-1.38-2.13A5.86 5.86 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg>
-              Instagram
-            </a>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function StatsStrip() {
-  return (
-    <div className="stats-strip">
-      <div className="stat-item">
-        <div className="stat-num">18</div>
-        <div className="stat-label">Years in industry</div>
-      </div>
-      <div className="stat-item">
-        <div className="stat-num">9+</div>
-        <div className="stat-label">Major productions</div>
-      </div>
-      <div className="stat-item" style={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ fontSize: '22px', fontFamily: 'var(--font-d)', fontWeight: 700, letterSpacing: '-0.02em', opacity: 0.9 }}>
-          <div>I animate. I automate.</div><div>I make everyone else faster.</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ReelPlayer() {
-  return (
-    <div className="reel-container">
-      <div style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 6px 40px oklch(0% 0 0 / 0.12)', position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-        <iframe
-          src={`https://www.youtube.com/embed/${YT_ID}?rel=0&modestbranding=1`}
-          title="Krishna Jain Demo Reel"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-        ></iframe>
-      </div>
-      <p className="reel-caption">Animation reel · character, effects, and pipeline work · Powerhouse Animation Studios 2006-2025</p>
-    </div>
-  );
-}
-
-function Credits() {
-  return (
-    <div className="employers-list">
-      {employers.map((e, i) => (
-        <div className="employer-card" key={i}>
-          <div className="employer-header">
-            <span className="employer-name">{e.studio}</span>
-            <span className="employer-role">{e.role}</span>
-            <span className="employer-tenure">{e.tenure}</span>
-          </div>
-          <div className="employer-projects">
-            {e.projects.map((p, j) => (
-              <div className="project-item" key={j}>
-                <div className="project-client">{p.client}</div>
-                <div className="project-title">{p.title}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function About() {
-  return (
-    <div className="about-layout">
-      <div className="about-text">
-        <p>
-          I graduated from <strong>SCAD with a BFA in Animation</strong> and spent the early part of my career
-          building a programming department at Powerhouse Animation from scratch,
-          first by making games in Actionscript, and then by creating tools and automating pipelines throughout the production process.
-        </p>
-        <p>
-          Over 18 years I grew into a genuinely rare combination: someone who can <strong>animate at a professional level
-          and write production scripts that change how a studio operates.</strong> I've done both
-          across major streaming, console, and indie game productions at Powerhouse Animation.
-        </p>
-        <p>
-          I'm looking for roles where that combination matters. <strong>2D pipeline developer, pipeline TD,
-          or character and effects animation work.</strong> If your studio has a list of "we really should fix this someday" tasks,
-          I've probably already built something for it.
-        </p>
-        <div style={{ marginTop: '28px' }}>
-          <a href="mailto:krishna@krishnajain.com" className="btn btn-blue">krishna@krishnajain.com</a>
-        </div>
-      </div>
-      <div className="about-stats">
-        {[
-          { num: "18", label: "Years in 2D animation" },
-          { num: "9+", label: "Major productions shipped" },
-          { num: "BFA", label: "Animation, SCAD" },
-        ].map((s, i) => (
-          <div className="about-stat" key={i}>
-            <div className="about-stat-num">{s.num}</div>
-            <div className="about-stat-label">{s.label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Footer() {
-  return (
-    <footer id="contact">
-      <div className="footer-inner">
-        <div className="footer-top">
-          <div>
-            <div className="footer-name">Krishna Ramos Jain</div>
-            <div className="footer-tagline">Pipeline Developer · Animator · Woodbury, MN</div>
-          </div>
-          <div className="footer-email">
-            <a href="mailto:krishna@krishnajain.com">krishna@krishnajain.com</a>
-          </div>
-        </div>
-        <div className="footer-links">
-          <a href="https://www.youtube.com/watch?v=79AOg9Q983I" target="_blank" rel="noopener">Demo Reel</a>
-          <a href="https://www.linkedin.com/in/krishna-jain-938b7222/" target="_blank" rel="noopener">LinkedIn</a>
-          <a href="https://github.com/kj-art/developer-portfolio" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://itch.io/profile/bluebeezle" target="_blank" rel="noopener">Itch.io</a>
-          <a href="https://www.instagram.com/krishnarjain/" target="_blank" rel="noopener">Instagram</a>
-        </div>
-        <div className="footer-bottom">
-          <span>2026 Krishna Ramos Jain. All rights reserved.</span>
-          <span>Available for hire · Pipeline Developer &amp; Animator</span>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-</script>
-
-
-</body></html>
+<script type="text/babel" src="title-card.jsx"></script>
+</body>
+</html>
