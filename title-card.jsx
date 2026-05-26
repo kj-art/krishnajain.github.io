@@ -505,19 +505,13 @@ function About() {
         <div className="about-grid">
           <div className="about-text">
             <p>
-              I started at Powerhouse Animation Studios in <b>2006</b> as a Flash developer
-              and animator. Two roles, two studios, and eighteen years later I'm still doing
-              both: drawing characters that move, and writing tools that move them faster.
-            </p>
-            <p>
-              Most of the credits below have my name attached because of animation work.
-              The scripts I'm proudest of usually don't. A pipeline tool is doing its job
-              when nobody notices it ran, and it ran a hundred times.
-            </p>
-            <p>
-              Outside the studio, I make <b>pixel art games</b>, illustrate <b>D&amp;D
-              characters</b> and <b>children's books</b>, and animate side projects in
-              After Effects, Spine, and Aseprite. The Lab section has the active threads.
+              I graduated from <b>SCAD with a BFA in Animation</b> and spent the early part of my career building a programming department at Powerhouse Animation from scratch, first by making games in Actionscript, and then by creating tools and automating pipelines throughout the production process.
+			</p>
+			<p>
+			Over 18 years I grew into a genuinely rare combination: someone who can <b>animate at a professional level and write production scripts that change how a studio operates.</b> I've done both across major streaming, console, and indie game productions at Powerhouse Animation.
+			</p>
+			</p>
+			I'm looking for roles where that combination matters. <b>2D pipeline developer, pipeline TD, or character and effects animation work.</b> If your studio has a list of "we really should fix this someday" tasks, I've probably already built something for it.
             </p>
           </div>
           <div className="about-stats">
