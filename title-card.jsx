@@ -102,7 +102,7 @@ function Hero() {
         <div className="hero-grid">
           <div>
             <div className="presenting">PRESENTING</div>
-            <h1 className="hero-name">Krishna<br/>Ramos <span>Jain!</span></h1>
+            <h1 className="hero-name"><span>K</span>rishna<br/><span>R</span>amos <span>J</span>ain!</h1>
             <div className="hero-role">{P.role}</div>
             <p className="hero-desc">{parseEmphasis(P.heroBlurb)}</p>
             <div className="hero-ctas">
