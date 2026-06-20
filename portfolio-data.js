@@ -145,7 +145,8 @@ window.PORTFOLIO = {
     { src: 'assets/night_final.png',        label: "Night scene, children's book mood thumbnail" },
     { src: 'assets/leaf.png',               label: 'Leaf, illustration' },
     { src: 'assets/leaf2_color.png',        label: 'Leaf and the Twisted Root, illustration' },
-    { src: 'assets/miya_portrait_animation.gif', label: 'Miya, RPG dialogue portrait' },
+    { src: 'assets/miya_portrait_animation.gif', label: 'Miya, RPG dialogue portrait (After Effects)' },
+    { src: 'assets/miya_portrait_pixel.gif', label: 'Miya, RPG dialogue portrait (Pixquare)' },
     { src: 'assets/kaz_adjust.png',         label: 'Kaz, character illustration' },
     { src: 'assets/scorch_and_kavos.png',   label: 'Scorch and Kavos, D&D characters' },
     { src: 'assets/dragon_character.jpg',   label: 'Dragon, character illustration' },
@@ -160,6 +161,10 @@ window.PORTFOLIO = {
   // ─── DEVLOG ──────────────────────────────────────────────────────
   // Most recent first. To add a post, prepend a new entry.
   devlogEntries: [
+    { tag: 'Spine rigging', date: 'Jun 20, 2026', title: 'Miya traditional pixel animation in Pixquare',
+      desc: "Sometimes the old ways are best. I created a speed line script in Aseprite to make that process easier.",
+      media: 'assets/miya_portrait_pixel.gif', mediaType: 'gif',
+      extraMedia: [{ src: 'assets/speed_lines_script.png', label: 'Speed line script in Aseprite' }] },
     { tag: 'Spine rigging', date: 'Apr 17, 2026', title: 'Miya rig in Spine',
       desc: "Rigged Miya in Spine as a proof-of-concept for a side-by-side comparison with the original After Effects version. Spine opens up the potential for smooth transitions between animations that frame-by-frame can't do as cleanly.",
       media: 'assets/miya_spine.gif', mediaType: 'gif',
