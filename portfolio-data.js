@@ -139,11 +139,13 @@ window.PORTFOLIO = {
   // ─── ART GALLERY ─────────────────────────────────────────────────
   // type: 'video' for .mp4, omit for images
   galleryItems: [
+    { src: 'assets/StrikeThereAndBackAgain_fb.mp4', type: 'video', label: 'Strike! There and Back Again, D&D animation' },
     { src: 'assets/bear_morning_final.png', label: "Bear Morning, children's book illustration" },
     { src: 'assets/moon_slice.png',         label: "Moon slice, children's book mood thumbnail" },
     { src: 'assets/night_final.png',        label: "Night scene, children's book mood thumbnail" },
     { src: 'assets/leaf.png',               label: 'Leaf, illustration' },
     { src: 'assets/leaf2_color.png',        label: 'Leaf and the Twisted Root, illustration' },
+    { src: 'assets/miya_portrait_animation.gif', label: 'Miya, RPG dialogue portrait' },
     { src: 'assets/kaz_adjust.png',         label: 'Kaz, character illustration' },
     { src: 'assets/scorch_and_kavos.png',   label: 'Scorch and Kavos, D&D characters' },
     { src: 'assets/dragon_character.jpg',   label: 'Dragon, character illustration' },
