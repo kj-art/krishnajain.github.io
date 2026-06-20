@@ -163,7 +163,7 @@ window.PORTFOLIO = {
   // Most recent first. To add a post, prepend a new entry.
   devlogEntries: [
     { tag: ['Pixel Art', 'Scripting', 'Pixquare', 'Aseprite'], date: 'Jun 20, 2026', title: 'Miya traditional pixel animation in Pixquare',
-      desc: "Sometimes the old ways are best. I created a speed line script in Aseprite to make that process easier.",
+      desc: "Sometimes the old ways are best. I created a speed line script in Aseprite to make that part of the process easier.",
       media: 'assets/miya_portrait_pixel.gif', mediaType: 'gif',
       extraMedia: [{ src: 'assets/speed_lines_script.png', label: 'Speed line script in Aseprite' }] },
     { tag: 'Spine', date: 'Apr 17, 2026', title: 'Miya rig in Spine',
