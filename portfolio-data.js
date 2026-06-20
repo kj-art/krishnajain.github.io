@@ -156,6 +156,7 @@ window.PORTFOLIO = {
     { src: 'assets/EmmaAndSophie2025.png',  label: 'Portrait studies' },
     { src: 'assets/kavos_design_sheet.png', label: 'Kavos, character design sheet' },
     { src: 'assets/roppu_kun.jpg',          label: "Roppu-kun, inspired by Yoh Yoshinari's Tezuka tribute" },
+    { src: 'assets/ghost_character_rig.jpg',          label: "Yokai, character illustration" },
   ],
 
   // ─── DEVLOG ──────────────────────────────────────────────────────
