@@ -159,7 +159,7 @@ window.PORTFOLIO = {
   // Most recent first. To add a post, prepend a new entry.
   devlogEntries: [
     { tag: 'Spine rigging', date: 'Apr 17, 2026', title: 'Miya rig in Spine',
-      desc: "Rigged Miya in Spine for a side-by-side comparison with the original After Effects version. Spine opens up smooth transitions between animations that frame-by-frame can't do as cleanly. Another version is in progress.",
+      desc: "Rigged Miya in Spine as a proof-of-concept for a side-by-side comparison with the original After Effects version. Spine opens up the potential for smooth transitions between animations that frame-by-frame can't do as cleanly.",
       media: 'assets/miya_spine.gif', mediaType: 'gif',
       extraMedia: [{ src: 'assets/miya_spine_bones.gif', label: 'Spine skeleton view' }] },
     { tag: 'Experiment', date: 'Apr 13, 2026', title: 'Sprite stacking for isometric character animation',
