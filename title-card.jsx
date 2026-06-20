@@ -299,8 +299,9 @@ function Devlog() {
                 : <div className="devlog-media-placeholder">IMAGE COMING SOON</div>}
               <div className="devlog-body">
                 <div className="devlog-meta">
-                  <span className="devlog-tag">{e.tag.toUpperCase()}</span>
-                  <span className="devlog-date">{e.date}</span>
+                {(Array.isArray(e.tag) ? e.tag : [e.tag]).map((t, ti) => (
+  <span className="devlog-tag" key={ti}>{t.toUpperCase()}</span>
+))}                  <span className="devlog-date">{e.date}</span>
                 </div>
                 <div className="devlog-title">{e.title}</div>
                 <p className="devlog-desc">{e.desc}</p>
@@ -315,8 +316,9 @@ function Devlog() {
           <div className="modal" onClick={ev => ev.stopPropagation()}>
             <button className="modal-close" onClick={() => setOpen(null)}>×</button>
             <div className="modal-meta">
-              <span className="devlog-tag">{open.tag.toUpperCase()}</span>
-              <span className="devlog-date">{open.date}</span>
+            {(Array.isArray(open.tag) ? open.tag : [open.tag]).map((t, ti) => (
+  <span className="devlog-tag" key={ti}>{t.toUpperCase()}</span>
+))}              <span className="devlog-date">{open.date}</span>
             </div>
             <h2>{open.title}</h2>
             <p>{open.desc}</p>
