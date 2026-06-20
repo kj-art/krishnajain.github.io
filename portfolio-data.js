@@ -162,7 +162,7 @@ window.PORTFOLIO = {
   // ─── DEVLOG ──────────────────────────────────────────────────────
   // Most recent first. To add a post, prepend a new entry.
   devlogEntries: [
-    { tag: ['Pixel', 'Scripting', 'Pixquare', 'Aseprite'], date: 'Jun 20, 2026', title: 'Miya traditional pixel animation in Pixquare',
+    { tag: ['Pixel Art', 'Scripting', 'Pixquare', 'Aseprite'], date: 'Jun 20, 2026', title: 'Miya traditional pixel animation in Pixquare',
       desc: "Sometimes the old ways are best. I created a speed line script in Aseprite to make that process easier.",
       media: 'assets/miya_portrait_pixel.gif', mediaType: 'gif',
       extraMedia: [{ src: 'assets/speed_lines_script.png', label: 'Speed line script in Aseprite' }] },
@@ -170,7 +170,7 @@ window.PORTFOLIO = {
       desc: "Rigged Miya in Spine as a proof-of-concept for a side-by-side comparison with the original After Effects version. Spine opens up the potential for smooth transitions between animations that frame-by-frame can't do as cleanly.",
       media: 'assets/miya_spine.gif', mediaType: 'gif',
       extraMedia: [{ src: 'assets/miya_spine_bones.gif', label: 'Spine skeleton view' }] },
-    { tag: 'Pixel', date: 'Apr 13, 2026', title: 'Sprite stacking for isometric character animation',
+    { tag: 'Pixel Art', date: 'Apr 13, 2026', title: 'Sprite stacking for isometric character animation',
       desc: "Investigated sprite stacking as a way to get isometric character rotations for free. Large shapes looked great and moved convincingly in 3D, with precise rotation at any angle. Even experimented with building poses in MagicaVoxel. The catch: fine details flickered badly on export. The idea is probably shelved for now, but the large-form results were genuinely impressive.",
       media: 'assets/sprite_stacking_test.gif', mediaType: 'gif',
       itchUrl: 'https://bluebeezle.itch.io/mitama-ji/devlog/1488963/sprite-stacking' },
@@ -178,7 +178,7 @@ window.PORTFOLIO = {
       desc: "Ghost story games require ghost story lighting. Isometric pixel game with a dynamic shadow and lighting system. Normal maps work for front-lighting, but when the player walks in front of a light, a naive setup lights her up as if the light is shining through her body. The fix: an auto-generated backlit rimlight normal map, with a shader that blends between the two based on the player's position relative to each light.",
       media: 'assets/dynamic_lighting_test.gif', mediaType: 'gif',
       itchUrl: 'https://bluebeezle.itch.io/mitama-ji/devlog/1129446/lighting-shaders-and-normal-maps' },
-    { tag: ['Pixel', 'Aseprite'], date: 'Nov 27, 2025', title: 'Auto-generated normal maps from layer data',
+    { tag: ['Pixel Art', 'Aseprite'], date: 'Nov 27, 2025', title: 'Auto-generated normal maps from layer data',
       desc: "Updated my Python Aseprite sprite sheet exporter to automatically generate normal maps by detecting edges on each layer's silhouette and creating gradients that approximate surface normals. It won't be perfect since the script doesn't know the actual geometry, but it's a solid starting point. Since every body part is already on its own layer, the top of the arm reads as north-facing even when it's halfway down the sprite.",
       media: 'assets/Miya_walk.png', mediaType: 'img',
       extraMedia: [
@@ -186,7 +186,7 @@ window.PORTFOLIO = {
         { src: 'assets/Miya_walk_nm_Frontlit.png', label: 'Front-lit normal map' },
       ],
       itchUrl: 'https://bluebeezle.itch.io/mitama-ji/devlog/1129446/lighting-shaders-and-normal-maps' },
-    { tag: ['Pixel', 'Scripting', 'Aseprite'], date: 'Sep 27, 2025', title: 'Self-colored outline script',
+    { tag: ['Pixel Art', 'Scripting', 'Aseprite'], date: 'Sep 27, 2025', title: 'Self-colored outline script',
       desc: "A script for Aseprite that automatically adds self-colored outlines across all frames, based on a palette layer that maps each color to its outline equivalent. Outlines are added on a separate layer, so you can erase selectively where they don't work. The character above looks fine without outlines because of his thin design, but since the outlines are added as a separate layer, removing them where I see fit is trivial.",
       media: 'assets/self_colored_outline_before.jpg', mediaType: 'img',
       extraMedia: [{ src: 'assets/self_colored_outline_after.jpg', label: 'After, Self-Colored Outline layer active' }] },
