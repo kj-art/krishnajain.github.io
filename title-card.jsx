@@ -323,9 +323,12 @@ function Devlog() {
                 : <div className="devlog-media-placeholder">IMAGE COMING SOON</div>}
               <div className="devlog-body">
                 <div className="devlog-meta">
-                {(Array.isArray(e.tag) ? e.tag : [e.tag]).map((t, ti) => (
-  <span className="devlog-tag" key={ti}>{t.toUpperCase()}</span>
-))}                  <span className="devlog-date">{e.date}</span>
+                  <div className="devlog-tags">
+                    {(Array.isArray(e.tag) ? e.tag : [e.tag]).map((t, ti) => (
+                      <span className="devlog-tag" key={ti}>{t.toUpperCase()}</span>
+                    ))}
+                  </div>
+                  <span className="devlog-date">{e.date}</span>
                 </div>
                 <div className="devlog-title">{e.title}</div>
                 <p className="devlog-desc">{e.desc}</p>
@@ -340,9 +343,12 @@ function Devlog() {
           <div className="modal" onClick={ev => ev.stopPropagation()}>
             <button className="modal-close" onClick={() => setOpen(null)}>×</button>
             <div className="modal-meta">
-            {(Array.isArray(open.tag) ? open.tag : [open.tag]).map((t, ti) => (
-  <span className="devlog-tag" key={ti}>{t.toUpperCase()}</span>
-))}              <span className="devlog-date">{open.date}</span>
+              <div className="devlog-tags">
+                {(Array.isArray(open.tag) ? open.tag : [open.tag]).map((t, ti) => (
+                  <span className="devlog-tag" key={ti}>{t.toUpperCase()}</span>
+                ))}
+              </div>
+              <span className="devlog-date">{open.date}</span>
             </div>
             <h2>{open.title}</h2>
             <p>{open.desc}</p>
@@ -354,7 +360,9 @@ function Devlog() {
             <div className="modal-gallery">
               {[{ src: open.media, label: open.title }, ...(open.extraMedia || [])].map((m, j) => (
                 <div className="gi" key={j} onClick={() => setLightbox(m)}>
-                  <img src={m.src} alt={m.label} loading="lazy" />
+                  {/\.(mp4|webm|mov)$/i.test(m.src)
+                    ? <video src={m.src} muted loop playsInline autoPlay />
+                    : <img src={m.src} alt={m.label} loading="lazy" />}
                   {m.label && j > 0 && <div className="gi-cap">{m.label}</div>}
                 </div>
               ))}
@@ -366,7 +374,9 @@ function Devlog() {
       {lightbox && (
         <div className="lightbox" onClick={() => setLightbox(null)} style={{ zIndex: 1000 }}>
           <button className="lightbox-close" onClick={() => setLightbox(null)}>×</button>
-          <img src={lightbox.src} alt={lightbox.label} onClick={e => e.stopPropagation()} />
+          {/\.(mp4|webm|mov)$/i.test(lightbox.src)
+            ? <video src={lightbox.src} controls autoPlay loop playsInline onClick={e => e.stopPropagation()} />
+            : <img src={lightbox.src} alt={lightbox.label} onClick={e => e.stopPropagation()} />}
         </div>
       )}
     </section>
