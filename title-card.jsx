@@ -275,7 +275,12 @@ function Gallery() {
 
 // ─── DEVLOG ─────────────────────────────────────────────────────────
 function Devlog() {
-  const [open, setOpen] = useState(null);
+  const slugify = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const findBySlug = (slug) => devlogEntries.find(e => slugify(e.title) === slug) || null;
+  const [open, setOpen] = useState(() => {
+    const m = window.location.hash.match(/^#lab\/(.+)$/);
+    return m ? findBySlug(decodeURIComponent(m[1])) : null;
+  });
   const [lightbox, setLightbox] = useState(null);
   useEffect(() => {
     const h = (e) => {
@@ -286,6 +291,25 @@ function Devlog() {
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
   }, [open, lightbox]);
+
+  // Keep the URL in sync with the open post
+  useEffect(() => {
+    if (open) {
+      history.replaceState(null, '', `#lab/${slugify(open.title)}`);
+    } else if (window.location.hash.startsWith('#lab/')) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, [open]);
+
+  // Open the right post when someone pastes a link or uses back/forward
+  useEffect(() => {
+    const onHash = () => {
+      const m = window.location.hash.match(/^#lab\/(.+)$/);
+      setOpen(m ? findBySlug(decodeURIComponent(m[1])) : null);
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
 
   return (
     <section id="lab" className="section">
