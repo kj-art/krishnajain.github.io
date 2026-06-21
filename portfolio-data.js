@@ -178,7 +178,7 @@ window.PORTFOLIO = {
       desc: "Investigated sprite stacking as a way to get isometric character rotations for free. Large shapes looked great and moved convincingly in 3D, with precise rotation at any angle. Even experimented with building poses in MagicaVoxel. The catch: fine details flickered badly on export. The idea is probably shelved for now, but the large-form results were genuinely impressive.",
       media: 'assets/sprite_stacking_test.gif', mediaType: 'gif',
       itchUrl: 'https://bluebeezle.itch.io/mitama-ji/devlog/1488963/sprite-stacking' },
-    { tag: ['Unity', 'Pixel'], date: 'Nov 29, 2025', title: 'Dynamic lighting and shadows in Unity',
+    { tag: ['Unity', 'Pixel Art'], date: 'Nov 29, 2025', title: 'Dynamic lighting and shadows in Unity',
       desc: "Ghost story games require ghost story lighting. Isometric pixel game with a dynamic shadow and lighting system. Normal maps work for front-lighting, but when the player walks in front of a light, a naive setup lights her up as if the light is shining through her body. The fix: an auto-generated backlit rimlight normal map, with a shader that blends between the two based on the player's position relative to each light.",
       media: 'assets/dynamic_lighting_test.gif', mediaType: 'gif',
       itchUrl: 'https://bluebeezle.itch.io/mitama-ji/devlog/1129446/lighting-shaders-and-normal-maps' },
