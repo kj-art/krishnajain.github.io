@@ -165,7 +165,11 @@ window.PORTFOLIO = {
     { tag: ['Pixel Art', 'Scripting', 'Pixquare', 'Aseprite'], date: 'Jun 20, 2026', title: 'Miya traditional pixel animation in Pixquare',
       desc: "Sometimes the old ways are best. I created a speed line script in Aseprite to make that part of the process easier.",
       media: 'assets/miya_portrait_pixel.gif', mediaType: 'gif',
-      extraMedia: [{ src: 'assets/speed_lines_script.png', label: 'Speed line script in Aseprite' }] },
+      extraMedia: [
+        { src: 'assets/Miya_angry_pixel_timelapse.mp4', label: 'Timelapse' },
+        { src: 'assets/speed_lines_script.png', label: 'Speed line script in Aseprite' },
+      ]
+    },
     { tag: 'Spine', date: 'Apr 17, 2026', title: 'Miya rig in Spine',
       desc: "Rigged Miya in Spine as a proof-of-concept for a side-by-side comparison with the original After Effects version. Spine opens up the potential for smooth transitions between animations that frame-by-frame can't do as cleanly.",
       media: 'assets/miya_spine.gif', mediaType: 'gif',
