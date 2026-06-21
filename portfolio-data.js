@@ -163,7 +163,7 @@ window.PORTFOLIO = {
   // Most recent first. To add a post, prepend a new entry.
   devlogEntries: [
     { tag: ['Pixel Art', 'Scripting', 'Pixquare', 'Aseprite'], date: 'Jun 20, 2026', title: 'Miya traditional pixel animation in Pixquare',
-      desc: "Sometimes the old ways are best. I created a speed line script in Aseprite to make that part of the process easier. As much as possible, I've kept different lighting on different layers in case I want to use dynamic lighting. This is particularly important with the rim lighting, which is actively destructive to the art underneath it.",
+      desc: "Sometimes the old ways are the best. I created a speed line script in Aseprite to make that part of the process easier. As much as possible, I've kept different lighting on different layers in case I want to use dynamic lighting. This is particularly important with the rim lighting, which is actively destructive to the art underneath it.",
       media: 'assets/miya_portrait_pixel.gif', mediaType: 'gif',
       extraMedia: [
         { src: 'assets/Miya_angry_pixel_timelapse.mp4', label: 'Timelapse' },
