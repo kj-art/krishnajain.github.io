@@ -139,7 +139,7 @@ function Reel() {
         <div className="reel-frame">
           <div className="marquee-strip">
             <span><span className="bulb"></span><span className="bulb"></span><span className="bulb"></span> NOW SHOWING</span>
-            <span style={{ fontSize: 11, letterSpacing: '0.18em' }}>DEMO REEL · 2025</span>
+            <span style={{ fontSize: 11, letterSpacing: '0.18em' }}>DEMO REEL · 2026</span>
           </div>
           {playing ? (
             <div style={{ aspectRatio: '16/9', background: '#000' }}>
