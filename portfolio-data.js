@@ -14,7 +14,7 @@ window.PORTFOLIO = {
   // Hero blurb. Plain string, but use [b]...[/b] to mark words that should
   // render bold/highlighted in the design. Each page renders these its own way.
   heroBlurb:
-    "18 years animating and [b]automating 2D pipelines[/b] at [b]Powerhouse Animation Studios[/b]. "
+    "18 years animating and [b]automating 2D pipelines[/b] at studios such as [b]Powerhouse Animation[/b]. "
     + "I've written the scripts that made the pipelines for productions such as "
     + "[b]Netflix's Castlevania, Blood of Zeus, and Masters of the Universe[/b] faster. "
     + "My tools cover the entire pipeline, from preproduction through delivery.",
