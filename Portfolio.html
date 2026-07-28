@@ -360,9 +360,9 @@
   .gal-item:hover .gal-label { opacity: 1; }
 
   .gal-group { cursor: pointer; }
-  .gal-stack { position: relative; height: clamp(190px, 26vw, 320px); background: var(--cream); overflow: hidden; }
+  .gal-stack { position: relative !important; height: clamp(190px, 26vw, 320px) !important; max-height: clamp(190px, 26vw, 320px) !important; background: var(--cream); overflow: hidden !important; }
   .gal-stack img.stack-photo {
-    position: absolute; max-height: 66%; max-width: 62%; width: auto; height: auto;
+    position: absolute !important; max-height: 66% !important; max-width: 62% !important; width: auto; height: auto;
     transform-origin: center;
     background: var(--cream-2);
     border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
