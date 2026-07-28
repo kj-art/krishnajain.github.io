@@ -45,6 +45,7 @@
     /* --on-color stays the same in dark mode (it's for colored bg chips) */
   }
   html { scroll-behavior: smooth; }
+  body::before { content: "BUILD-CHECK-7"; position: fixed; top: 0; left: 0; z-index: 99999; background: red; color: #fff; font-size: 14px; padding: 4px 10px; font-family: monospace; }
   body { background: var(--cream); color: var(--ink); font-family: var(--font-b); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
   a { color: inherit; }
 
