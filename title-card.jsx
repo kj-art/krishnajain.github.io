@@ -261,11 +261,7 @@ function Gallery() {
           {galleryItems.map((it, i) => (
             Array.isArray(it.items) ? (
               <div className="gal-item gal-group" key={i} onClick={() => setGroupView({ items: it.items, index: 0, label: it.label })}>
-                <div className={`gal-mini-grid n${Math.min(it.items.length, 4)}`}>
-                  {it.items.slice(0, 4).map((sub, si) => (
-                    <img key={si} src={sub.src} alt="" loading="lazy" onError={e => e.currentTarget.style.display = 'none'} />
-                  ))}
-                </div>
+                <img src={it.items[0].src} alt={it.label} loading="lazy" onError={e => e.currentTarget.closest('.gal-item').style.display = 'none'} />
                 <div className="gal-group-badge">{it.items.length} PHOTOS</div>
                 <div className="gal-label">{it.label}</div>
               </div>
