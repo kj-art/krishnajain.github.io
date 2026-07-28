@@ -241,38 +241,23 @@ function Skills() {
 // ─── GALLERY ────────────────────────────────────────────────────────
 function Gallery() {
   const [lightbox, setLightbox] = useState(null);
-  const [groupView, setGroupView] = useState(null);
   useEffect(() => {
-    const h = (e) => {
-      if (groupView) {
-        if (e.key === 'Escape') setGroupView(null);
-        else if (e.key === 'ArrowLeft') setGroupView(v => ({ ...v, index: (v.index - 1 + v.items.length) % v.items.length }));
-        else if (e.key === 'ArrowRight') setGroupView(v => ({ ...v, index: (v.index + 1) % v.items.length }));
-      } else if (e.key === 'Escape') setLightbox(null);
-    };
+    const h = (e) => { if (e.key === 'Escape') setLightbox(null); };
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
-  }, [groupView]);
+  }, []);
   return (
     <section id="art" className="section magenta-wash">
       <div className="wrap">
         <div className="plaque magenta"><span className="n">05</span>ON DISPLAY</div>
         <div className="gallery-grid">
           {galleryItems.map((it, i) => (
-            Array.isArray(it.items) ? (
-              <div className="gal-item gal-group" key={i} onClick={() => setGroupView({ items: it.items, index: 0, label: it.label })}>
-                <img src={it.items[0].src} alt={it.label} loading="lazy" onError={e => e.currentTarget.closest('.gal-item').style.display = 'none'} />
-                <div className="gal-group-badge">{it.items.length} PHOTOS</div>
-                <div className="gal-label">{it.label}</div>
-              </div>
-            ) : (
-              <div className="gal-item" key={i} onClick={() => setLightbox(it)}>
-                {it.type === 'video'
-                  ? <video src={it.src} autoPlay loop muted playsInline onError={e => e.currentTarget.closest('.gal-item').style.display = 'none'} />
-                  : <img src={it.src} alt={it.label} loading="lazy" onError={e => e.currentTarget.closest('.gal-item').style.display = 'none'} />}
-                <div className="gal-label">{it.label}</div>
-              </div>
-            )
+            <div className="gal-item" key={i} onClick={() => setLightbox(it)}>
+              {it.type === 'video'
+                ? <video src={it.src} autoPlay loop muted playsInline onError={e => e.currentTarget.closest('.gal-item').style.display = 'none'} />
+                : <img src={it.src} alt={it.label} loading="lazy" onError={e => e.currentTarget.closest('.gal-item').style.display = 'none'} />}
+              <div className="gal-label">{it.label}</div>
+            </div>
           ))}
         </div>
       </div>
@@ -282,21 +267,6 @@ function Gallery() {
           {lightbox.type === 'video'
             ? <video src={lightbox.src} autoPlay loop muted playsInline controls onClick={e => e.stopPropagation()} />
             : <img src={lightbox.src} alt={lightbox.label} onClick={e => e.stopPropagation()} />}
-        </div>
-      )}
-      {groupView && (
-        <div className="lightbox" onClick={() => setGroupView(null)}>
-          <button className="lightbox-close" onClick={() => setGroupView(null)}>×</button>
-          <div className="scrub-row" onClick={e => e.stopPropagation()}>
-            <button className="scrub-btn prev" onClick={() => setGroupView(v => ({ ...v, index: (v.index - 1 + v.items.length) % v.items.length }))} aria-label="Previous"></button>
-            {/\.(mp4|webm|mov)$/i.test(groupView.items[groupView.index].src)
-              ? <video key={groupView.index} src={groupView.items[groupView.index].src} autoPlay loop muted playsInline controls />
-              : <img key={groupView.index} src={groupView.items[groupView.index].src} alt={groupView.items[groupView.index].label} />}
-            <button className="scrub-btn next" onClick={() => setGroupView(v => ({ ...v, index: (v.index + 1) % v.items.length }))} aria-label="Next"></button>
-          </div>
-          <div className="scrub-counter" onClick={e => e.stopPropagation()}>
-            {groupView.index + 1} / {groupView.items.length} — {groupView.items[groupView.index].label}
-          </div>
         </div>
       )}
     </section>
