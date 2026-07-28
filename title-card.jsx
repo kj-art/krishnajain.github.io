@@ -288,11 +288,11 @@ function Gallery() {
         <div className="lightbox" onClick={() => setGroupView(null)}>
           <button className="lightbox-close" onClick={() => setGroupView(null)}>×</button>
           <div className="scrub-row" onClick={e => e.stopPropagation()}>
-            <button className="scrub-btn" onClick={() => setGroupView(v => ({ ...v, index: (v.index - 1 + v.items.length) % v.items.length }))}>‹</button>
+            <button className="scrub-btn prev" onClick={() => setGroupView(v => ({ ...v, index: (v.index - 1 + v.items.length) % v.items.length }))} aria-label="Previous"></button>
             {/\.(mp4|webm|mov)$/i.test(groupView.items[groupView.index].src)
               ? <video key={groupView.index} src={groupView.items[groupView.index].src} autoPlay loop muted playsInline controls />
               : <img key={groupView.index} src={groupView.items[groupView.index].src} alt={groupView.items[groupView.index].label} />}
-            <button className="scrub-btn" onClick={() => setGroupView(v => ({ ...v, index: (v.index + 1) % v.items.length }))}>›</button>
+            <button className="scrub-btn next" onClick={() => setGroupView(v => ({ ...v, index: (v.index + 1) % v.items.length }))} aria-label="Next"></button>
           </div>
           <div className="scrub-counter" onClick={e => e.stopPropagation()}>
             {groupView.index + 1} / {groupView.items.length} — {groupView.items[groupView.index].label}
