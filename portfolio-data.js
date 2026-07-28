@@ -137,13 +137,24 @@ window.PORTFOLIO = {
   ],
 
   // ─── ART GALLERY ─────────────────────────────────────────────────
-  // type: 'video' for .mp4, omit for images
+  // type: 'video' for .mp4, omit for images.
+  // Grouped item: { label, items: [{src, label}, ...] } — shows as one tile
+  // with a fanned photo-stack thumbnail; clicking it opens a scrubbable viewer.
   galleryItems: [
     { src: 'assets/StrikeThereAndBackAgain_fb.mp4', type: 'video', label: 'Strike! There and Back Again, D&D animation' },
     { src: 'assets/bear_morning_final.png', label: "Bear Morning, children's book illustration" },
-    { src: 'assets/moon_slice.png',         label: "Moon slice, children's book mood thumbnail" },
-    { src: 'assets/night_final.png',        label: "Night scene, children's book mood thumbnail" },
+    { label: "Children's book mood thumbnails", items: [
+      { src: 'assets/moon_slice.png',  label: "Moon slice, children's book mood thumbnail" },
+      { src: 'assets/night_final.png', label: "Night scene, children's book mood thumbnail" },
+    ]},
     { src: 'assets/leaf.png',               label: 'Leaf, illustration' },
+    { label: 'D&D dice tray portraits', items: [
+      { src: 'assets/scorch.jpg',    label: 'Scorch, dice tray portrait' },
+      { src: 'assets/nhi.jpg',       label: 'Nhi, dice tray portrait' },
+      { src: 'assets/selim.jpg',     label: 'Selim, dice tray portrait' },
+      { src: 'assets/morlo.jpg',     label: 'Morlo, dice tray portrait' },
+      { src: 'assets/friedrich.jpg', label: 'Friedrich, dice tray portrait' },
+    ]},
     { src: 'assets/leaf2_color.png',        label: 'Leaf and the Twisted Root, illustration' },
     { src: 'assets/miya_portrait_animation.gif', label: 'Miya, RPG dialogue portrait (After Effects)' },
     { src: 'assets/miya_portrait_pixel.gif', label: 'Miya, RPG dialogue portrait (Pixquare)' },
