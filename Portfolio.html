@@ -360,9 +360,9 @@
   .gal-item:hover .gal-label { opacity: 1; }
 
   .gal-group { cursor: pointer; }
-  .gal-stack { position: relative !important; height: clamp(190px, 26vw, 320px) !important; max-height: clamp(190px, 26vw, 320px) !important; background: var(--cream); overflow: hidden !important; }
+  .gal-stack { position: relative; height: 260px; background: var(--cream); overflow: hidden; }
   .gal-stack img.stack-photo {
-    position: absolute !important; max-height: 66% !important; max-width: 62% !important; width: auto; height: auto;
+    position: absolute; max-height: 66%; max-width: 62%; width: auto; height: auto;
     transform-origin: center;
     background: var(--cream-2);
     border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
@@ -375,18 +375,18 @@
   }
 
   .scrub-arrow {
-    position: fixed !important; top: 50%; transform: translateY(-50%); z-index: 1001;
+    position: fixed; top: 50%; margin-top: -24px; z-index: 1001;
     background: var(--cream-2); color: var(--ink); border: 3px solid var(--ink);
     width: 48px; height: 48px; font-family: var(--font-d); font-size: 24px;
     cursor: pointer; box-shadow: 4px 4px 0 var(--cobalt);
   }
-  .scrub-arrow.left { left: 20px !important; right: auto !important; }
-  .scrub-arrow.right { right: 20px !important; left: auto !important; }
+  .scrub-arrow.left { left: 20px; }
+  .scrub-arrow.right { right: 20px; }
   .scrub-counter {
-    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 1001;
+    position: fixed; bottom: 22px; left: 50%; margin-left: -140px; z-index: 1001;
     background: var(--cream-2); color: var(--ink); border: 3px solid var(--ink);
     padding: 8px 18px; font-family: var(--font-d); font-size: 12.5px;
-    box-shadow: 4px 4px 0 var(--ink); max-width: 82vw; text-align: center;
+    box-shadow: 4px 4px 0 var(--ink); width: 280px; text-align: center;
   }
 
   /* ─── DEVLOG ────────────────────────────────────────────────── */
