@@ -241,23 +241,50 @@ function Skills() {
 // ─── GALLERY ────────────────────────────────────────────────────────
 function Gallery() {
   const [lightbox, setLightbox] = useState(null);
+  const [groupView, setGroupView] = useState(null);
   useEffect(() => {
-    const h = (e) => { if (e.key === 'Escape') setLightbox(null); };
+    const h = (e) => {
+      if (groupView) {
+        if (e.key === 'Escape') setGroupView(null);
+        else if (e.key === 'ArrowLeft') setGroupView(v => ({ ...v, index: (v.index - 1 + v.items.length) % v.items.length }));
+        else if (e.key === 'ArrowRight') setGroupView(v => ({ ...v, index: (v.index + 1) % v.items.length }));
+      } else if (e.key === 'Escape') setLightbox(null);
+    };
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
-  }, []);
+  }, [groupView]);
   return (
     <section id="art" className="section magenta-wash">
       <div className="wrap">
         <div className="plaque magenta"><span className="n">05</span>ON DISPLAY</div>
         <div className="gallery-grid">
           {galleryItems.map((it, i) => (
-            <div className="gal-item" key={i} onClick={() => setLightbox(it)}>
-              {it.type === 'video'
-                ? <video src={it.src} autoPlay loop muted playsInline onError={e => e.currentTarget.closest('.gal-item').style.display = 'none'} />
-                : <img src={it.src} alt={it.label} loading="lazy" onError={e => e.currentTarget.closest('.gal-item').style.display = 'none'} />}
-              <div className="gal-label">{it.label}</div>
-            </div>
+            Array.isArray(it.items) ? (
+              <div className="gal-item gal-group" key={i} onClick={() => setGroupView({ items: it.items, index: 0, label: it.label })}>
+                <div className="gal-stack">
+                  {it.items.map((sub, si) => {
+                    const n = it.items.length;
+                    const t = n === 1 ? 0 : si / (n - 1);
+                    const top = 40 + t * 20;
+                    const left = 30 + t * 40;
+                    const tilt = (si % 2 === 0 ? -1 : 1) * (4 + ((si * 7) % 9));
+                    return (
+                      <img key={si} className="stack-photo" style={{ top: `${top}%`, left: `${left}%`, transform: `translate(-50%, -50%) rotate(${tilt}deg)`, zIndex: n - si }}
+                        src={sub.src} alt="" loading="lazy" onError={e => e.currentTarget.style.display = 'none'} />
+                    );
+                  })}
+                </div>
+                <div className="gal-group-badge">{it.items.length} PHOTOS</div>
+                <div className="gal-label">{it.label}</div>
+              </div>
+            ) : (
+              <div className="gal-item" key={i} onClick={() => setLightbox(it)}>
+                {it.type === 'video'
+                  ? <video src={it.src} autoPlay loop muted playsInline onError={e => e.currentTarget.closest('.gal-item').style.display = 'none'} />
+                  : <img src={it.src} alt={it.label} loading="lazy" onError={e => e.currentTarget.closest('.gal-item').style.display = 'none'} />}
+                <div className="gal-label">{it.label}</div>
+              </div>
+            )
           ))}
         </div>
       </div>
@@ -267,6 +294,19 @@ function Gallery() {
           {lightbox.type === 'video'
             ? <video src={lightbox.src} autoPlay loop muted playsInline controls onClick={e => e.stopPropagation()} />
             : <img src={lightbox.src} alt={lightbox.label} onClick={e => e.stopPropagation()} />}
+        </div>
+      )}
+      {groupView && (
+        <div className="lightbox" onClick={() => setGroupView(null)}>
+          <button className="lightbox-close" onClick={() => setGroupView(null)}>×</button>
+          <button className="scrub-arrow left" onClick={e => { e.stopPropagation(); setGroupView(v => ({ ...v, index: (v.index - 1 + v.items.length) % v.items.length })); }}>‹</button>
+          <button className="scrub-arrow right" onClick={e => { e.stopPropagation(); setGroupView(v => ({ ...v, index: (v.index + 1) % v.items.length })); }}>›</button>
+          {/\.(mp4|webm|mov)$/i.test(groupView.items[groupView.index].src)
+            ? <video key={groupView.index} src={groupView.items[groupView.index].src} autoPlay loop muted playsInline controls onClick={e => e.stopPropagation()} />
+            : <img key={groupView.index} src={groupView.items[groupView.index].src} alt={groupView.items[groupView.index].label} onClick={e => e.stopPropagation()} />}
+          <div className="scrub-counter" onClick={e => e.stopPropagation()}>
+            {groupView.index + 1} / {groupView.items.length} — {groupView.items[groupView.index].label}
+          </div>
         </div>
       )}
     </section>
