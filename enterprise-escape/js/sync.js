@@ -72,6 +72,7 @@ export function encodeGameState(state) {
     lastCapture: state.lastCapture || null,
     outcome: state.outcome || null,
     staging: state.staging || {},
+    readyDetectives: state.readyDetectives || [],
     detectives: state.detectives.map((d) => ({ ...d, stunnedUntilRound: d.stunnedUntilRound ?? null })),
   };
 }
@@ -86,6 +87,7 @@ export function decodeGameState(raw, board) {
     lastCapture: raw.lastCapture || null,
     outcome: raw.outcome || null,
     staging: raw.staging || {},
+    readyDetectives: raw.readyDetectives || [],
     log: raw.log || [],
     detectives: (raw.detectives || []).map((d) => ({ ...d, stunnedUntilRound: d.stunnedUntilRound ?? null })),
   };
