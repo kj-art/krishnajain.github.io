@@ -6,9 +6,25 @@
 export const TICKET_KINDS = ["taxi", "bus", "underground"];
 
 export const DEFAULT_SETTINGS = {
+  // How much movement pool each route type costs to use. Global -- a route
+  // costs what it costs regardless of who's using it.
+  movementCosts: { taxi: 0, bus: 2, underground: 5 },
+  // Separate pools per side (like the old per-side ticket counts), each with
+  // its own starting size, how much regenerates at the start of every one
+  // of that side's turns, and an optional cap on how high it can build up.
+  movementPools: {
+    detective: { start: 20, regen: 1, capEnabled: true, cap: 20 },
+    mrx: { start: 15, regen: 1, capEnabled: true, cap: 15 },
+  },
+  // When there are 2 detectives, do they draw from one shared pool (true)
+  // or each get their own independent pool (false, default)?
+  sharedDetectivePool: false,
+  // Black and Double stay simple counted tickets, untouched by the movement
+  // pool -- black hides which route was used (and can hide a Pass too), and
+  // still costs the same movement as whichever route it stands in for.
   tickets: {
-    detective: { taxi: 10, bus: 8, underground: 4, black: 0, double: 0 },
-    mrx: { taxi: 4, bus: 3, underground: 3, black: 5, double: 2 },
+    detective: { black: 0, double: 0 },
+    mrx: { black: 5, double: 2 },
   },
   revealRounds: [3, 8, 13, 18, 24],
   stunDuration: 2,
@@ -36,6 +52,11 @@ function mergeSettings(overrides = {}) {
   return {
     ...DEFAULT_SETTINGS,
     ...overrides,
+    movementCosts: { ...DEFAULT_SETTINGS.movementCosts, ...overrides.movementCosts },
+    movementPools: {
+      detective: { ...DEFAULT_SETTINGS.movementPools.detective, ...(overrides.movementPools && overrides.movementPools.detective) },
+      mrx: { ...DEFAULT_SETTINGS.movementPools.mrx, ...(overrides.movementPools && overrides.movementPools.mrx) },
+    },
     tickets: {
       detective: { ...DEFAULT_SETTINGS.tickets.detective, ...(overrides.tickets && overrides.tickets.detective) },
       mrx: { ...DEFAULT_SETTINGS.tickets.mrx, ...(overrides.tickets && overrides.tickets.mrx) },
@@ -57,6 +78,7 @@ export function createGame(board, settingsOverrides = {}) {
       id: `d${i + 1}`,
       color: DETECTIVE_COLORS[i],
       position: spawn,
+      movement: settings.movementPools.detective.start,
       tickets: { ...settings.tickets.detective },
       stunnedUntilRound: null,
     });
@@ -69,10 +91,11 @@ export function createGame(board, settingsOverrides = {}) {
     phase: "mrx", // "mrx" | "detectives" | "ended"
     mrx: {
       position: board.roles.mrx,
+      movement: settings.movementPools.mrx.start,
       tickets: { ...settings.tickets.mrx },
     },
     detectives,
-    staging: {}, // detectiveId -> { to, ticket }
+    staging: {}, // detectiveId -> { to, ticket, cost }
     readyDetectives: [], // detective ids who have locked in this turn
     captureCount: 0,
     lastReveal: null, // { round, position }
@@ -106,28 +129,48 @@ function isDetectiveStunned(detective, round) {
   return detective.stunnedUntilRound != null && round < detective.stunnedUntilRound;
 }
 
-// Moves available from `from` for a rider with the given ticket pool.
+// How much movement a detective can actually draw on right now. With
+// independent pools that's just their own value; with a shared pool, it's
+// the (mirrored) shared value minus whatever the OTHER detective has
+// already staged this turn but not yet committed -- otherwise both crew
+// members could each plan a move as if the full shared pool were theirs
+// alone and collectively overspend it.
+function availableMovementFor(state, detectiveId) {
+  const d = state.detectives.find((x) => x.id === detectiveId);
+  if (!d) return 0;
+  if (!state.settings.sharedDetectivePool) return d.movement;
+  let reserved = 0;
+  for (const [id, move] of Object.entries(state.staging)) {
+    if (id !== detectiveId) reserved += move.cost;
+  }
+  return d.movement - reserved;
+}
+
+// Moves available from `from`, gated by movement pool rather than per-type
+// ticket counts. Black tickets remain a separate limited count and can
+// substitute for any route -- at that route's cost, picking the cheapest
+// available one to a given destination when more than one connects it --
+// so black is purely about hiding which route was used, not about being
+// cheaper or faster than the route it stands in for.
 // `blockDetectiveSquares` is true for MrX (can't step onto a detective) and
 // false for detectives (their own occupancy rule is handled by the caller).
-function movesFrom(board, from, tickets, state, blockDetectiveSquares) {
+function movesFrom(board, from, movement, blackCount, costs, state, blockDetectiveSquares) {
   const byKind = neighborsByTicket(board, from);
   const out = [];
+  const cheapestToDestination = new Map();
   for (const kind of TICKET_KINDS) {
-    if (!tickets[kind]) continue;
+    const cost = costs[kind];
     for (const to of byKind[kind] || []) {
       if (blockDetectiveSquares && stationOccupiedByAnyDetective(state, to)) continue;
-      out.push({ to, ticket: kind });
+      const existing = cheapestToDestination.get(to);
+      if (existing === undefined || cost < existing) cheapestToDestination.set(to, cost);
+      if (movement >= cost) out.push({ to, ticket: kind, cost });
     }
   }
-  if (tickets.black) {
-    const seen = new Set();
-    for (const kind of TICKET_KINDS) {
-      for (const to of byKind[kind] || []) {
-        if (seen.has(to)) continue;
-        seen.add(to);
-        if (blockDetectiveSquares && stationOccupiedByAnyDetective(state, to)) continue;
-        out.push({ to, ticket: "black" });
-      }
+  if (blackCount > 0) {
+    for (const [to, cost] of cheapestToDestination) {
+      if (movement < cost) continue;
+      out.push({ to, ticket: "black", cost });
     }
   }
   return out;
@@ -135,7 +178,7 @@ function movesFrom(board, from, tickets, state, blockDetectiveSquares) {
 
 export function legalMovesForMrX(state) {
   if (state.phase !== "mrx") return [];
-  return movesFrom(state.board, state.mrx.position, state.mrx.tickets, state, true);
+  return movesFrom(state.board, state.mrx.position, state.mrx.movement, state.mrx.tickets.black, state.settings.movementCosts, state, true);
 }
 
 // Legal moves stay available even after this detective has already staged
@@ -146,7 +189,8 @@ export function legalMovesForDetective(state, detectiveId) {
   const d = state.detectives.find((x) => x.id === detectiveId);
   if (!d) return [];
   if (isDetectiveStunned(d, state.round)) return [];
-  const moves = movesFrom(state.board, d.position, d.tickets, state, false);
+  const movement = availableMovementFor(state, detectiveId);
+  const moves = movesFrom(state.board, d.position, movement, d.tickets.black, state.settings.movementCosts, state, false);
   return moves.filter((m) => !stationClaimedThisTurn(state, m.to, detectiveId));
 }
 
@@ -163,6 +207,11 @@ function checkExitOutcome(board, position) {
   return null;
 }
 
+function cappedRegen(current, poolSettings) {
+  const next = current + poolSettings.regen;
+  return poolSettings.capEnabled ? Math.min(next, poolSettings.cap) : next;
+}
+
 // Landing on an exit station does NOT end the game by itself -- MrX must
 // explicitly commitToExit(). Otherwise every exit station becomes a single
 // mandatory trap the moment you touch it, which makes those nodes useless
@@ -172,7 +221,17 @@ function afterMrxMoveResolved(state) {
   if (state.settings.revealRounds.includes(state.round)) {
     lastReveal = { round: state.round, position: state.mrx.position };
   }
-  return { ...state, lastReveal, phase: "detectives", readyDetectives: [] };
+  // Regen fires at the START of the side whose turn it now is -- detectives
+  // regen the moment it becomes their turn, not when they last acted.
+  const poolSettings = state.settings.movementPools.detective;
+  let detectives;
+  if (state.settings.sharedDetectivePool) {
+    const shared = cappedRegen(state.detectives[0] ? state.detectives[0].movement : 0, poolSettings);
+    detectives = state.detectives.map((d) => ({ ...d, movement: shared }));
+  } else {
+    detectives = state.detectives.map((d) => ({ ...d, movement: cappedRegen(d.movement, poolSettings) }));
+  }
+  return { ...state, detectives, lastReveal, phase: "detectives", readyDetectives: [] };
 }
 
 // What MrX would win/lose by committing to an exit right now, or null if
@@ -187,42 +246,56 @@ export function commitToExit(state) {
   return { ...state, outcome, phase: "ended" };
 }
 
-function deductTicket(tickets, kind) {
-  return { ...tickets, [kind]: tickets[kind] - 1 };
+function applyMoveCost(mrxOrDetective, ticket, cost) {
+  return {
+    ...mrxOrDetective,
+    movement: mrxOrDetective.movement - cost,
+    tickets: ticket === "black" ? { ...mrxOrDetective.tickets, black: mrxOrDetective.tickets.black - 1 } : mrxOrDetective.tickets,
+  };
 }
 
 export function moveMrX(state, to, ticket) {
   if (state.phase !== "mrx") throw new Error("Not MrX's turn");
-  const legal = legalMovesForMrX(state).some((m) => m.to === to && m.ticket === ticket);
-  if (!legal) throw new Error(`Illegal MrX move to ${to} via ${ticket}`);
+  const match = legalMovesForMrX(state).find((m) => m.to === to && m.ticket === ticket);
+  if (!match) throw new Error(`Illegal MrX move to ${to} via ${ticket}`);
 
-  const mrx = { position: to, tickets: deductTicket(state.mrx.tickets, ticket) };
+  const mrx = { ...applyMoveCost(state.mrx, ticket, match.cost), position: to };
   const log = [...state.log, { round: state.round, actor: "mrx", to, ticket }];
   return afterMrxMoveResolved({ ...state, mrx, log });
 }
 
+// MrX can always choose not to move -- free (no movement cost), and can
+// optionally spend a black ticket to hide even the fact that they passed,
+// same as hiding which route a real move used.
+export function passMrX(state, useBlack = false) {
+  if (state.phase !== "mrx") throw new Error("Not MrX's turn");
+  if (useBlack && !state.mrx.tickets.black) throw new Error("No black tickets remaining");
+  const tickets = useBlack ? { ...state.mrx.tickets, black: state.mrx.tickets.black - 1 } : state.mrx.tickets;
+  const mrx = { ...state.mrx, tickets };
+  const log = [...state.log, { round: state.round, actor: "mrx", to: state.mrx.position, ticket: useBlack ? "black" : "pass" }];
+  return afterMrxMoveResolved({ ...state, mrx, log });
+}
+
 // Double-move: two component moves resolved back-to-back, consuming one
-// double ticket plus each component's own ticket, but only ONE round-tick /
-// reveal-schedule check happens, after the second move lands.
+// double ticket plus each component's own movement cost (and black ticket,
+// if either leg used one), but only ONE round-tick / reveal-schedule check
+// happens, after the second move lands.
 export function doubleMoveMrX(state, moves) {
   if (state.phase !== "mrx") throw new Error("Not MrX's turn");
   if (!Array.isArray(moves) || moves.length !== 2) throw new Error("Double move needs exactly 2 moves");
   if (!state.mrx.tickets.double) throw new Error("No double-move tickets remaining");
 
-  let position = state.mrx.position;
-  let tickets = { ...state.mrx.tickets, double: state.mrx.tickets.double - 1 };
+  let mrx = { ...state.mrx, tickets: { ...state.mrx.tickets, double: state.mrx.tickets.double - 1 } };
   const log = [...state.log];
 
   for (const { to, ticket } of moves) {
-    const legalFrom = movesFrom(state.board, position, tickets, state, true);
-    const legal = legalFrom.some((m) => m.to === to && m.ticket === ticket);
-    if (!legal) throw new Error(`Illegal double-move leg to ${to} via ${ticket}`);
-    tickets = deductTicket(tickets, ticket);
-    position = to;
+    const legalFrom = movesFrom(state.board, mrx.position, mrx.movement, mrx.tickets.black, state.settings.movementCosts, state, true);
+    const match = legalFrom.find((m) => m.to === to && m.ticket === ticket);
+    if (!match) throw new Error(`Illegal double-move leg to ${to} via ${ticket}`);
+    mrx = { ...applyMoveCost(mrx, ticket, match.cost), position: to };
     log.push({ round: state.round, actor: "mrx", to, ticket, double: true });
   }
 
-  const mrx = { position, tickets };
   return afterMrxMoveResolved({ ...state, mrx, log });
 }
 
@@ -232,9 +305,9 @@ export function doubleMoveMrX(state, moves) {
 // mean to lock in.
 export function stageDetectiveMove(state, detectiveId, to, ticket) {
   if (state.phase !== "detectives") throw new Error("Not the detectives' turn");
-  const legal = legalMovesForDetective(state, detectiveId).some((m) => m.to === to && m.ticket === ticket);
-  if (!legal) throw new Error(`Illegal detective move to ${to} via ${ticket}`);
-  const staging = { ...state.staging, [detectiveId]: { to, ticket } };
+  const match = legalMovesForDetective(state, detectiveId).find((m) => m.to === to && m.ticket === ticket);
+  if (!match) throw new Error(`Illegal detective move to ${to} via ${ticket}`);
+  const staging = { ...state.staging, [detectiveId]: { to, ticket, cost: match.cost } };
   const readyDetectives = state.readyDetectives.filter((id) => id !== detectiveId);
   return { ...state, staging, readyDetectives };
 }
@@ -266,8 +339,10 @@ export function allDetectivesReady(state) {
 }
 
 // Commits every staged detective move atomically ("End Turn"): applies
-// moves, deducts tickets, resolves captures against MrX's true position,
-// advances the round, and clears any stun timers that have expired.
+// moves, deducts movement/black tickets (shared pool spends deduct the
+// SAME amount from every detective at once, keeping their mirrored values
+// in sync), resolves captures against MrX's true position, advances the
+// round, and clears any stun timers that have expired.
 export function commitDetectiveTurn(state) {
   if (state.phase !== "detectives") throw new Error("Not the detectives' turn");
 
@@ -276,12 +351,22 @@ export function commitDetectiveTurn(state) {
   let captureCount = state.captureCount;
   let lastCapture = state.lastCapture;
   const nextRound = state.round + 1;
+  const shared = state.settings.sharedDetectivePool;
+  let totalSharedCost = 0;
+  let sharedBlackSpent = 0;
 
   for (const d of detectives) {
     const move = state.staging[d.id];
     if (!move) continue;
+    if (!shared) {
+      const updated = applyMoveCost(d, move.ticket, move.cost);
+      d.movement = updated.movement;
+      d.tickets = updated.tickets;
+    } else {
+      totalSharedCost += move.cost;
+      if (move.ticket === "black") sharedBlackSpent += 1;
+    }
     d.position = move.to;
-    d.tickets = deductTicket(d.tickets, move.ticket);
     log.push({ round: state.round, actor: d.id, to: move.to, ticket: move.ticket });
 
     if (move.to === state.mrx.position) {
@@ -292,6 +377,15 @@ export function commitDetectiveTurn(state) {
         d.position = state.board.roles.detective;
       }
     }
+  }
+
+  if (shared && (totalSharedCost > 0 || sharedBlackSpent > 0)) {
+    const newMovement = (detectives[0] ? detectives[0].movement : 0) - totalSharedCost;
+    detectives = detectives.map((d) => ({
+      ...d,
+      movement: newMovement,
+      tickets: sharedBlackSpent > 0 ? { ...d.tickets, black: d.tickets.black - sharedBlackSpent } : d.tickets,
+    }));
   }
 
   detectives = detectives.map((d) =>
@@ -305,8 +399,14 @@ export function commitDetectiveTurn(state) {
     phase = "ended";
   }
 
+  let mrx = state.mrx;
+  if (phase === "mrx") {
+    mrx = { ...state.mrx, movement: cappedRegen(state.mrx.movement, state.settings.movementPools.mrx) };
+  }
+
   return {
     ...state,
+    mrx,
     detectives,
     staging: {},
     round: nextRound,

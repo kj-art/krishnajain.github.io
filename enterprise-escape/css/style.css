@@ -21,7 +21,7 @@ body {
 #setup-screen input[type="number"], #lobby-screen input[type="number"] { width: 5rem; }
 #setup-screen button, #lobby-screen button, #mode-select-screen button,
 #detective-rows button, #new-game-btn, #airlock-continue,
-#mrx-end-turn-btn, #mrx-clear-btn {
+#mrx-end-turn-btn, #mrx-clear-btn, #mrx-pass-btn {
   background: #38bdf8;
   border: none;
   border-radius: 6px;

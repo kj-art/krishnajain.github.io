@@ -1,5 +1,5 @@
-import { createGame } from "./engine.js";
-import { settingsFromForm, populateForm } from "./settings-form.js";
+import { createGame, parseRevealRounds } from "./engine.js";
+import { settingsFromForm, populateForm, wireCapToggle } from "./settings-form.js";
 import * as sync from "./sync.js";
 import { startNetworkedGame } from "./networked.js";
 
@@ -19,6 +19,8 @@ export function initLobby(board, controller) {
   unlimitedField.addEventListener("change", () => {
     maxCapturesField.disabled = unlimitedField.checked;
   });
+  wireCapToggle(settingsForm, "det_movement_cap_enabled", "det_movement_cap");
+  wireCapToggle(settingsForm, "mrx_movement_cap_enabled", "mrx_movement_cap");
 
   let code = null;
   let isHost = false;
@@ -65,6 +67,35 @@ export function initLobby(board, controller) {
     // room's real values.
     renderMyRoleCheckboxes(room.players || {});
     updateStartButtonState(room);
+    renderHowToPlay(sync.decodeSettings(room.settings));
+  }
+
+  // Only the parts of the rules that were vague placeholders before ("a
+  // couple of rounds", "ask whoever set up the game") get filled in from
+  // live settings -- everything else in the section is fixed prose that
+  // doesn't depend on configuration, so it stays static.
+  function renderHowToPlay(settings) {
+    const costs = settings.movementCosts;
+    const detRegen = settings.movementPools.detective.regen;
+    const mrxRegen = settings.movementPools.mrx.regen;
+    el("htp-movement-summary").textContent =
+      `Corridor costs ${costs.taxi}, Tram costs ${costs.bus}, Turbolift costs ${costs.underground} -- ` +
+      `the Crew gets ${detRegen} back each round, the Fugitive gets ${mrxRegen} back.`;
+
+    const stun = settings.stunDuration;
+    el("htp-stun").textContent = `${stun} round${stun === 1 ? "" : "s"}`;
+
+    const maxCaptures = settings.maxCaptures;
+    el("htp-max-captures").textContent =
+      maxCaptures === Infinity
+        ? ""
+        : ` If that happens ${maxCaptures} time${maxCaptures === 1 ? "" : "s"}, the Fugitive wins by default.`;
+
+    const rounds = parseRevealRounds(settings.revealRounds);
+    el("htp-reveals").textContent =
+      rounds.length > 0
+        ? `Every so often, the Fugitive's real location gets shown to everyone automatically -- rounds ${rounds.join(", ")}.`
+        : `The Fugitive's real location is never shown automatically.`;
   }
 
   function renderPlayers(players) {
@@ -93,6 +124,7 @@ export function initLobby(board, controller) {
     const useSharedUI = twoDetectives && settings.sharedDetectiveTurn;
 
     el("shared-turn-label").classList.toggle("hidden", !twoDetectives);
+    el("lobby-shared-pool-label").classList.toggle("hidden", !twoDetectives);
     el("role-crew-shared-label").classList.toggle("hidden", !useSharedUI);
     el("role-d1-label").classList.toggle("hidden", useSharedUI);
     el("role-d2-label").classList.toggle("hidden", !twoDetectives || useSharedUI);

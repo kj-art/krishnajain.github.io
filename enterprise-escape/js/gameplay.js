@@ -9,6 +9,7 @@ import {
   legalMovesForMrX,
   legalMovesForDetective,
   moveMrX,
+  passMrX,
   doubleMoveMrX,
   stageDetectiveMove,
   unstageDetectiveMove,
@@ -32,17 +33,17 @@ function getCanvasCoords(evt, canvas) {
   return [(evt.clientX - rect.left) * scaleX, (evt.clientY - rect.top) * scaleY];
 }
 
-// A click always auto-picks the natural (non-black) ticket -- cheapest/most
-// common transport first -- and just moves you, no pre-selection toggle to
-// remember. Black is a separate decision made AFTER a move is chosen (see
-// the per-move "Hide this move" checkboxes rendered in _renderMrxPlanRows),
+// A click always auto-picks the cheapest natural (non-black) route to that
+// destination -- cost-aware rather than a fixed kind order, since costs are
+// now a configurable setting -- and just moves you, no pre-selection toggle
+// to remember. Black is a separate decision made AFTER a move is chosen
+// (see the per-move "Hide this move" checkboxes in _renderMrxPlanRows),
 // except when black is truly the only way to reach that destination at all,
 // in which case it's picked automatically since there's no other option.
-const NATURAL_ORDER = ["taxi", "bus", "underground"];
 function pickTicket(options) {
-  for (const kind of NATURAL_ORDER) {
-    const found = options.find((o) => o.ticket === kind);
-    if (found) return found;
+  const natural = options.filter((o) => o.ticket !== "black");
+  if (natural.length > 0) {
+    return natural.reduce((best, o) => (o.cost < best.cost ? o : best));
   }
   return options[0] || null;
 }
@@ -93,8 +94,9 @@ export class GameplayController {
     this.view = new BoardView(canvas, board);
     this.viewerRoles = new Set();
     this.state = null;
-    // null | { type: "single", to, naturalTicket, useBlack }
-    //      | { type: "double", leg1: {to,naturalTicket,useBlack}, leg2: null|{...} }
+    // null | { type: "single", to, naturalTicket, cost, useBlack }
+    //      | { type: "double", leg1: {to,naturalTicket,cost,useBlack}, leg2: null|{...} }
+    //      | { type: "pass", naturalTicket: "pass", cost: 0, useBlack }
     // Purely local UI state -- never committed to the engine (and never
     // synced) until the Fugitive explicitly presses End Turn and confirms.
     this.mrxPlan = null;
@@ -104,6 +106,11 @@ export class GameplayController {
       this.mrxPlan = null;
       this._renderMrxPanel();
       el("crew-picker").classList.add("hidden");
+      this._renderBoard();
+    });
+    el("mrx-pass-btn").addEventListener("click", () => {
+      this.mrxPlan = { type: "pass", naturalTicket: "pass", cost: 0, useBlack: false };
+      this._renderMrxPanel();
       this._renderBoard();
     });
     el("mrx-clear-btn").addEventListener("click", () => {
@@ -153,7 +160,11 @@ export class GameplayController {
 
   _mrxPlanComplete() {
     if (!this.mrxPlan) return false;
-    return this.mrxPlan.type === "single" || (this.mrxPlan.type === "double" && this.mrxPlan.leg2);
+    return (
+      this.mrxPlan.type === "single" ||
+      this.mrxPlan.type === "pass" ||
+      (this.mrxPlan.type === "double" && this.mrxPlan.leg2)
+    );
   }
 
   // The ticket actually spent for a leg: black if the player checked "hide
@@ -177,37 +188,39 @@ export class GameplayController {
   }
 
   _setLegUseBlack(legKey, value) {
-    if (legKey === "single") {
-      this.mrxPlan = { ...this.mrxPlan, useBlack: value };
-    } else if (legKey === "leg1") {
+    if (legKey === "leg1") {
       this.mrxPlan = { ...this.mrxPlan, leg1: { ...this.mrxPlan.leg1, useBlack: value } };
-    } else {
+    } else if (legKey === "leg2") {
       this.mrxPlan = { ...this.mrxPlan, leg2: { ...this.mrxPlan.leg2, useBlack: value } };
+    } else {
+      // "single" or "pass" -- both keep their data directly on the plan.
+      this.mrxPlan = { ...this.mrxPlan, useBlack: value };
     }
     this._renderMrxPlanRows();
   }
 
-  // One row per chosen move (one for a single move, one or two for a
-  // double), each showing the effective ticket and -- unless that move can
-  // only ever be black anyway -- a checkbox to hide it.
+  // One row per chosen move (one for a single move or a Pass, one or two
+  // for a double), each showing the effective ticket and -- unless that
+  // move can only ever be black anyway -- a checkbox to hide it.
   _renderMrxPlanRows() {
     const container = el("mrx-plan-rows");
     container.innerHTML = "";
     if (!this.mrxPlan) return;
 
     const legs =
-      this.mrxPlan.type === "single"
-        ? [{ key: "single", data: this.mrxPlan, label: null }]
-        : [
+      this.mrxPlan.type === "double"
+        ? [
             { key: "leg1", data: this.mrxPlan.leg1, label: "Leg 1" },
             ...(this.mrxPlan.leg2 ? [{ key: "leg2", data: this.mrxPlan.leg2, label: "Leg 2" }] : []),
-          ];
+          ]
+        : [{ key: this.mrxPlan.type, data: this.mrxPlan, label: null }];
 
     for (const { key, data, label } of legs) {
       const row = document.createElement("div");
       row.className = "mrx-plan-row";
       const prefix = label ? `${label}: ` : "";
-      row.innerHTML = `<div>${prefix}To ${data.to} via ${ticketSpan(this.board, this._effectiveTicket(data))}</div>`;
+      const description = data.to != null ? `${prefix}To ${data.to} via ${ticketSpan(this.board, this._effectiveTicket(data))}` : `${prefix}Stay put this turn`;
+      row.innerHTML = `<div>${description}</div>`;
 
       if (data.naturalTicket !== "black") {
         const blackLeft = this._blackAvailableExcluding(key);
@@ -233,12 +246,20 @@ export class GameplayController {
   _commitMrxPlan() {
     if (!this._mrxPlanComplete()) return;
     const plan = this.mrxPlan;
-    const description =
-      plan.type === "single"
-        ? `Move to ${plan.to} via ${ticketLabel(this._effectiveTicket(plan))}`
-        : `Move to ${plan.leg1.to} via ${ticketLabel(this._effectiveTicket(plan.leg1))}, then to ${plan.leg2.to} via ${ticketLabel(this._effectiveTicket(plan.leg2))}`;
+    let description;
+    if (plan.type === "pass") {
+      description = this._effectiveTicket(plan) === "black" ? "Stay put this turn (hidden)" : "Stay put this turn";
+    } else if (plan.type === "single") {
+      description = `Move to ${plan.to} via ${ticketLabel(this._effectiveTicket(plan))}`;
+    } else {
+      description = `Move to ${plan.leg1.to} via ${ticketLabel(this._effectiveTicket(plan.leg1))}, then to ${plan.leg2.to} via ${ticketLabel(this._effectiveTicket(plan.leg2))}`;
+    }
     if (!window.confirm(`${description}. End your turn?`)) return;
-    if (plan.type === "single") {
+    if (plan.type === "pass") {
+      const useBlack = this._effectiveTicket(plan) === "black";
+      this.mrxPlan = null;
+      this._applyMrxMove((s) => passMrX(s, useBlack));
+    } else if (plan.type === "single") {
       const ticket = this._effectiveTicket(plan);
       this.mrxPlan = null;
       this._applyMrxMove((s) => moveMrX(s, plan.to, ticket));
@@ -262,13 +283,20 @@ export class GameplayController {
     }
   }
 
+  // Cost is invariant to whether leg1 ends up hidden via black -- black is
+  // always offered at the same (cheapest) cost as the natural route it
+  // stands in for -- so the stored leg1.cost is safe to use here regardless
+  // of the current state of leg1's "hide this move" checkbox.
   _scratchLeg2Options() {
     const leg1 = this.mrxPlan.leg1;
+    const usedBlack = this._effectiveTicket(leg1) === "black";
     const scratch = {
       ...this.state,
       mrx: {
+        ...this.state.mrx,
         position: leg1.to,
-        tickets: { ...this.state.mrx.tickets, [leg1.naturalTicket]: this.state.mrx.tickets[leg1.naturalTicket] - 1 },
+        movement: this.state.mrx.movement - leg1.cost,
+        tickets: usedBlack ? { ...this.state.mrx.tickets, black: this.state.mrx.tickets.black - 1 } : this.state.mrx.tickets,
       },
     };
     return legalMovesForMrX(scratch);
@@ -301,18 +329,22 @@ export class GameplayController {
         const options = legalMovesForMrX(this.state).filter((m) => m.to === to);
         const chosen = pickTicket(options);
         if (!chosen) return;
-        this.mrxPlan = { type: "double", leg1: { to: chosen.to, naturalTicket: chosen.ticket, useBlack: false }, leg2: null };
+        this.mrxPlan = {
+          type: "double",
+          leg1: { to: chosen.to, naturalTicket: chosen.ticket, cost: chosen.cost, useBlack: false },
+          leg2: null,
+        };
       } else {
         const options = this._scratchLeg2Options().filter((m) => m.to === to);
         const chosen = pickTicket(options);
         if (!chosen) return;
-        this.mrxPlan = { ...this.mrxPlan, leg2: { to: chosen.to, naturalTicket: chosen.ticket, useBlack: false } };
+        this.mrxPlan = { ...this.mrxPlan, leg2: { to: chosen.to, naturalTicket: chosen.ticket, cost: chosen.cost, useBlack: false } };
       }
     } else {
       const options = legalMovesForMrX(this.state).filter((m) => m.to === to);
       const chosen = pickTicket(options);
       if (!chosen) return;
-      this.mrxPlan = { type: "single", to: chosen.to, naturalTicket: chosen.ticket, useBlack: false };
+      this.mrxPlan = { type: "single", to: chosen.to, naturalTicket: chosen.ticket, cost: chosen.cost, useBlack: false };
     }
     this._renderMrxPanel();
     this._renderBoard();
@@ -354,12 +386,12 @@ export class GameplayController {
       const pickingLeg2 = this.mrxPlan && this.mrxPlan.type === "double" && !this.mrxPlan.leg2;
       const rawOptions = pickingLeg2 ? this._scratchLeg2Options() : legalMovesForMrX(this.state);
       legalMoves = resolvedDestinations(rawOptions);
-      if (this.mrxPlan) {
-        mrxPending =
-          this.mrxPlan.type === "single"
-            ? [this.mrxPlan.to]
-            : [this.mrxPlan.leg1.to, ...(this.mrxPlan.leg2 ? [this.mrxPlan.leg2.to] : [])];
+      if (this.mrxPlan && this.mrxPlan.type === "single") {
+        mrxPending = [this.mrxPlan.to];
+      } else if (this.mrxPlan && this.mrxPlan.type === "double") {
+        mrxPending = [this.mrxPlan.leg1.to, ...(this.mrxPlan.leg2 ? [this.mrxPlan.leg2.to] : [])];
       }
+      // "pass" has no destination to mark.
     }
     this.view.render(this.state, { legalMoves, mrxPending });
   }
@@ -408,8 +440,10 @@ export class GameplayController {
     }
     el("mrx-controls").classList.remove("hidden");
     const t = this.state.mrx.tickets;
+    const pool = this.state.settings.movementPools.mrx;
+    const capText = pool.capEnabled ? `/${pool.cap}` : "";
     el("mrx-tickets").innerHTML =
-      `${ticketSpan(this.board, "taxi")}: ${t.taxi} &nbsp; ${ticketSpan(this.board, "bus")}: ${t.bus} &nbsp; ${ticketSpan(this.board, "underground")}: ${t.underground} &nbsp; Black: ${t.black} &nbsp; Double: ${t.double}`;
+      `Movement: ${this.state.mrx.movement}${capText} &nbsp; Black: ${t.black} &nbsp; Double: ${t.double}`;
     el("mrx-double-toggle").disabled = t.double === 0;
 
     const pickingLeg2 = this.mrxPlan && this.mrxPlan.type === "double" && !this.mrxPlan.leg2;
@@ -450,10 +484,13 @@ export class GameplayController {
         statusHtml = `<div><em>Still deciding…</em></div>`;
       }
 
+      const pool = this.state.settings.movementPools.detective;
+      const capText = pool.capEnabled ? `/${pool.cap}` : "";
+      const sharedNote = this.state.settings.sharedDetectivePool ? " (shared)" : "";
       row.innerHTML = `
         <span class="swatch" style="background:${d.color}"></span>
         <strong>Crew ${d.id.slice(1)}</strong> — at station ${d.position}
-        <div>${ticketSpan(this.board, "taxi")}: ${t.taxi} &nbsp; ${ticketSpan(this.board, "bus")}: ${t.bus} &nbsp; ${ticketSpan(this.board, "underground")}: ${t.underground} &nbsp; Black: ${t.black}</div>
+        <div>Movement: ${d.movement}${capText}${sharedNote} &nbsp; Black: ${t.black}</div>
         ${statusHtml}
         ${ready ? '<div class="locked-badge">Locked in ✓</div>' : ""}
       `;

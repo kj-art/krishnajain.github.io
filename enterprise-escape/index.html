@@ -21,22 +21,32 @@
         <legend>Players</legend>
         <label><input type="radio" name="detectiveCount" value="1" checked /> One crew member</label>
         <label><input type="radio" name="detectiveCount" value="2" /> Two crew members (shared spawn)</label>
+        <label id="setup-shared-pool-label" class="hidden"><input type="checkbox" name="sharedDetectivePool" /> Two crew members share one movement pool (default: each gets their own)</label>
       </fieldset>
 
       <fieldset>
-        <legend>Crew tickets (each crew member)</legend>
-        <label>Corridor <input type="number" name="det_taxi" value="10" min="0" /></label>
-        <label>Tram <input type="number" name="det_bus" value="8" min="0" /></label>
-        <label>Turbolift <input type="number" name="det_underground" value="4" min="0" /></label>
+        <legend>Route costs (same for everyone)</legend>
+        <label>Corridor <input type="number" name="cost_taxi" value="0" min="0" /></label>
+        <label>Tram <input type="number" name="cost_bus" value="2" min="0" /></label>
+        <label>Turbolift <input type="number" name="cost_underground" value="5" min="0" /></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Crew movement (each crew member)</legend>
+        <label>Starting movement <input type="number" name="det_movement_start" value="20" min="0" /></label>
+        <label>Regen per round <input type="number" name="det_movement_regen" value="1" min="0" /></label>
+        <label><input type="checkbox" name="det_movement_cap_enabled" checked /> Cap how high it can build up</label>
+        <label>Cap <input type="number" name="det_movement_cap" value="20" min="0" /></label>
         <label>Black <input type="number" name="det_black" value="0" min="0" /></label>
         <label>Double <input type="number" name="det_double" value="0" min="0" /></label>
       </fieldset>
 
       <fieldset>
-        <legend>Fugitive tickets</legend>
-        <label>Corridor <input type="number" name="mrx_taxi" value="4" min="0" /></label>
-        <label>Tram <input type="number" name="mrx_bus" value="3" min="0" /></label>
-        <label>Turbolift <input type="number" name="mrx_underground" value="3" min="0" /></label>
+        <legend>Fugitive movement</legend>
+        <label>Starting movement <input type="number" name="mrx_movement_start" value="15" min="0" /></label>
+        <label>Regen per round <input type="number" name="mrx_movement_regen" value="1" min="0" /></label>
+        <label><input type="checkbox" name="mrx_movement_cap_enabled" checked /> Cap how high it can build up</label>
+        <label>Cap <input type="number" name="mrx_movement_cap" value="15" min="0" /></label>
         <label>Black <input type="number" name="mrx_black" value="5" min="0" /></label>
         <label>Double <input type="number" name="mrx_double" value="2" min="0" /></label>
       </fieldset>
@@ -92,22 +102,32 @@
           <label><input type="radio" name="detectiveCount" value="1" checked /> One crew member</label>
           <label><input type="radio" name="detectiveCount" value="2" /> Two crew members (shared spawn)</label>
           <label id="shared-turn-label"><input type="checkbox" name="sharedDetectiveTurn" checked /> Crew shares a turn and a device (uncheck for one device per crew member)</label>
+          <label id="lobby-shared-pool-label"><input type="checkbox" name="sharedDetectivePool" /> Two crew members share one movement pool (default: each gets their own)</label>
         </fieldset>
 
         <fieldset>
-          <legend>Crew tickets (each crew member)</legend>
-          <label>Corridor <input type="number" name="det_taxi" value="10" min="0" /></label>
-          <label>Tram <input type="number" name="det_bus" value="8" min="0" /></label>
-          <label>Turbolift <input type="number" name="det_underground" value="4" min="0" /></label>
+          <legend>Route costs (same for everyone)</legend>
+          <label>Corridor <input type="number" name="cost_taxi" value="0" min="0" /></label>
+          <label>Tram <input type="number" name="cost_bus" value="2" min="0" /></label>
+          <label>Turbolift <input type="number" name="cost_underground" value="5" min="0" /></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Crew movement (each crew member)</legend>
+          <label>Starting movement <input type="number" name="det_movement_start" value="20" min="0" /></label>
+          <label>Regen per round <input type="number" name="det_movement_regen" value="1" min="0" /></label>
+          <label><input type="checkbox" name="det_movement_cap_enabled" checked /> Cap how high it can build up</label>
+          <label>Cap <input type="number" name="det_movement_cap" value="20" min="0" /></label>
           <label>Black <input type="number" name="det_black" value="0" min="0" /></label>
           <label>Double <input type="number" name="det_double" value="0" min="0" /></label>
         </fieldset>
 
         <fieldset>
-          <legend>Fugitive tickets</legend>
-          <label>Corridor <input type="number" name="mrx_taxi" value="4" min="0" /></label>
-          <label>Tram <input type="number" name="mrx_bus" value="3" min="0" /></label>
-          <label>Turbolift <input type="number" name="mrx_underground" value="3" min="0" /></label>
+          <legend>Fugitive movement</legend>
+          <label>Starting movement <input type="number" name="mrx_movement_start" value="15" min="0" /></label>
+          <label>Regen per round <input type="number" name="mrx_movement_regen" value="1" min="0" /></label>
+          <label><input type="checkbox" name="mrx_movement_cap_enabled" checked /> Cap how high it can build up</label>
+          <label>Cap <input type="number" name="mrx_movement_cap" value="15" min="0" /></label>
           <label>Black <input type="number" name="mrx_black" value="5" min="0" /></label>
           <label>Double <input type="number" name="mrx_double" value="2" min="0" /></label>
         </fieldset>
@@ -138,12 +158,12 @@
 
       <section id="how-to-play">
         <h3>How to Play</h3>
-        <p><strong>One player is the Fugitive</strong>, everyone else is the <strong>Enterprise Crew</strong>. The Fugitive is sneaking toward an Exit station (the ones with a colored ring around them). The Crew is trying to catch them first.</p>
+        <p>The Fugitive is trying to reach an Exit station without being caught. The Enterprise Crew is trying to catch them first. Either side can be one person, or more than one person sharing a device and deciding together -- that's up to you.</p>
         <p><strong>Each round:</strong> the Fugitive secretly moves first, then the Crew moves. The Crew can't see where the Fugitive actually is -- only what kind of route they used to get there, or nothing at all if the Fugitive used a Black ticket (or didn't move) to stay hidden.</p>
-        <p><strong>Moving:</strong> tap a highlighted station to go there. Different routes cost different amounts to use, and you get some back each round, so you're never completely stuck.</p>
+        <p><strong>Moving:</strong> tap a highlighted station to go there. <span id="htp-movement-summary"></span></p>
         <p><strong>Reaching an Exit</strong> lets the Fugitive choose to end the game right there -- gold is worth the most, bronze the least, but any Exit is a win for the Fugitive. Passing through one doesn't end the game unless the Fugitive says so.</p>
-        <p><strong>Getting caught:</strong> if a Crew member lands exactly on the Fugitive, that's a capture! Go have your showdown at the table, then keep playing -- the Crew member who caught them is stunned for a couple of rounds, but the game isn't over.</p>
-        <p><strong>Every so often</strong>, the Fugitive's real location gets shown to everyone automatically -- ask whoever set up the game which rounds.</p>
+        <p><strong>Getting caught:</strong> if a Crew member lands exactly on the Fugitive, that's a capture! Go have your showdown at the table, then keep playing -- the Crew member who caught them is stunned for <span id="htp-stun"></span>.<span id="htp-max-captures"></span></p>
+        <p id="htp-reveals"></p>
       </section>
     </div>
   </section>
@@ -171,6 +191,7 @@
           <label><input type="checkbox" id="mrx-double-toggle" /> Use a double-move ticket</label>
           <div id="mrx-double-status"></div>
           <div id="mrx-plan-rows"></div>
+          <button id="mrx-pass-btn">Pass (stay put)</button>
           <button id="mrx-clear-btn" class="hidden">Clear selection</button>
           <button id="mrx-end-turn-btn" disabled>End Turn</button>
         </div>

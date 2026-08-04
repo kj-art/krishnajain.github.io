@@ -1,5 +1,5 @@
 import { createGame, isGameOver } from "./engine.js";
-import { settingsFromForm } from "./settings-form.js";
+import { settingsFromForm, wireCapToggle } from "./settings-form.js";
 
 const el = (id) => document.getElementById(id);
 
@@ -19,6 +19,18 @@ export function startHotseat(board, controller) {
   maxCapturesUnlimited.addEventListener("change", () => {
     maxCapturesInput.disabled = maxCapturesUnlimited.checked;
   });
+
+  wireCapToggle(setupForm, "det_movement_cap_enabled", "det_movement_cap");
+  wireCapToggle(setupForm, "mrx_movement_cap_enabled", "mrx_movement_cap");
+
+  const detectiveCountRadios = setupForm.querySelectorAll('[name="detectiveCount"]');
+  const sharedPoolLabel = el("setup-shared-pool-label");
+  const updateSharedPoolVisibility = () => {
+    const twoDetectives = setupForm.querySelector('[name="detectiveCount"]:checked').value === "2";
+    sharedPoolLabel.classList.toggle("hidden", !twoDetectives);
+  };
+  detectiveCountRadios.forEach((r) => r.addEventListener("change", updateSharedPoolVisibility));
+  updateSharedPoolVisibility();
 
   controller.onLocalMove = (state) => afterStateChange(state);
 

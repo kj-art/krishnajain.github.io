@@ -10,6 +10,7 @@ export const TICKET_LABELS = {
   underground: "Turbolift",
   black: "Black",
   double: "Double",
+  pass: "No movement",
 };
 
 export function ticketLabel(kind) {
@@ -18,9 +19,11 @@ export function ticketLabel(kind) {
 
 const FALLBACK_COLOR = "#e2e8f0";
 const BLACK_TICKET_COLOR = "#8b5cf6"; // violet -- distinct from all 3 map colors, still legible as a ring
+const PASS_COLOR = "#94a3b8"; // neutral gray -- "nothing happened," not a route
 
 export function ticketColor(board, kind) {
   if (kind === "black") return BLACK_TICKET_COLOR;
+  if (kind === "pass") return PASS_COLOR;
   const rgb = board.colors && board.colors[kind];
   return rgb ? `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})` : FALLBACK_COLOR;
 }
