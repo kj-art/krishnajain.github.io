@@ -135,6 +135,16 @@
 
       <button id="lobby-start-btn" disabled>Start Game</button>
       <p id="lobby-start-hint"></p>
+
+      <section id="how-to-play">
+        <h3>How to Play</h3>
+        <p><strong>One player is the Fugitive</strong>, everyone else is the <strong>Enterprise Crew</strong>. The Fugitive is sneaking toward an Exit station (the ones with a colored ring around them). The Crew is trying to catch them first.</p>
+        <p><strong>Each round:</strong> the Fugitive secretly moves first, then the Crew moves. The Crew can't see where the Fugitive actually is -- only what kind of route they used to get there, or nothing at all if the Fugitive used a Black ticket (or didn't move) to stay hidden.</p>
+        <p><strong>Moving:</strong> tap a highlighted station to go there. Different routes cost different amounts to use, and you get some back each round, so you're never completely stuck.</p>
+        <p><strong>Reaching an Exit</strong> lets the Fugitive choose to end the game right there -- gold is worth the most, bronze the least, but any Exit is a win for the Fugitive. Passing through one doesn't end the game unless the Fugitive says so.</p>
+        <p><strong>Getting caught:</strong> if a Crew member lands exactly on the Fugitive, that's a capture! Go have your showdown at the table, then keep playing -- the Crew member who caught them is stunned for a couple of rounds, but the game isn't over.</p>
+        <p><strong>Every so often</strong>, the Fugitive's real location gets shown to everyone automatically -- ask whoever set up the game which rounds.</p>
+      </section>
     </div>
   </section>
 
@@ -159,9 +169,8 @@
         <div id="mrx-tickets"></div>
         <div id="mrx-controls">
           <label><input type="checkbox" id="mrx-double-toggle" /> Use a double-move ticket</label>
-          <label><input type="checkbox" id="mrx-black-toggle" /> Use a black ticket</label>
           <div id="mrx-double-status"></div>
-          <div id="mrx-plan-status"></div>
+          <div id="mrx-plan-rows"></div>
           <button id="mrx-clear-btn" class="hidden">Clear selection</button>
           <button id="mrx-end-turn-btn" disabled>End Turn</button>
         </div>
