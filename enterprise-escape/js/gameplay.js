@@ -77,19 +77,29 @@ export class GameplayController {
     this.view = new BoardView(canvas, board);
     this.viewerRoles = new Set();
     this.state = null;
-    this.pendingLeg1 = null;
+    // null | { type: "single", to, ticket } | { type: "double", leg1, leg2: null|{to,ticket} }
+    // Purely local UI state -- never committed to the engine (and never
+    // synced) until the Fugitive explicitly presses End Turn and confirms.
+    this.mrxPlan = null;
 
     canvas.addEventListener("click", (evt) => this._onCanvasClick(evt));
-    el("mrx-double-toggle").addEventListener("change", (evt) => {
-      this.pendingLeg1 = null;
-      el("mrx-double-status").textContent = evt.target.checked ? "Pick your first destination." : "";
+    el("mrx-double-toggle").addEventListener("change", () => {
+      this.mrxPlan = null;
+      this._renderMrxPanel();
       el("crew-picker").classList.add("hidden");
       this._renderBoard();
     });
     el("mrx-black-toggle").addEventListener("change", () => {
-      this.pendingLeg1 = null;
-      el("mrx-double-status").textContent = "";
+      this.mrxPlan = null;
+      this._renderMrxPanel();
+      this._renderBoard();
     });
+    el("mrx-clear-btn").addEventListener("click", () => {
+      this.mrxPlan = null;
+      this._renderMrxPanel();
+      this._renderBoard();
+    });
+    el("mrx-end-turn-btn").addEventListener("click", () => this._commitMrxPlan());
   }
 
   setViewerRoles(roles) {
@@ -99,10 +109,9 @@ export class GameplayController {
 
   setState(state) {
     this.state = state;
-    this.pendingLeg1 = null;
+    this.mrxPlan = null;
     el("mrx-double-toggle").checked = false;
     el("mrx-black-toggle").checked = false;
-    el("mrx-double-status").textContent = "";
     this._renderAll();
     this._maybeAutoCommit();
   }
@@ -131,6 +140,40 @@ export class GameplayController {
     if (commit) this._applyMove((s) => commitToExit(s));
   }
 
+  _mrxPlanComplete() {
+    if (!this.mrxPlan) return false;
+    return this.mrxPlan.type === "single" || (this.mrxPlan.type === "double" && this.mrxPlan.leg2);
+  }
+
+  _mrxPlanDescription() {
+    if (!this.mrxPlan) return "";
+    if (this.mrxPlan.type === "single") {
+      return `Selected: ${this.mrxPlan.to} via ${ticketLabel(this.mrxPlan.ticket)}.`;
+    }
+    const { leg1, leg2 } = this.mrxPlan;
+    if (!leg2) return `Leg 1: ${leg1.to} via ${ticketLabel(leg1.ticket)}. Pick your second destination.`;
+    return `Selected: ${leg1.to} via ${ticketLabel(leg1.ticket)}, then ${leg2.to} via ${ticketLabel(leg2.ticket)}.`;
+  }
+
+  // Nothing actually moves until this fires -- clicking the board only
+  // ever stages mrxPlan. End Turn asks for an explicit confirmation before
+  // the move (and any exit-commit prompt that follows it) actually happens.
+  _commitMrxPlan() {
+    if (!this._mrxPlanComplete()) return;
+    const plan = this.mrxPlan;
+    const description =
+      plan.type === "single"
+        ? `Move to ${plan.to} via ${ticketLabel(plan.ticket)}`
+        : `Move to ${plan.leg1.to} via ${ticketLabel(plan.leg1.ticket)}, then to ${plan.leg2.to} via ${ticketLabel(plan.leg2.ticket)}`;
+    if (!window.confirm(`${description}. End your turn?`)) return;
+    this.mrxPlan = null;
+    if (plan.type === "single") {
+      this._applyMrxMove((s) => moveMrX(s, plan.to, plan.ticket));
+    } else {
+      this._applyMrxMove((s) => doubleMoveMrX(s, [plan.leg1, plan.leg2]));
+    }
+  }
+
   // Fires once every non-stunned detective has locked in -- nobody needs to
   // press a shared "End Turn"; whichever device notices the condition
   // commits, and since it's a pure function of the same synced state, two
@@ -142,11 +185,12 @@ export class GameplayController {
   }
 
   _scratchLeg2Options() {
+    const leg1 = this.mrxPlan.leg1;
     const scratch = {
       ...this.state,
       mrx: {
-        position: this.pendingLeg1.to,
-        tickets: { ...this.state.mrx.tickets, [this.pendingLeg1.ticket]: this.state.mrx.tickets[this.pendingLeg1.ticket] - 1 },
+        position: leg1.to,
+        tickets: { ...this.state.mrx.tickets, [leg1.ticket]: this.state.mrx.tickets[leg1.ticket] - 1 },
       },
     };
     return legalMovesForMrX(scratch);
@@ -167,29 +211,34 @@ export class GameplayController {
     }
   }
 
+  // Clicking the board only ever stages this.mrxPlan -- nothing moves until
+  // End Turn is pressed and confirmed. Picking a different destination is
+  // always computed from MrX's true current position (never chained off a
+  // not-yet-committed selection), so changing your mind is a single direct
+  // click, no undo step first.
   _handleMrxClick(to) {
     const preferBlack = el("mrx-black-toggle").checked;
     if (el("mrx-double-toggle").checked) {
-      if (!this.pendingLeg1) {
+      const needLeg1 = !this.mrxPlan || this.mrxPlan.type !== "double" || this.mrxPlan.leg2;
+      if (needLeg1) {
         const options = legalMovesForMrX(this.state).filter((m) => m.to === to);
         const chosen = pickTicket(options, preferBlack);
         if (!chosen) return;
-        this.pendingLeg1 = chosen;
-        el("mrx-double-status").textContent = `Leg 1: ${ticketLabel(chosen.ticket)} to ${chosen.to}. Pick your second destination.`;
-        this._renderBoard();
+        this.mrxPlan = { type: "double", leg1: chosen, leg2: null };
       } else {
         const options = this._scratchLeg2Options().filter((m) => m.to === to);
         const chosen = pickTicket(options, preferBlack);
         if (!chosen) return;
-        const leg1 = this.pendingLeg1;
-        this._applyMrxMove((s) => doubleMoveMrX(s, [leg1, chosen]));
+        this.mrxPlan = { ...this.mrxPlan, leg2: chosen };
       }
     } else {
       const options = legalMovesForMrX(this.state).filter((m) => m.to === to);
       const chosen = pickTicket(options, preferBlack);
       if (!chosen) return;
-      this._applyMrxMove((s) => moveMrX(s, chosen.to, chosen.ticket));
+      this.mrxPlan = { type: "single", to: chosen.to, ticket: chosen.ticket };
     }
+    this._renderMrxPanel();
+    this._renderBoard();
   }
 
   _handleDetectiveClick(to) {
@@ -223,10 +272,18 @@ export class GameplayController {
 
   _renderBoard() {
     let legalMoves = [];
+    let mrxPending = [];
     if (this.state.phase === "mrx" && this.viewerRoles.has("mrx")) {
-      legalMoves = this.pendingLeg1 ? this._scratchLeg2Options() : legalMovesForMrX(this.state);
+      const pickingLeg2 = this.mrxPlan && this.mrxPlan.type === "double" && !this.mrxPlan.leg2;
+      legalMoves = pickingLeg2 ? this._scratchLeg2Options() : legalMovesForMrX(this.state);
+      if (this.mrxPlan) {
+        mrxPending =
+          this.mrxPlan.type === "single"
+            ? [this.mrxPlan.to]
+            : [this.mrxPlan.leg1.to, ...(this.mrxPlan.leg2 ? [this.mrxPlan.leg2.to] : [])];
+      }
     }
-    this.view.render(this.state, { legalMoves });
+    this.view.render(this.state, { legalMoves, mrxPending });
   }
 
   _renderRoundInfo() {
@@ -277,6 +334,11 @@ export class GameplayController {
       `${ticketSpan(this.board, "taxi")}: ${t.taxi} &nbsp; ${ticketSpan(this.board, "bus")}: ${t.bus} &nbsp; ${ticketSpan(this.board, "underground")}: ${t.underground} &nbsp; Black: ${t.black} &nbsp; Double: ${t.double}`;
     el("mrx-double-toggle").disabled = t.double === 0;
     el("mrx-black-toggle").disabled = t.black === 0;
+
+    el("mrx-double-status").textContent = el("mrx-double-toggle").checked ? this._mrxPlanDescription() : "";
+    el("mrx-plan-status").textContent = !el("mrx-double-toggle").checked ? this._mrxPlanDescription() : "";
+    el("mrx-clear-btn").classList.toggle("hidden", !this.mrxPlan);
+    el("mrx-end-turn-btn").disabled = !this._mrxPlanComplete();
   }
 
   _renderDetectivesPanel() {
@@ -330,7 +392,13 @@ export class GameplayController {
         const lockBtn = document.createElement("button");
         lockBtn.textContent = ready ? "Unlock" : "Lock In";
         lockBtn.onclick = () => {
-          this._applyMove((s) => (ready ? unlockDetective(s, d.id) : lockInDetective(s, d.id)));
+          if (ready) {
+            this._applyMove((s) => unlockDetective(s, d.id));
+            return;
+          }
+          const destDescription = staged ? `moving to ${staged.to}` : "staying put";
+          if (!window.confirm(`Lock in Crew ${d.id.slice(1)}, ${destDescription}? The turn ends once everyone's locked in.`)) return;
+          this._applyMove((s) => lockInDetective(s, d.id));
         };
         row.appendChild(lockBtn);
       }

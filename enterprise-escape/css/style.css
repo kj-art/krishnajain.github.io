@@ -20,7 +20,8 @@ body {
 #setup-screen label, #lobby-screen label { display: block; margin: 0.35rem 0; }
 #setup-screen input[type="number"], #lobby-screen input[type="number"] { width: 5rem; }
 #setup-screen button, #lobby-screen button, #mode-select-screen button,
-#detective-rows button, #new-game-btn, #airlock-continue {
+#detective-rows button, #new-game-btn, #airlock-continue,
+#mrx-end-turn-btn, #mrx-clear-btn {
   background: #38bdf8;
   border: none;
   border-radius: 6px;
@@ -31,7 +32,10 @@ body {
   font-weight: 600;
 }
 #setup-screen button, #lobby-screen > button { margin-top: 0.5rem; }
-#lobby-start-btn:disabled { background: #475569; cursor: not-allowed; }
+#lobby-start-btn:disabled, #mrx-end-turn-btn:disabled { background: #475569; cursor: not-allowed; }
+#mrx-controls { margin-top: 0.5rem; }
+#mrx-controls button { margin-top: 0.5rem; margin-right: 0.5rem; }
+#mrx-plan-status, #mrx-double-status { min-height: 1.2em; margin: 0.35rem 0; font-size: 0.9rem; }
 
 #mode-select-screen {
   display: flex;

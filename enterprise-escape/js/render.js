@@ -102,6 +102,11 @@ export class BoardView {
     return false;
   }
 
+  // Layering (bottom to top): station circles, then connection paths drawn
+  // OVER them, then everything else, then station number labels drawn last
+  // with a white halo -- with 53 stations packed densely, paths crossing
+  // through circles and numbers always staying legible on top of everything
+  // reads far better than circles/edges/text fighting for the same layer.
   render(state, opts = {}) {
     this._lastState = state;
     this._computeTransform();
@@ -118,11 +123,13 @@ export class BoardView {
       ctx.globalAlpha = 1;
     }
 
+    this._drawStationCircles();
     this._drawEdges();
     this._drawHighlights(state, opts);
-    this._drawStations(state);
     this._drawGhosts(state);
     this._drawTokens(state);
+    this._drawMrxPending(opts.mrxPending);
+    this._drawStationLabels();
   }
 
   _drawEdges() {
@@ -178,7 +185,7 @@ export class BoardView {
     ctx.stroke();
   }
 
-  _drawStations(state) {
+  _drawStationCircles() {
     const { ctx, board } = this;
     for (const [key, s] of Object.entries(board.stations)) {
       const [x, y] = this.boardToCanvas(s.x, s.y);
@@ -198,11 +205,21 @@ export class BoardView {
         ctx.lineWidth = 2;
         ctx.stroke();
       }
+    }
+  }
 
+  _drawStationLabels() {
+    const { ctx, board } = this;
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.lineJoin = "round";
+    for (const [key, s] of Object.entries(board.stations)) {
+      const [x, y] = this.boardToCanvas(s.x, s.y);
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 3;
+      ctx.strokeText(key, x, y);
       ctx.fillStyle = "#1e293b";
-      ctx.font = "10px sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
       ctx.fillText(key, x, y);
     }
   }
@@ -222,6 +239,26 @@ export class BoardView {
       ctx.fill();
       ctx.globalAlpha = 1;
     }
+  }
+
+  // Only ever populated on MrX's own device (see gameplay.js) -- a dashed
+  // ring at whatever destination(s) are staged but not yet committed via
+  // End Turn.
+  _drawMrxPending(pendingStations) {
+    if (!pendingStations || pendingStations.length === 0) return;
+    const { ctx } = this;
+    ctx.setLineDash([4, 3]);
+    for (const stationKey of pendingStations) {
+      const s = this.board.stations[String(stationKey)];
+      if (!s) continue;
+      const [x, y] = this.boardToCanvas(s.x, s.y);
+      ctx.beginPath();
+      ctx.arc(x, y, STATION_RADIUS + 6, 0, Math.PI * 2);
+      ctx.strokeStyle = MRX_COLOR;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
   }
 
   _drawTokens(state) {

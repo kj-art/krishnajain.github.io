@@ -31,9 +31,11 @@ export function initLobby(board, controller) {
     el("lobby-join-box").classList.add("hidden");
     el("lobby-room-box").classList.remove("hidden");
     el("lobby-room-code").textContent = code;
-    // Only the host edits the ruleset; everyone else just picks a role
-    // against whatever the host has configured.
+    // Only the host edits the ruleset and starts the game; everyone else
+    // just picks a role against whatever the host has configured.
     settingsForm.classList.toggle("hidden", !isHost);
+    el("lobby-start-btn").classList.toggle("hidden", !isHost);
+    el("lobby-start-hint").classList.toggle("hidden", !isHost);
     unsubscribe = sync.subscribeRoom(code, onRoomUpdate);
   }
 
@@ -139,10 +141,11 @@ export function initLobby(board, controller) {
     return roles;
   }
 
-  // Everyone gets a Start Game button; it's just gated on the lobby
-  // actually being in a startable state -- every connected player has
-  // picked a role, no role is double-claimed, and every role the current
-  // settings need is covered.
+  // Only the host has a Start Game button at all; it's gated purely on the
+  // lobby being in a startable state -- every connected player has picked
+  // a role, no role is double-claimed, and every role the current settings
+  // need is covered. The host needs no one else's permission once that's
+  // true.
   function validateRoomForStart(players, settings) {
     const entries = Object.entries(players);
     if (entries.length === 0) return "No one is in the room yet.";
