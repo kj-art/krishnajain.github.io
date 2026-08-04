@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Enterprise Escape</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <section id="mode-select-screen" class="screen">
+    <h1>Enterprise Escape</h1>
+    <button id="mode-hotseat-btn">Hotseat (pass one device)</button>
+    <button id="mode-networked-btn">Networked (laptop + iPad)</button>
+  </section>
+
+  <section id="setup-screen" class="screen hidden">
+    <h1>Enterprise Escape — Setup</h1>
+    <form id="setup-form">
+      <fieldset>
+        <legend>Players</legend>
+        <label><input type="radio" name="detectiveCount" value="1" checked /> One crew member</label>
+        <label><input type="radio" name="detectiveCount" value="2" /> Two crew members (shared spawn)</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Crew tickets (each crew member)</legend>
+        <label>Taxi <input type="number" name="det_taxi" value="10" min="0" /></label>
+        <label>Bus <input type="number" name="det_bus" value="8" min="0" /></label>
+        <label>Underground <input type="number" name="det_underground" value="4" min="0" /></label>
+        <label>Black <input type="number" name="det_black" value="0" min="0" /></label>
+        <label>Double <input type="number" name="det_double" value="0" min="0" /></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Fugitive tickets</legend>
+        <label>Taxi <input type="number" name="mrx_taxi" value="4" min="0" /></label>
+        <label>Bus <input type="number" name="mrx_bus" value="3" min="0" /></label>
+        <label>Underground <input type="number" name="mrx_underground" value="3" min="0" /></label>
+        <label>Black <input type="number" name="mrx_black" value="5" min="0" /></label>
+        <label>Double <input type="number" name="mrx_double" value="2" min="0" /></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Reveal &amp; capture rules</legend>
+        <label>Reveal rounds (comma-separated)
+          <input type="text" name="revealRounds" value="3,8,13,18,24" />
+        </label>
+        <label>Stun duration (rounds)
+          <input type="number" name="stunDuration" value="2" min="0" />
+        </label>
+        <label>When a crew member captures the Fugitive
+          <select name="stunnedDetectiveBehavior">
+            <option value="stay" selected>Stay at the capture station</option>
+            <option value="respawn">Return to spawn</option>
+          </select>
+        </label>
+        <label><input type="checkbox" name="maxCapturesUnlimited" checked /> Unlimited captures (game only ends via exit)</label>
+        <label>Max captures before game over
+          <input type="number" name="maxCaptures" value="3" min="1" disabled />
+        </label>
+      </fieldset>
+
+      <button type="submit">Start Game</button>
+    </form>
+  </section>
+
+  <section id="lobby-screen" class="screen hidden">
+    <h1>Networked Game</h1>
+    <div id="lobby-join-box">
+      <button id="lobby-create-btn">Create Room</button>
+      <p>— or —</p>
+      <input id="lobby-join-code" placeholder="ROOM CODE" maxlength="4" />
+      <button id="lobby-join-btn">Join Room</button>
+      <p id="lobby-join-error"></p>
+    </div>
+    <div id="lobby-room-box" class="hidden">
+      <h2>Room code: <span id="lobby-room-code"></span></h2>
+      <div id="lobby-players"></div>
+
+      <fieldset>
+        <legend>Your role(s)</legend>
+        <label><input type="checkbox" id="role-mrx" /> Fugitive</label>
+        <label><input type="checkbox" id="role-d1" /> Crew 1</label>
+        <label><input type="checkbox" id="role-d2" /> Crew 2</label>
+      </fieldset>
+
+      <form id="lobby-settings-form">
+        <fieldset>
+          <legend>Players</legend>
+          <label><input type="radio" name="detectiveCount" value="1" checked /> One crew member</label>
+          <label><input type="radio" name="detectiveCount" value="2" /> Two crew members (shared spawn)</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Crew tickets (each crew member)</legend>
+          <label>Taxi <input type="number" name="det_taxi" value="10" min="0" /></label>
+          <label>Bus <input type="number" name="det_bus" value="8" min="0" /></label>
+          <label>Underground <input type="number" name="det_underground" value="4" min="0" /></label>
+          <label>Black <input type="number" name="det_black" value="0" min="0" /></label>
+          <label>Double <input type="number" name="det_double" value="0" min="0" /></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Fugitive tickets</legend>
+          <label>Taxi <input type="number" name="mrx_taxi" value="4" min="0" /></label>
+          <label>Bus <input type="number" name="mrx_bus" value="3" min="0" /></label>
+          <label>Underground <input type="number" name="mrx_underground" value="3" min="0" /></label>
+          <label>Black <input type="number" name="mrx_black" value="5" min="0" /></label>
+          <label>Double <input type="number" name="mrx_double" value="2" min="0" /></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Reveal &amp; capture rules</legend>
+          <label>Reveal rounds (comma-separated)
+            <input type="text" name="revealRounds" value="3,8,13,18,24" />
+          </label>
+          <label>Stun duration (rounds)
+            <input type="number" name="stunDuration" value="2" min="0" />
+          </label>
+          <label>When a crew member captures the Fugitive
+            <select name="stunnedDetectiveBehavior">
+              <option value="stay" selected>Stay at the capture station</option>
+              <option value="respawn">Return to spawn</option>
+            </select>
+          </label>
+          <label><input type="checkbox" name="maxCapturesUnlimited" checked /> Unlimited captures (game only ends via exit)</label>
+          <label>Max captures before game over
+            <input type="number" name="maxCaptures" value="3" min="1" disabled />
+          </label>
+        </fieldset>
+      </form>
+
+      <button id="lobby-start-btn" disabled>Start Game</button>
+    </div>
+  </section>
+
+  <section id="airlock-screen" class="screen hidden">
+    <div class="airlock-box">
+      <h2 id="airlock-title">Pass the device</h2>
+      <p id="airlock-message"></p>
+      <button id="airlock-continue">Continue</button>
+    </div>
+  </section>
+
+  <section id="game-screen" class="screen hidden">
+    <div id="board-wrap">
+      <canvas id="board-canvas" width="1100" height="620"></canvas>
+    </div>
+    <aside id="side-panel">
+      <div id="round-info"></div>
+      <div id="capture-banner" class="hidden"></div>
+      <div id="mrx-panel" class="hidden">
+        <h3>Fugitive's turn</h3>
+        <div id="mrx-tickets"></div>
+        <label><input type="checkbox" id="mrx-double-toggle" /> Use a double-move ticket</label>
+        <div id="mrx-double-status"></div>
+        <div id="ticket-chooser" class="hidden"></div>
+      </div>
+      <div id="detectives-panel" class="hidden">
+        <h3>Enterprise Crew's turn</h3>
+        <div id="detective-rows"></div>
+        <div id="ticket-chooser-det" class="hidden"></div>
+        <button id="end-turn-btn">End Turn</button>
+      </div>
+    </aside>
+  </section>
+
+  <section id="end-screen" class="screen hidden">
+    <div class="end-box">
+      <h1 id="end-title"></h1>
+      <p id="end-detail"></p>
+      <button id="new-game-btn">New Game</button>
+    </div>
+  </section>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
