@@ -1,4 +1,5 @@
 import { getReachableSets } from "./engine.js";
+import { ticketColor } from "./ticket-theme.js";
 
 const STATION_RADIUS = 14;
 const HIT_RADIUS = 20;
@@ -155,9 +156,13 @@ export class BoardView {
   _drawHighlights(state, opts) {
     const { ctx } = this;
     if (state.phase === "mrx" && this._viewerRoles.has("mrx")) {
-      // legalMoves passed in via opts to avoid importing legalMovesForMrX here
+      // legalMoves passed in via opts to avoid importing legalMovesForMrX here.
+      // Already deduped to one entry per destination (see gameplay.js), ring
+      // colored by whichever ticket that destination would actually cost --
+      // this is the only indication of cost before you click, so it has to
+      // be accurate to what pickTicket will actually choose.
       for (const m of opts.legalMoves || []) {
-        this._ringStation(m.to, "#38bdf8", 4);
+        this._ringStation(m.to, ticketColor(this.board, m.ticket), 4);
       }
     } else if (state.phase === "detectives") {
       const sets = getReachableSets(state);

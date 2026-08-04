@@ -17,7 +17,7 @@ export function ticketLabel(kind) {
 }
 
 const FALLBACK_COLOR = "#e2e8f0";
-const BLACK_TICKET_COLOR = "#e2e8f0";
+const BLACK_TICKET_COLOR = "#8b5cf6"; // violet -- distinct from all 3 map colors, still legible as a ring
 
 export function ticketColor(board, kind) {
   if (kind === "black") return BLACK_TICKET_COLOR;

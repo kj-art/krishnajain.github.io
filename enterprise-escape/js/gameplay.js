@@ -48,6 +48,23 @@ function pickTicket(options, preferBlack) {
   return options[0] || null;
 }
 
+// One highlight ring per destination, colored by whichever ticket
+// pickTicket would actually spend to get there -- so the ring itself is
+// the answer to "what will this cost me," visible before you ever click.
+function resolvedDestinations(options, preferBlack) {
+  const byDestination = new Map();
+  for (const opt of options) {
+    if (!byDestination.has(opt.to)) byDestination.set(opt.to, []);
+    byDestination.get(opt.to).push(opt);
+  }
+  const result = [];
+  for (const [to, opts] of byDestination) {
+    const chosen = pickTicket(opts, preferBlack);
+    if (chosen) result.push({ to, ticket: chosen.ticket });
+  }
+  return result;
+}
+
 function showCrewPicker(container, detectives, onChosen) {
   container.innerHTML = "";
   container.classList.remove("hidden");
@@ -274,8 +291,10 @@ export class GameplayController {
     let legalMoves = [];
     let mrxPending = [];
     if (this.state.phase === "mrx" && this.viewerRoles.has("mrx")) {
+      const preferBlack = el("mrx-black-toggle").checked;
       const pickingLeg2 = this.mrxPlan && this.mrxPlan.type === "double" && !this.mrxPlan.leg2;
-      legalMoves = pickingLeg2 ? this._scratchLeg2Options() : legalMovesForMrX(this.state);
+      const rawOptions = pickingLeg2 ? this._scratchLeg2Options() : legalMovesForMrX(this.state);
+      legalMoves = resolvedDestinations(rawOptions, preferBlack);
       if (this.mrxPlan) {
         mrxPending =
           this.mrxPlan.type === "single"
