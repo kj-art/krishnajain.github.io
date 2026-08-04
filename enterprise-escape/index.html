@@ -81,8 +81,9 @@
       <fieldset>
         <legend>Your role(s)</legend>
         <label><input type="checkbox" id="role-mrx" /> Fugitive</label>
-        <label><input type="checkbox" id="role-d1" /> Crew 1</label>
-        <label><input type="checkbox" id="role-d2" /> Crew 2</label>
+        <label id="role-crew-shared-label"><input type="checkbox" id="role-crew-shared" /> Enterprise Crew (both)</label>
+        <label id="role-d1-label"><input type="checkbox" id="role-d1" /> Crew 1</label>
+        <label id="role-d2-label"><input type="checkbox" id="role-d2" /> Crew 2</label>
       </fieldset>
 
       <form id="lobby-settings-form">
@@ -90,6 +91,7 @@
           <legend>Players</legend>
           <label><input type="radio" name="detectiveCount" value="1" checked /> One crew member</label>
           <label><input type="radio" name="detectiveCount" value="2" /> Two crew members (shared spawn)</label>
+          <label id="shared-turn-label"><input type="checkbox" name="sharedDetectiveTurn" checked /> Crew shares a turn and a device (uncheck for one device per crew member)</label>
         </fieldset>
 
         <fieldset>

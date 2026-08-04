@@ -76,17 +76,32 @@ export function initLobby(board, controller) {
   function renderMyRoleCheckboxes(players) {
     const mine = (players[sync.clientId] && players[sync.clientId].roles) || [];
     el("role-mrx").checked = mine.includes("mrx");
+
+    const settings = settingsFromForm(settingsForm);
+    const twoDetectives = settings.detectiveCount === 2;
+    const useSharedUI = twoDetectives && settings.sharedDetectiveTurn;
+
+    el("shared-turn-label").classList.toggle("hidden", !twoDetectives);
+    el("role-crew-shared-label").classList.toggle("hidden", !useSharedUI);
+    el("role-d1-label").classList.toggle("hidden", useSharedUI);
+    el("role-d2-label").classList.toggle("hidden", !twoDetectives || useSharedUI);
+
+    el("role-crew-shared").checked = mine.includes("d1") && mine.includes("d2");
     el("role-d1").checked = mine.includes("d1");
     el("role-d2").checked = mine.includes("d2");
-    const twoDetectives = settingsFromForm(settingsForm).detectiveCount === 2;
-    el("role-d2").parentElement.classList.toggle("hidden", !twoDetectives);
   }
 
   function currentMyRoles() {
     const roles = [];
     if (el("role-mrx").checked) roles.push("mrx");
-    if (el("role-d1").checked) roles.push("d1");
-    if (el("role-d2").checked) roles.push("d2");
+    const settings = settingsFromForm(settingsForm);
+    const useSharedUI = settings.detectiveCount === 2 && settings.sharedDetectiveTurn;
+    if (useSharedUI) {
+      if (el("role-crew-shared").checked) roles.push("d1", "d2");
+    } else {
+      if (el("role-d1").checked) roles.push("d1");
+      if (el("role-d2").checked) roles.push("d2");
+    }
     return roles;
   }
 
@@ -97,7 +112,7 @@ export function initLobby(board, controller) {
     el("lobby-start-btn").disabled = !(hasMrx && hasDetective);
   }
 
-  for (const id of ["role-mrx", "role-d1", "role-d2"]) {
+  for (const id of ["role-mrx", "role-crew-shared", "role-d1", "role-d2"]) {
     el(id).addEventListener("change", () => {
       if (!code) return;
       sync.setMyRoles(code, currentMyRoles());

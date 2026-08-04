@@ -2,7 +2,7 @@ import { getReachableSets } from "./engine.js";
 
 const STATION_RADIUS = 14;
 const HIT_RADIUS = 20;
-const SHARED_HIGHLIGHT_COLOR = "#a855f7";
+const SHARED_HIGHLIGHT_COLOR = "#22d3ee";
 const MRX_COLOR = "#111827";
 const GHOST_ALPHA = 0.35;
 

@@ -2,8 +2,14 @@ export function settingsFromForm(form) {
   const fd = new FormData(form);
   const num = (name) => parseInt(fd.get(name), 10) || 0;
   const unlimited = fd.get("maxCapturesUnlimited") === "on";
+  // Only the networked lobby form has this field; hotseat is always
+  // single-device, so it's meaningless there and defaults to the engine's
+  // default rather than being coerced to false by an absent checkbox.
+  const sharedField = form.querySelector('[name="sharedDetectiveTurn"]');
+  const sharedDetectiveTurn = sharedField ? sharedField.checked : true;
   return {
     detectiveCount: parseInt(fd.get("detectiveCount"), 10),
+    sharedDetectiveTurn,
     tickets: {
       detective: {
         taxi: num("det_taxi"),
@@ -35,6 +41,8 @@ export function populateForm(form, settings) {
 
   const countField = form.querySelector(`[name="detectiveCount"][value="${settings.detectiveCount}"]`);
   if (countField) countField.checked = true;
+  const sharedField = form.querySelector('[name="sharedDetectiveTurn"]');
+  if (sharedField) sharedField.checked = settings.sharedDetectiveTurn;
   set("det_taxi", settings.tickets.detective.taxi);
   set("det_bus", settings.tickets.detective.bus);
   set("det_underground", settings.tickets.detective.underground);

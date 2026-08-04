@@ -64,6 +64,7 @@ export class GameplayController {
       if (!this.state || this.state.phase !== "detectives") return;
       const controlsADetective = this.state.detectives.some((d) => this.viewerRoles.has(d.id));
       if (!controlsADetective) return;
+      if (!window.confirm("Lock in this turn? You won't be able to change your moves after this.")) return;
       this._applyMove((s) => commitDetectiveTurn(s));
     });
     el("mrx-double-toggle").addEventListener("change", (evt) => {
