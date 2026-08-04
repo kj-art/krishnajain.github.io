@@ -167,6 +167,19 @@ export class BoardView {
       }
     } else if (state.phase === "detectives") {
       const sets = getReachableSets(state);
+      // A device with one active crew member (see gameplay.js's per-panel
+      // "control this crew member" click) only ever needs that one
+      // detective's own options on the board -- showing everyone's at once
+      // is what a board click was previously ambiguous about.
+      if (opts.activeDetectiveId) {
+        const d = state.detectives.find((x) => x.id === opts.activeDetectiveId);
+        if (d) {
+          for (const station of sets[d.id] || []) {
+            this._ringStation(station, d.color, 4);
+          }
+        }
+        return;
+      }
       for (const d of state.detectives) {
         for (const station of sets[d.id] || []) {
           if (sets.shared.has(station)) continue;

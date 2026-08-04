@@ -132,13 +132,7 @@ body {
   font-weight: 600;
 }
 
-.detective-row {
-  border: 1px solid #334155;
-  border-radius: 8px;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-.detective-row .swatch {
+.swatch {
   display: inline-block;
   width: 0.9rem;
   height: 0.9rem;
@@ -146,12 +140,22 @@ body {
   margin-right: 0.4rem;
   vertical-align: middle;
 }
+
+.detective-row {
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+.detective-row button { cursor: default; }
 .detective-row button {
   margin-top: 0.35rem;
   margin-right: 0.4rem;
 }
-.detective-row.stunned { opacity: 0.55; }
+.detective-row.stunned { opacity: 0.55; cursor: default; }
 .detective-row.ready { border-color: #4ade80; }
+.detective-row.active { border-width: 2px; padding: calc(0.5rem - 1px); }
 .locked-badge { color: #4ade80; font-weight: 600; margin-top: 0.25rem; }
 
 #transport-log {
@@ -161,18 +165,6 @@ body {
 }
 
 #mrx-controls label { display: block; margin: 0.35rem 0; }
-
-.ticket-choice-btn {
-  display: block;
-  width: 100%;
-  margin: 0.25rem 0;
-  padding: 0.4rem;
-  border-radius: 6px;
-  border: 1px solid #475569;
-  background: #334155;
-  color: #e2e8f0;
-  cursor: pointer;
-}
 
 #end-screen {
   display: flex;

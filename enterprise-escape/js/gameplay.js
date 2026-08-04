@@ -65,23 +65,6 @@ function resolvedDestinations(options) {
   return result;
 }
 
-function showCrewPicker(container, detectives, onChosen) {
-  container.innerHTML = "";
-  container.classList.remove("hidden");
-  for (const d of detectives) {
-    const btn = document.createElement("button");
-    btn.className = "ticket-choice-btn";
-    btn.style.borderLeft = `6px solid ${d.color}`;
-    btn.textContent = `Crew ${d.id.slice(1)}`;
-    btn.onclick = () => {
-      container.classList.add("hidden");
-      container.innerHTML = "";
-      onChosen(d);
-    };
-    container.appendChild(btn);
-  }
-}
-
 function isStunned(d, round) {
   return d.stunnedUntilRound != null && round < d.stunnedUntilRound;
 }
@@ -100,12 +83,17 @@ export class GameplayController {
     // Purely local UI state -- never committed to the engine (and never
     // synced) until the Fugitive explicitly presses End Turn and confirms.
     this.mrxPlan = null;
+    // Which of this device's own detectives the board is currently wired to
+    // -- clicking a station stages a move for THIS one. Purely local UI
+    // state, re-derived (not reset) on every render so it survives staging/
+    // locking actions and only changes when the player taps another crew
+    // member's panel or the previous active one stops being controllable.
+    this.activeDetectiveId = null;
 
     canvas.addEventListener("click", (evt) => this._onCanvasClick(evt));
     el("mrx-double-toggle").addEventListener("change", () => {
       this.mrxPlan = null;
       this._renderMrxPanel();
-      el("crew-picker").classList.add("hidden");
       this._renderBoard();
     });
     el("mrx-pass-btn").addEventListener("click", () => {
@@ -350,17 +338,26 @@ export class GameplayController {
     this._renderBoard();
   }
 
-  _handleDetectiveClick(to) {
-    const myDetectives = this.state.detectives.filter(
+  // Which of this device's detectives the board is "wired to" for the next
+  // click -- clicking a crew panel (outside its own buttons) switches this,
+  // so on a shared device with two crew members, only one at a time is ever
+  // ambiguous about whose move a board click means.
+  _ensureActiveDetective() {
+    const controllable = this.state.detectives.filter(
       (d) => this.viewerRoles.has(d.id) && !isStunned(d, this.state.round)
     );
-    const candidates = myDetectives.filter((d) => legalMovesForDetective(this.state, d.id).some((m) => m.to === to));
-    if (candidates.length === 0) return;
-    if (candidates.length === 1) {
-      this._stageDetectiveTo(candidates[0], to);
-    } else {
-      showCrewPicker(el("crew-picker"), candidates, (chosen) => this._stageDetectiveTo(chosen, to));
+    if (!controllable.some((d) => d.id === this.activeDetectiveId)) {
+      this.activeDetectiveId = controllable[0] ? controllable[0].id : null;
     }
+  }
+
+  _handleDetectiveClick(to) {
+    if (!this.activeDetectiveId) return;
+    const detective = this.state.detectives.find((d) => d.id === this.activeDetectiveId);
+    if (!detective) return;
+    const legal = legalMovesForDetective(this.state, detective.id).some((m) => m.to === to);
+    if (!legal) return;
+    this._stageDetectiveTo(detective, to);
   }
 
   _stageDetectiveTo(detective, to) {
@@ -371,6 +368,7 @@ export class GameplayController {
   }
 
   _renderAll() {
+    if (this.state.phase === "detectives") this._ensureActiveDetective();
     this._renderRoundInfo();
     this._renderTransportLog();
     this._renderCaptureBanner();
@@ -393,7 +391,8 @@ export class GameplayController {
       }
       // "pass" has no destination to mark.
     }
-    this.view.render(this.state, { legalMoves, mrxPending });
+    const activeDetectiveId = this.state.phase === "detectives" ? this.activeDetectiveId : null;
+    this.view.render(this.state, { legalMoves, mrxPending, activeDetectiveId });
   }
 
   _renderRoundInfo() {
@@ -440,10 +439,18 @@ export class GameplayController {
     }
     el("mrx-controls").classList.remove("hidden");
     const t = this.state.mrx.tickets;
+    const startingTickets = this.state.settings.tickets.mrx;
     const pool = this.state.settings.movementPools.mrx;
     const capText = pool.capEnabled ? `/${pool.cap}` : "";
-    el("mrx-tickets").innerHTML =
-      `Movement: ${this.state.mrx.movement}${capText} &nbsp; Black: ${t.black} &nbsp; Double: ${t.double}`;
+    const parts = [`Movement: ${this.state.mrx.movement}${capText}`];
+    if (startingTickets.black > 0) parts.push(`Black: ${t.black}`);
+    if (startingTickets.double > 0) parts.push(`Double: ${t.double}`);
+    el("mrx-tickets").innerHTML = parts.join(" &nbsp; ");
+    // A double-move ticket count of 0 in settings means the whole feature is
+    // off for this game -- hide the toggle rather than just disabling it, so
+    // it doesn't read as a broken/greyed-out control.
+    const hasDouble = startingTickets.double > 0;
+    el("mrx-double-wrap").classList.toggle("hidden", !hasDouble);
     el("mrx-double-toggle").disabled = t.double === 0;
 
     const pickingLeg2 = this.mrxPlan && this.mrxPlan.type === "double" && !this.mrxPlan.leg2;
@@ -460,6 +467,7 @@ export class GameplayController {
 
     const container = el("detective-rows");
     container.innerHTML = "";
+    const multipleControllable = this.state.detectives.filter((d) => this.viewerRoles.has(d.id)).length > 1;
     for (const d of this.state.detectives) {
       const row = document.createElement("div");
       row.className = "detective-row";
@@ -469,6 +477,11 @@ export class GameplayController {
       const staged = this.state.staging[d.id];
       const ready = this.state.readyDetectives.includes(d.id);
       if (ready) row.classList.add("ready");
+      const active = controllable && !stunned && d.id === this.activeDetectiveId;
+      if (active) {
+        row.classList.add("active");
+        row.style.borderColor = d.color;
+      }
 
       const t = d.tickets;
       let statusHtml;
@@ -478,8 +491,10 @@ export class GameplayController {
         statusHtml = `<div>Moving to ${staged.to} via ${ticketSpan(this.board, staged.ticket)}</div>`;
       } else if (ready) {
         statusHtml = `<div>Staying put</div>`;
-      } else if (controllable) {
+      } else if (controllable && active) {
         statusHtml = `<div>Tap a highlighted station to move…</div>`;
+      } else if (controllable) {
+        statusHtml = `<div>Tap here to control Crew ${d.id.slice(1)}</div>`;
       } else {
         statusHtml = `<div><em>Still deciding…</em></div>`;
       }
@@ -487,15 +502,27 @@ export class GameplayController {
       const pool = this.state.settings.movementPools.detective;
       const capText = pool.capEnabled ? `/${pool.cap}` : "";
       const sharedNote = this.state.settings.sharedDetectivePool ? " (shared)" : "";
+      const blackHtml = this.state.settings.tickets.detective.black > 0 ? ` &nbsp; Black: ${t.black}` : "";
       row.innerHTML = `
         <span class="swatch" style="background:${d.color}"></span>
         <strong>Crew ${d.id.slice(1)}</strong> — at station ${d.position}
-        <div>Movement: ${d.movement}${capText}${sharedNote} &nbsp; Black: ${t.black}</div>
+        <div>Movement: ${d.movement}${capText}${sharedNote}${blackHtml}</div>
         ${statusHtml}
         ${ready ? '<div class="locked-badge">Locked in ✓</div>' : ""}
       `;
 
       if (!stunned && controllable) {
+        // The row itself is the "control this crew member" button -- only
+        // suppressed for a click that actually landed on one of the buttons
+        // below, which handle their own action instead.
+        if (multipleControllable) {
+          row.addEventListener("click", (evt) => {
+            if (evt.target.closest("button")) return;
+            this.activeDetectiveId = d.id;
+            this._renderDetectivesPanel();
+            this._renderBoard();
+          });
+        }
         if (staged) {
           const clearBtn = document.createElement("button");
           clearBtn.textContent = "Stay put instead";

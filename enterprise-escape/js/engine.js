@@ -24,20 +24,26 @@ export const DEFAULT_SETTINGS = {
   // still costs the same movement as whichever route it stands in for.
   tickets: {
     detective: { black: 0, double: 0 },
-    mrx: { black: 5, double: 2 },
+    // MrX's double-move defaults to 0, not the classic 2 -- on this trimmed
+    // 53-station board, exit interceptability margins are already 0-1 hops
+    // in the tightest cases, and a single double-move (skipping a whole
+    // round of detective movement) is enough to flip a barely-interceptable
+    // exit into an uncatchable one. Black tickets don't touch round-count,
+    // so they're unaffected and keep the classic default.
+    mrx: { black: 5, double: 0 },
   },
   revealRounds: [3, 8, 13, 18, 24],
   stunDuration: 2,
   stunnedDetectiveBehavior: "stay", // "stay" | "respawn"
   maxCaptures: Infinity,
-  detectiveCount: 1, // 1 or 2, sharing the board's single detective spawn
+  detectiveCount: 2, // 1 or 2, sharing the board's single detective spawn
   // Purely a networked-lobby UI concern (which role checkboxes are shown) --
   // the engine's turn model is identical either way, since it was always
   // "both detectives stage moves, then one shared End Turn commits them."
   sharedDetectiveTurn: true,
 };
 
-const DETECTIVE_COLORS = ["#a855f7", "#c2703d"]; // purple, fox orange
+export const DETECTIVE_COLORS = ["#a855f7", "#c2703d"]; // purple, fox orange
 
 export function parseRevealRounds(str) {
   if (Array.isArray(str)) return str.slice().sort((a, b) => a - b);

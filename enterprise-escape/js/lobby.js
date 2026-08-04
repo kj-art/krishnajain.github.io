@@ -1,4 +1,4 @@
-import { createGame, parseRevealRounds } from "./engine.js";
+import { createGame, parseRevealRounds, DETECTIVE_COLORS } from "./engine.js";
 import { settingsFromForm, populateForm, wireCapToggle } from "./settings-form.js";
 import * as sync from "./sync.js";
 import { startNetworkedGame } from "./networked.js";
@@ -21,6 +21,11 @@ export function initLobby(board, controller) {
   });
   wireCapToggle(settingsForm, "det_movement_cap_enabled", "det_movement_cap");
   wireCapToggle(settingsForm, "mrx_movement_cap_enabled", "mrx_movement_cap");
+
+  // Same colors the in-game crew swatches/tokens use, so picking a role here
+  // already tells you which color you'll be playing as.
+  el("role-d1-swatch").style.background = DETECTIVE_COLORS[0];
+  el("role-d2-swatch").style.background = DETECTIVE_COLORS[1];
 
   let code = null;
   let isHost = false;
@@ -81,6 +86,13 @@ export function initLobby(board, controller) {
     el("htp-movement-summary").textContent =
       `Corridor costs ${costs.taxi}, Tram costs ${costs.bus}, Turbolift costs ${costs.underground} -- ` +
       `the Crew gets ${detRegen} back each round, the Fugitive gets ${mrxRegen} back.`;
+
+    const mrxDouble = settings.tickets.mrx.double;
+    el("htp-double-move").classList.toggle("hidden", !(mrxDouble > 0));
+    if (mrxDouble > 0) {
+      el("htp-double-move").textContent =
+        `The Fugitive also has ${mrxDouble} double-move ticket${mrxDouble === 1 ? "" : "s"}, letting them take two moves in a single turn.`;
+    }
 
     const stun = settings.stunDuration;
     el("htp-stun").textContent = `${stun} round${stun === 1 ? "" : "s"}`;
