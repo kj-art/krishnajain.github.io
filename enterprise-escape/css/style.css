@@ -93,6 +93,14 @@ body {
   #side-panel { width: 100%; }
 }
 
+.role-status {
+  color: #94a3b8;
+  font-size: 0.85em;
+  margin-left: 0.35rem;
+}
+#role-fieldset label:has(input:disabled) { opacity: 0.5; }
+#lobby-start-hint { color: #f87171; min-height: 1.2em; }
+
 #capture-banner {
   background: #f97316;
   color: #1e293b;

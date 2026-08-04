@@ -78,12 +78,12 @@
       <h2>Room code: <span id="lobby-room-code"></span></h2>
       <div id="lobby-players"></div>
 
-      <fieldset>
+      <fieldset id="role-fieldset">
         <legend>Your role(s)</legend>
-        <label><input type="checkbox" id="role-mrx" /> Fugitive</label>
-        <label id="role-crew-shared-label"><input type="checkbox" id="role-crew-shared" /> Enterprise Crew (both)</label>
-        <label id="role-d1-label"><input type="checkbox" id="role-d1" /> Crew 1</label>
-        <label id="role-d2-label"><input type="checkbox" id="role-d2" /> Crew 2</label>
+        <label id="role-mrx-label"><input type="checkbox" id="role-mrx" /> Fugitive<span class="role-status" id="role-mrx-status"></span></label>
+        <label id="role-crew-shared-label"><input type="checkbox" id="role-crew-shared" /> Enterprise Crew (both)<span class="role-status" id="role-crew-shared-status"></span></label>
+        <label id="role-d1-label"><input type="checkbox" id="role-d1" /> Crew 1<span class="role-status" id="role-d1-status"></span></label>
+        <label id="role-d2-label"><input type="checkbox" id="role-d2" /> Crew 2<span class="role-status" id="role-d2-status"></span></label>
       </fieldset>
 
       <form id="lobby-settings-form">
@@ -134,6 +134,7 @@
       </form>
 
       <button id="lobby-start-btn" disabled>Start Game</button>
+      <p id="lobby-start-hint"></p>
     </div>
   </section>
 

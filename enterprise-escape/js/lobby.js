@@ -21,6 +21,7 @@ export function initLobby(board, controller) {
   });
 
   let code = null;
+  let isHost = false;
   let unsubscribe = null;
   let lastKnownSettingsJSON = null;
   let suppressFormEvents = false;
@@ -30,6 +31,9 @@ export function initLobby(board, controller) {
     el("lobby-join-box").classList.add("hidden");
     el("lobby-room-box").classList.remove("hidden");
     el("lobby-room-code").textContent = code;
+    // Only the host edits the ruleset; everyone else just picks a role
+    // against whatever the host has configured.
+    settingsForm.classList.toggle("hidden", !isHost);
     unsubscribe = sync.subscribeRoom(code, onRoomUpdate);
   }
 
@@ -53,12 +57,12 @@ export function initLobby(board, controller) {
       lastKnownSettingsJSON = settingsJSON;
     }
 
-    // Must run after the populateForm sync above -- role-checkbox visibility
-    // depends on live settings (detectiveCount, sharedDetectiveTurn), and a
-    // joining client's form starts out at defaults until populateForm pulls
-    // in the room's real values.
+    // Must run after the populateForm sync above -- role visibility depends
+    // on live settings (detectiveCount, sharedDetectiveTurn), and a joining
+    // client's form starts out at defaults until populateForm pulls in the
+    // room's real values.
     renderMyRoleCheckboxes(room.players || {});
-    updateStartButtonState(room.players || {});
+    updateStartButtonState(room);
   }
 
   function renderPlayers(players) {
@@ -77,10 +81,11 @@ export function initLobby(board, controller) {
       .join("");
   }
 
+  // A role checkbox is grayed out (disabled, "(taken)") whenever some OTHER
+  // player already holds it -- this is what actually prevents conflicts at
+  // the UI level, rather than the settings-driven show/hide alone.
   function renderMyRoleCheckboxes(players) {
     const mine = (players[sync.clientId] && players[sync.clientId].roles) || [];
-    el("role-mrx").checked = mine.includes("mrx");
-
     const settings = settingsFromForm(settingsForm);
     const twoDetectives = settings.detectiveCount === 2;
     const useSharedUI = twoDetectives && settings.sharedDetectiveTurn;
@@ -90,9 +95,34 @@ export function initLobby(board, controller) {
     el("role-d1-label").classList.toggle("hidden", useSharedUI);
     el("role-d2-label").classList.toggle("hidden", !twoDetectives || useSharedUI);
 
-    el("role-crew-shared").checked = mine.includes("d1") && mine.includes("d2");
-    el("role-d1").checked = mine.includes("d1");
-    el("role-d2").checked = mine.includes("d2");
+    const claimedBy = {};
+    for (const [pid, p] of Object.entries(players)) {
+      for (const r of p.roles || []) {
+        (claimedBy[r] = claimedBy[r] || []).push(pid);
+      }
+    }
+    const takenByOther = (role) => (claimedBy[role] || []).some((pid) => pid !== sync.clientId);
+
+    function applyRoleCheckbox(id, statusId, roleKey, checked) {
+      const checkbox = el(id);
+      const taken = takenByOther(roleKey);
+      checkbox.checked = checked;
+      checkbox.disabled = taken && !checked;
+      el(statusId).textContent = taken ? " (taken)" : "";
+    }
+
+    applyRoleCheckbox("role-mrx", "role-mrx-status", "mrx", mine.includes("mrx"));
+    if (useSharedUI) {
+      const bothMine = mine.includes("d1") && mine.includes("d2");
+      const taken = takenByOther("d1") || takenByOther("d2");
+      const checkbox = el("role-crew-shared");
+      checkbox.checked = bothMine;
+      checkbox.disabled = taken && !bothMine;
+      el("role-crew-shared-status").textContent = taken ? " (taken)" : "";
+    } else {
+      applyRoleCheckbox("role-d1", "role-d1-status", "d1", mine.includes("d1"));
+      applyRoleCheckbox("role-d2", "role-d2-status", "d2", mine.includes("d2"));
+    }
   }
 
   function currentMyRoles() {
@@ -109,11 +139,34 @@ export function initLobby(board, controller) {
     return roles;
   }
 
-  function updateStartButtonState(players) {
-    const allRoles = Object.values(players).flatMap((p) => p.roles || []);
-    const hasMrx = allRoles.includes("mrx");
-    const hasDetective = allRoles.includes("d1") || allRoles.includes("d2");
-    el("lobby-start-btn").disabled = !(hasMrx && hasDetective);
+  // Everyone gets a Start Game button; it's just gated on the lobby
+  // actually being in a startable state -- every connected player has
+  // picked a role, no role is double-claimed, and every role the current
+  // settings need is covered.
+  function validateRoomForStart(players, settings) {
+    const entries = Object.entries(players);
+    if (entries.length === 0) return "No one is in the room yet.";
+    for (const [, p] of entries) {
+      if (!p.roles || p.roles.length === 0) return "Someone hasn't picked a role yet.";
+    }
+    const claimCounts = {};
+    for (const [, p] of entries) {
+      for (const r of p.roles) claimCounts[r] = (claimCounts[r] || 0) + 1;
+    }
+    for (const [role, count] of Object.entries(claimCounts)) {
+      if (count > 1) return `${ROLE_LABELS[role] || role} is claimed by more than one player.`;
+    }
+    if (!claimCounts.mrx) return "No one has claimed Fugitive yet.";
+    if (!claimCounts.d1) return "No one has claimed Crew 1 yet.";
+    if (settings.detectiveCount === 2 && !claimCounts.d2) return "No one has claimed Crew 2 yet.";
+    return null;
+  }
+
+  function updateStartButtonState(room) {
+    const settings = sync.decodeSettings(room.settings);
+    const problem = validateRoomForStart(room.players || {}, settings);
+    el("lobby-start-btn").disabled = !!problem;
+    el("lobby-start-hint").textContent = problem || "";
   }
 
   for (const id of ["role-mrx", "role-crew-shared", "role-d1", "role-d2"]) {
@@ -131,12 +184,17 @@ export function initLobby(board, controller) {
       maxCaptures: settings.maxCaptures === Infinity ? "Infinity" : settings.maxCaptures,
     });
     sync.updateSettings(code, settings);
-    renderMyRoleCheckboxes({ [sync.clientId]: { roles: currentMyRoles() } });
+    // Don't re-render role checkboxes from a fabricated single-player
+    // object here -- the real onRoomUpdate (triggered by this same write)
+    // arrives moments later with the actual full players list. Rendering
+    // from a partial stand-in risked racing against an in-flight role
+    // claim from the same rapid input burst.
   });
 
   el("lobby-create-btn").addEventListener("click", async () => {
     const settings = settingsFromForm(settingsForm);
     const roomCode = await sync.createRoom(settings);
+    isHost = true;
     enterRoom(roomCode);
   });
 
@@ -146,6 +204,7 @@ export function initLobby(board, controller) {
     if (!roomCode) return;
     try {
       await sync.joinRoom(roomCode);
+      isHost = false;
       enterRoom(roomCode);
     } catch (err) {
       el("lobby-join-error").textContent = err.message;
@@ -153,6 +212,10 @@ export function initLobby(board, controller) {
   });
 
   el("lobby-start-btn").addEventListener("click", async () => {
+    if (el("lobby-start-btn").disabled) return;
+    // settingsForm's values are authoritative for every client here, host
+    // or not -- the host edits it directly, everyone else has it kept in
+    // sync via populateForm even while it's hidden from their view.
     const settings = settingsFromForm(settingsForm);
     const state = createGame(board, settings);
     await sync.startGame(code, state);
