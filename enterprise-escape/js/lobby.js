@@ -42,7 +42,6 @@ export function initLobby(board, controller) {
       return;
     }
     renderPlayers(room.players || {});
-    renderMyRoleCheckboxes(room.players || {});
 
     const settingsJSON = JSON.stringify(room.settings);
     if (settingsJSON !== lastKnownSettingsJSON && document.activeElement && !settingsForm.contains(document.activeElement)) {
@@ -54,6 +53,11 @@ export function initLobby(board, controller) {
       lastKnownSettingsJSON = settingsJSON;
     }
 
+    // Must run after the populateForm sync above -- role-checkbox visibility
+    // depends on live settings (detectiveCount, sharedDetectiveTurn), and a
+    // joining client's form starts out at defaults until populateForm pulls
+    // in the room's real values.
+    renderMyRoleCheckboxes(room.players || {});
     updateStartButtonState(room.players || {});
   }
 
