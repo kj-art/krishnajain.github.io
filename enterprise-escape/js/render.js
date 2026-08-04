@@ -126,6 +126,7 @@ export class BoardView {
 
     this._drawStationCircles();
     this._drawEdges();
+    this._drawExitRings();
     this._drawHighlights(state, opts);
     this._drawGhosts(state);
     this._drawTokens(state);
@@ -201,15 +202,25 @@ export class BoardView {
       ctx.strokeStyle = "#475569";
       ctx.lineWidth = 1.5;
       ctx.stroke();
+    }
+  }
 
+  // Drawn AFTER edges (see render()), not bundled into the circle layer --
+  // a 2px ring sitting right where edges converge got buried under the
+  // connection lines, the same legibility problem the white-stroke labels
+  // solved for station numbers.
+  _drawExitRings() {
+    const { ctx, board } = this;
+    for (const key of Object.keys(board.stations)) {
       const ring = exitRingFor(board, key);
-      if (ring) {
-        ctx.beginPath();
-        ctx.arc(x, y, STATION_RADIUS + 2, 0, Math.PI * 2);
-        ctx.strokeStyle = ring.color;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
+      if (!ring) continue;
+      const s = board.stations[key];
+      const [x, y] = this.boardToCanvas(s.x, s.y);
+      ctx.beginPath();
+      ctx.arc(x, y, STATION_RADIUS + 3, 0, Math.PI * 2);
+      ctx.strokeStyle = ring.color;
+      ctx.lineWidth = 3;
+      ctx.stroke();
     }
   }
 
