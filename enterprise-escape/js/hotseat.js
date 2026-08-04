@@ -22,6 +22,14 @@ export function startHotseat(board, controller) {
 
   controller.onLocalMove = (state) => afterStateChange(state);
 
+  // onLocalMove now fires for every granular action (a detective staging a
+  // move, locking in, unlocking) since the lock-in model needs each crew
+  // member's action synced independently -- not just for a full turn
+  // commit like the old single "End Turn" button. The airlock should only
+  // appear on an actual phase handoff, so track the phase we last showed
+  // and ignore same-phase updates.
+  let currentPhase = null;
+
   function goToAirlock(message, onContinue) {
     el("airlock-message").textContent = message;
     showScreen("airlock-screen");
@@ -45,6 +53,8 @@ export function startHotseat(board, controller) {
       showEndScreen(state);
       return;
     }
+    if (state.phase === currentPhase) return; // same-phase local action, no handoff yet
+    currentPhase = state.phase;
     if (state.phase === "mrx") {
       goToAirlock("The Enterprise Crew's moves are locked in. Hand the device to the Fugitive.", () => {
         controller.setViewerRoles(["mrx"]);
@@ -69,6 +79,7 @@ export function startHotseat(board, controller) {
     evt.preventDefault();
     const settings = settingsFromForm(setupForm);
     const state = createGame(board, settings);
+    currentPhase = state.phase;
 
     goToAirlock("Setup complete. Hand the device to the Fugitive to begin.", () => {
       controller.setViewerRoles(["mrx"]);

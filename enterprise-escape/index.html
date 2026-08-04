@@ -25,18 +25,18 @@
 
       <fieldset>
         <legend>Crew tickets (each crew member)</legend>
-        <label>Taxi <input type="number" name="det_taxi" value="10" min="0" /></label>
-        <label>Bus <input type="number" name="det_bus" value="8" min="0" /></label>
-        <label>Underground <input type="number" name="det_underground" value="4" min="0" /></label>
+        <label>Corridor <input type="number" name="det_taxi" value="10" min="0" /></label>
+        <label>Tram <input type="number" name="det_bus" value="8" min="0" /></label>
+        <label>Turbolift <input type="number" name="det_underground" value="4" min="0" /></label>
         <label>Black <input type="number" name="det_black" value="0" min="0" /></label>
         <label>Double <input type="number" name="det_double" value="0" min="0" /></label>
       </fieldset>
 
       <fieldset>
         <legend>Fugitive tickets</legend>
-        <label>Taxi <input type="number" name="mrx_taxi" value="4" min="0" /></label>
-        <label>Bus <input type="number" name="mrx_bus" value="3" min="0" /></label>
-        <label>Underground <input type="number" name="mrx_underground" value="3" min="0" /></label>
+        <label>Corridor <input type="number" name="mrx_taxi" value="4" min="0" /></label>
+        <label>Tram <input type="number" name="mrx_bus" value="3" min="0" /></label>
+        <label>Turbolift <input type="number" name="mrx_underground" value="3" min="0" /></label>
         <label>Black <input type="number" name="mrx_black" value="5" min="0" /></label>
         <label>Double <input type="number" name="mrx_double" value="2" min="0" /></label>
       </fieldset>
@@ -96,18 +96,18 @@
 
         <fieldset>
           <legend>Crew tickets (each crew member)</legend>
-          <label>Taxi <input type="number" name="det_taxi" value="10" min="0" /></label>
-          <label>Bus <input type="number" name="det_bus" value="8" min="0" /></label>
-          <label>Underground <input type="number" name="det_underground" value="4" min="0" /></label>
+          <label>Corridor <input type="number" name="det_taxi" value="10" min="0" /></label>
+          <label>Tram <input type="number" name="det_bus" value="8" min="0" /></label>
+          <label>Turbolift <input type="number" name="det_underground" value="4" min="0" /></label>
           <label>Black <input type="number" name="det_black" value="0" min="0" /></label>
           <label>Double <input type="number" name="det_double" value="0" min="0" /></label>
         </fieldset>
 
         <fieldset>
           <legend>Fugitive tickets</legend>
-          <label>Taxi <input type="number" name="mrx_taxi" value="4" min="0" /></label>
-          <label>Bus <input type="number" name="mrx_bus" value="3" min="0" /></label>
-          <label>Underground <input type="number" name="mrx_underground" value="3" min="0" /></label>
+          <label>Corridor <input type="number" name="mrx_taxi" value="4" min="0" /></label>
+          <label>Tram <input type="number" name="mrx_bus" value="3" min="0" /></label>
+          <label>Turbolift <input type="number" name="mrx_underground" value="3" min="0" /></label>
           <label>Black <input type="number" name="mrx_black" value="5" min="0" /></label>
           <label>Double <input type="number" name="mrx_double" value="2" min="0" /></label>
         </fieldset>
@@ -152,19 +152,21 @@
     </div>
     <aside id="side-panel">
       <div id="round-info"></div>
+      <div id="transport-log"></div>
       <div id="capture-banner" class="hidden"></div>
       <div id="mrx-panel" class="hidden">
         <h3>Fugitive's turn</h3>
         <div id="mrx-tickets"></div>
-        <label><input type="checkbox" id="mrx-double-toggle" /> Use a double-move ticket</label>
-        <div id="mrx-double-status"></div>
-        <div id="ticket-chooser" class="hidden"></div>
+        <div id="mrx-controls">
+          <label><input type="checkbox" id="mrx-double-toggle" /> Use a double-move ticket</label>
+          <label><input type="checkbox" id="mrx-black-toggle" /> Use a black ticket</label>
+          <div id="mrx-double-status"></div>
+        </div>
       </div>
       <div id="detectives-panel" class="hidden">
         <h3>Enterprise Crew's turn</h3>
         <div id="detective-rows"></div>
-        <div id="ticket-chooser-det" class="hidden"></div>
-        <button id="end-turn-btn">End Turn</button>
+        <div id="crew-picker" class="hidden"></div>
       </div>
     </aside>
   </section>

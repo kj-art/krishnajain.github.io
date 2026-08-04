@@ -20,7 +20,7 @@ body {
 #setup-screen label, #lobby-screen label { display: block; margin: 0.35rem 0; }
 #setup-screen input[type="number"], #lobby-screen input[type="number"] { width: 5rem; }
 #setup-screen button, #lobby-screen button, #mode-select-screen button,
-#detective-rows button, #end-turn-btn, #new-game-btn, #airlock-continue {
+#detective-rows button, #new-game-btn, #airlock-continue {
   background: #38bdf8;
   border: none;
   border-radius: 6px;
@@ -128,10 +128,17 @@ body {
   margin-top: 0.35rem;
   margin-right: 0.4rem;
 }
-.detective-row.armed { border-color: #38bdf8; box-shadow: 0 0 0 2px #38bdf8; }
 .detective-row.stunned { opacity: 0.55; }
+.detective-row.ready { border-color: #4ade80; }
+.locked-badge { color: #4ade80; font-weight: 600; margin-top: 0.25rem; }
 
-#end-turn-btn { width: 100%; margin-top: 0.5rem; }
+#transport-log {
+  min-height: 1.2em;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+#mrx-controls label { display: block; margin: 0.35rem 0; }
 
 .ticket-choice-btn {
   display: block;

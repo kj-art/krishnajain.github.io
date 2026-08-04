@@ -28,11 +28,18 @@ function randomRoomCode() {
   return code;
 }
 
+// sessionStorage, not localStorage: localStorage is shared across every tab
+// of the same site, so two tabs on one browser (e.g. testing on one laptop)
+// would silently collide into the same "player" and could end up sharing
+// role claims -- including a crew tab inheriting the Fugitive role. Each
+// tab getting its own identity by default matches how people will actually
+// use this (one tab per physical device); running two detectives from one
+// device is still done by checking both role boxes within that one tab.
 function getOrCreateClientId() {
-  let id = localStorage.getItem("sy_client_id");
+  let id = sessionStorage.getItem("sy_client_id");
   if (!id) {
     id = "c" + Math.random().toString(36).slice(2, 10);
-    localStorage.setItem("sy_client_id", id);
+    sessionStorage.setItem("sy_client_id", id);
   }
   return id;
 }

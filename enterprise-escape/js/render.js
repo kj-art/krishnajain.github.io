@@ -94,7 +94,10 @@ export class BoardView {
   _shouldShowMrX(state) {
     if (this._viewerRoles.has("mrx")) return true;
     if (state.phase === "ended") return true;
-    if (state.lastCapture && state.lastCapture.round === state.round) return true;
+    // lastCapture.round is the round the capture happened IN, but the round
+    // counter has already advanced by the time this renders (commit ticks
+    // it), so the comparison is against round - 1, not round.
+    if (state.lastCapture && state.lastCapture.round === state.round - 1) return true;
     if (state.lastReveal && state.lastReveal.round === state.round && state.phase === "detectives") return true;
     return false;
   }

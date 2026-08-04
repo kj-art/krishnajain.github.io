@@ -73,6 +73,7 @@ export function createGame(board, settingsOverrides = {}) {
     },
     detectives,
     staging: {}, // detectiveId -> { to, ticket }
+    readyDetectives: [], // detective ids who have locked in this turn
     captureCount: 0,
     lastReveal: null, // { round, position }
     lastCapture: null, // { round, detectiveId, position }
@@ -89,6 +90,16 @@ function neighborsByTicket(board, station) {
 
 function stationOccupiedByAnyDetective(state, station, exceptId = null) {
   return state.detectives.some((d) => d.id !== exceptId && d.position === station);
+}
+
+// A station is off-limits to detective `exceptId` if another detective
+// already stands there OR has already staged a move there this turn --
+// the latter is what stops two crew members from both claiming the same
+// destination, since a staged claim is visible to every device as soon as
+// it syncs.
+function stationClaimedThisTurn(state, station, exceptId = null) {
+  if (stationOccupiedByAnyDetective(state, station, exceptId)) return true;
+  return Object.entries(state.staging).some(([id, move]) => id !== exceptId && move.to === station);
 }
 
 function isDetectiveStunned(detective, round) {
@@ -127,14 +138,16 @@ export function legalMovesForMrX(state) {
   return movesFrom(state.board, state.mrx.position, state.mrx.tickets, state, true);
 }
 
+// Legal moves stay available even after this detective has already staged
+// one -- picking a different highlighted station just restages, no explicit
+// "undo" step required first.
 export function legalMovesForDetective(state, detectiveId) {
   if (state.phase !== "detectives") return [];
   const d = state.detectives.find((x) => x.id === detectiveId);
   if (!d) return [];
   if (isDetectiveStunned(d, state.round)) return [];
-  if (state.staging[detectiveId]) return []; // already staged a move this turn
   const moves = movesFrom(state.board, d.position, d.tickets, state, false);
-  return moves.filter((m) => !stationOccupiedByAnyDetective(state, m.to, detectiveId));
+  return moves.filter((m) => !stationClaimedThisTurn(state, m.to, detectiveId));
 }
 
 function checkExitOutcome(board, position) {
@@ -150,16 +163,28 @@ function checkExitOutcome(board, position) {
   return null;
 }
 
+// Landing on an exit station does NOT end the game by itself -- MrX must
+// explicitly commitToExit(). Otherwise every exit station becomes a single
+// mandatory trap the moment you touch it, which makes those nodes useless
+// for anyone routing through the area without meaning to end the game there.
 function afterMrxMoveResolved(state) {
-  const outcome = checkExitOutcome(state.board, state.mrx.position);
-  if (outcome) {
-    return { ...state, outcome, phase: "ended" };
-  }
   let lastReveal = state.lastReveal;
   if (state.settings.revealRounds.includes(state.round)) {
     lastReveal = { round: state.round, position: state.mrx.position };
   }
-  return { ...state, lastReveal, phase: "detectives" };
+  return { ...state, lastReveal, phase: "detectives", readyDetectives: [] };
+}
+
+// What MrX would win/lose by committing to an exit right now, or null if
+// the current station isn't an exit at all.
+export function currentExitOpportunity(state) {
+  return checkExitOutcome(state.board, state.mrx.position);
+}
+
+export function commitToExit(state) {
+  const outcome = currentExitOpportunity(state);
+  if (!outcome) throw new Error("Not standing on an exit station");
+  return { ...state, outcome, phase: "ended" };
 }
 
 function deductTicket(tickets, kind) {
@@ -201,18 +226,43 @@ export function doubleMoveMrX(state, moves) {
   return afterMrxMoveResolved({ ...state, mrx, log });
 }
 
+// Restaging (picking a new destination for a detective who already staged
+// one) implicitly un-readies them -- a changed move needs re-confirming via
+// lockInDetective, rather than silently committing something they didn't
+// mean to lock in.
 export function stageDetectiveMove(state, detectiveId, to, ticket) {
   if (state.phase !== "detectives") throw new Error("Not the detectives' turn");
   const legal = legalMovesForDetective(state, detectiveId).some((m) => m.to === to && m.ticket === ticket);
   if (!legal) throw new Error(`Illegal detective move to ${to} via ${ticket}`);
-  return { ...state, staging: { ...state.staging, [detectiveId]: { to, ticket } } };
+  const staging = { ...state.staging, [detectiveId]: { to, ticket } };
+  const readyDetectives = state.readyDetectives.filter((id) => id !== detectiveId);
+  return { ...state, staging, readyDetectives };
 }
 
 export function unstageDetectiveMove(state, detectiveId) {
-  if (!state.staging[detectiveId]) return state;
+  if (!state.staging[detectiveId] && !state.readyDetectives.includes(detectiveId)) return state;
   const staging = { ...state.staging };
   delete staging[detectiveId];
-  return { ...state, staging };
+  const readyDetectives = state.readyDetectives.filter((id) => id !== detectiveId);
+  return { ...state, staging, readyDetectives };
+}
+
+// A detective can lock in with no staged move at all -- that's a valid
+// explicit choice to stay put this turn.
+export function lockInDetective(state, detectiveId) {
+  if (state.readyDetectives.includes(detectiveId)) return state;
+  return { ...state, readyDetectives: [...state.readyDetectives, detectiveId] };
+}
+
+export function unlockDetective(state, detectiveId) {
+  if (!state.readyDetectives.includes(detectiveId)) return state;
+  return { ...state, readyDetectives: state.readyDetectives.filter((id) => id !== detectiveId) };
+}
+
+// The turn only commits once every non-stunned detective has locked in --
+// no single crew member can end another's turn for them.
+export function allDetectivesReady(state) {
+  return state.detectives.every((d) => isDetectiveStunned(d, state.round) || state.readyDetectives.includes(d.id));
 }
 
 // Commits every staged detective move atomically ("End Turn"): applies
