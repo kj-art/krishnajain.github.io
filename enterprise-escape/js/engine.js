@@ -179,15 +179,28 @@ function neighborsByTicket(board, station) {
   return { taxi: s.taxi, bus: s.bus, underground: s.underground };
 }
 
-function stationOccupiedByAnyDetective(state, station, exceptId = null) {
-  return state.detectives.some((d) => d.id !== exceptId && d.position === station);
+// A detective's real `.position` doesn't change until the turn commits --
+// if they've already staged a move away from it this turn, they won't
+// actually be there anymore, so their STAGED destination (not their
+// current square) is what should count as "occupied" for everyone else's
+// collision checks. Only relevant during the detectives' own phase --
+// staging is always empty during MrX's turn, so this is a no-op fallback
+// to `.position` there.
+function effectiveDetectivePosition(state, detective) {
+  const staged = state.staging[detective.id];
+  return staged ? staged.to : detective.position;
 }
 
-// A station is off-limits to detective `exceptId` if another detective
-// already stands there OR has already staged a move there this turn --
-// the latter is what stops two crew members from both claiming the same
-// destination, since a staged claim is visible to every device as soon as
-// it syncs.
+function stationOccupiedByAnyDetective(state, station, exceptId = null) {
+  return state.detectives.some((d) => d.id !== exceptId && effectiveDetectivePosition(state, d) === station);
+}
+
+// A station is off-limits to detective `exceptId` if another detective will
+// end this turn there (their real position, unless they've staged a move
+// elsewhere -- see effectiveDetectivePosition) OR has already staged a move
+// there this turn -- the latter is what stops two crew members from both
+// claiming the same destination, since a staged claim is visible to every
+// device as soon as it syncs.
 function stationClaimedThisTurn(state, station, exceptId = null) {
   if (stationOccupiedByAnyDetective(state, station, exceptId)) return true;
   return Object.entries(state.staging).some(([id, move]) => id !== exceptId && move.to === station);
