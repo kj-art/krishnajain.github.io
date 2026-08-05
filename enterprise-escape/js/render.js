@@ -22,11 +22,16 @@ function rgb(arr, alpha = 1) {
 }
 
 function exitRingFor(board, stationKey) {
+  // board.roles values are JSON numbers, but stationKey here always comes
+  // from Object.keys(board.stations) -- a string, even for numeric-looking
+  // keys -- so this has to normalize both sides or every comparison is a
+  // silent string-vs-number false.
+  const key = String(stationKey);
   const roles = board.roles;
-  if (stationKey === roles.exit1) return EXIT_RING.exit1;
-  if (stationKey === roles.exit2) return EXIT_RING.exit2;
+  if (key === String(roles.exit1)) return EXIT_RING.exit1;
+  if (key === String(roles.exit2)) return EXIT_RING.exit2;
   for (let i = 0; i < 5; i++) {
-    if (stationKey === roles[`exit3_${i}`]) return EXIT_RING.exit3;
+    if (key === String(roles[`exit3_${i}`])) return EXIT_RING.exit3;
   }
   return null;
 }
