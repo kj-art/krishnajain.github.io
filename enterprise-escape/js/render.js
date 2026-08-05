@@ -175,7 +175,7 @@ export class BoardView {
     }
 
     this._drawStationCircles();
-    this._drawEdges();
+    this._drawEdges(state.settings.movementCosts);
     this._drawHighlights(state, opts);
     this._drawGhosts(state);
     const detectiveOccupied = this._drawDetectiveTokens(state);
@@ -184,10 +184,45 @@ export class BoardView {
     this._drawStationLabels(detectiveOccupied);
   }
 
-  _drawEdges() {
+  // A few station pairs on this board have TWO edge kinds between the same
+  // two stations (e.g. both a Corridor and a Tram). Route costs are a
+  // per-game setting, not a fixed board fact (deliberately not baked into
+  // board.json -- see export_board.py), so which kind of a shared pair
+  // actually matters has to be worked out live, against this game's real
+  // costs: the game's UI always auto-picks the cheapest reachable ticket
+  // for any destination you click (see gameplay.js's pickTicket), so a
+  // strictly-more-expensive duplicate is unreachable in practice and just
+  // clutters the map -- skip drawing it entirely. If costs genuinely TIE,
+  // both are real, equally-valid options, so both get drawn, nudged a
+  // couple pixels apart perpendicular to the line so they stay their own
+  // true color instead of blending into a third one that doesn't exist
+  // (yellow taxi under cyan bus reads as green).
+  _drawEdges(costs) {
     const { ctx, board } = this;
     const colors = board.colors;
-    for (const kind of ["taxi", "bus", "underground"]) {
+    const kinds = ["taxi", "bus", "underground"];
+
+    const kindsByPair = new Map(); // "a-b" (a<b) -> [kinds connecting them]
+    for (const kind of kinds) {
+      for (const [a, b] of board.edges[kind] || []) {
+        const key = a < b ? `${a}-${b}` : `${b}-${a}`;
+        if (!kindsByPair.has(key)) kindsByPair.set(key, []);
+        kindsByPair.get(key).push(kind);
+      }
+    }
+    // Only populated for pairs with 2+ kinds -- the kind(s) actually worth
+    // drawing there, i.e. whichever tie for cheapest under `costs`.
+    const keepKindsByPair = new Map();
+    for (const [key, kindsHere] of kindsByPair) {
+      if (kindsHere.length < 2) continue;
+      const minCost = Math.min(...kindsHere.map((k) => costs[k] ?? 0));
+      keepKindsByPair.set(
+        key,
+        kindsHere.filter((k) => (costs[k] ?? 0) === minCost)
+      );
+    }
+
+    for (const kind of kinds) {
       ctx.strokeStyle = rgb(colors[kind] || [150, 150, 150], 0.55);
       ctx.lineWidth = kind === "underground" ? 3 : 1.5;
       ctx.beginPath();
@@ -195,10 +230,21 @@ export class BoardView {
         const sa = board.stations[String(a)];
         const sb = board.stations[String(b)];
         if (!sa || !sb) continue;
+        const key = a < b ? `${a}-${b}` : `${b}-${a}`;
+        const keepKinds = keepKindsByPair.get(key);
+        if (keepKinds && !keepKinds.includes(kind)) continue; // strictly dominated here
         const [ax, ay] = this.boardToCanvas(sa.x, sa.y);
         const [bx, by] = this.boardToCanvas(sb.x, sb.y);
-        ctx.moveTo(ax, ay);
-        ctx.lineTo(bx, by);
+        let ox = 0, oy = 0;
+        if (keepKinds && keepKinds.length > 1) {
+          const dx = bx - ax, dy = by - ay;
+          const len = Math.hypot(dx, dy) || 1;
+          const sign = keepKinds.indexOf(kind) === 0 ? -1 : 1;
+          ox = (-dy / len) * 2.5 * sign;
+          oy = (dx / len) * 2.5 * sign;
+        }
+        ctx.moveTo(ax + ox, ay + oy);
+        ctx.lineTo(bx + ox, by + oy);
       }
       ctx.stroke();
     }
