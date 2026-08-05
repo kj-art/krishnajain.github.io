@@ -37,10 +37,6 @@ export const DEFAULT_SETTINGS = {
   stunnedDetectiveBehavior: "stay", // "stay" | "respawn"
   maxCaptures: Infinity,
   detectiveCount: 2, // 1 or 2, sharing the board's single detective spawn
-  // Purely a networked-lobby UI concern (which role checkboxes are shown) --
-  // the engine's turn model is identical either way, since it was always
-  // "both detectives stage moves, then one shared End Turn commits them."
-  sharedDetectiveTurn: true,
 };
 
 export const DETECTIVE_COLORS = ["#a855f7", "#c2703d"]; // purple, fox orange

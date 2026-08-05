@@ -6,6 +6,10 @@ const HIT_RADIUS = 20;
 const SHARED_HIGHLIGHT_COLOR = "#22d3ee";
 const MRX_COLOR = "#111827";
 const GHOST_ALPHA = 0.35;
+// Matches the station circle exactly -- now that a badge-bearing station
+// skips its own number label, there's no legibility reason to keep the
+// token smaller than the station it's standing on.
+const DETECTIVE_TOKEN_RADIUS = STATION_RADIUS;
 
 const EXIT_RING = {
   exit1: { color: "#facc15", label: "E1" },
@@ -285,7 +289,7 @@ export class BoardView {
       const s = this.board.stations[String(d.position)];
       if (!s) return;
       const [x, y] = this.boardToCanvas(s.x, s.y);
-      const r = STATION_RADIUS - 3;
+      const r = DETECTIVE_TOKEN_RADIUS;
       ctx.save();
       ctx.globalAlpha = GHOST_ALPHA;
       ctx.beginPath();
@@ -333,7 +337,7 @@ export class BoardView {
       if (!s) return;
       occupied.add(String(pos));
       const [x, y] = this.boardToCanvas(s.x, s.y);
-      const r = STATION_RADIUS - 3;
+      const r = DETECTIVE_TOKEN_RADIUS;
       const ready = this._detectiveImageReady(i);
       ctx.save();
       ctx.globalAlpha = state.staging[d.id] ? 0.9 : 1;

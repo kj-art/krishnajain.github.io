@@ -24,7 +24,6 @@ export function settingsFromForm(form) {
   const mrxCapEnabled = checkbox("mrx_movement_cap_enabled", true);
   return {
     detectiveCount: parseInt(fd.get("detectiveCount"), 10),
-    sharedDetectiveTurn: checkbox("sharedDetectiveTurn", true),
     sharedDetectivePool: checkbox("sharedDetectivePool", false),
     movementCosts: {
       taxi: num("cost_taxi"),
@@ -68,7 +67,6 @@ export function populateForm(form, settings) {
 
   const countField = form.querySelector(`[name="detectiveCount"][value="${settings.detectiveCount}"]`);
   if (countField) countField.checked = true;
-  setChecked("sharedDetectiveTurn", settings.sharedDetectiveTurn);
   setChecked("sharedDetectivePool", settings.sharedDetectivePool);
 
   set("cost_taxi", settings.movementCosts.taxi);

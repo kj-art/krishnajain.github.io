@@ -122,6 +122,7 @@ body {
 }
 #role-fieldset label:has(input:disabled) { opacity: 0.5; }
 #lobby-start-hint { color: #f87171; min-height: 1.2em; }
+.hint { color: #94a3b8; font-size: 0.85em; margin: 0.35rem 0 1rem; }
 
 #capture-banner {
   background: #f97316;
@@ -134,8 +135,8 @@ body {
 
 .swatch {
   display: inline-block;
-  width: 0.9rem;
-  height: 0.9rem;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 50%;
   margin-right: 0.4rem;
   vertical-align: middle;

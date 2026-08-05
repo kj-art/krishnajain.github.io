@@ -506,7 +506,7 @@ export class GameplayController {
       const blackHtml = this.state.settings.tickets.detective.black > 0 ? ` &nbsp; Black: ${t.black}` : "";
       const image = DETECTIVE_IMAGES[Number(d.id.slice(1)) - 1];
       row.innerHTML = `
-        <span class="swatch" style="background:${d.color};background-image:url('${image}')"></span>
+        <span class="swatch" style="background-color:${d.color};background-image:url('${image}')"></span>
         <strong>Crew ${d.id.slice(1)}</strong> — at station ${d.position}
         <div>Movement: ${d.movement}${capText}${sharedNote}${blackHtml}</div>
         ${statusHtml}

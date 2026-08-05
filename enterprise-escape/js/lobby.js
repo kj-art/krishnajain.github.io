@@ -24,9 +24,13 @@ export function initLobby(board, controller) {
 
   // Same colors/badge art the in-game crew swatches and map tokens use, so
   // picking a role here already shows you who you'll be playing as.
-  el("role-d1-swatch").style.background = DETECTIVE_COLORS[0];
+  // backgroundColor, not the "background" shorthand -- the shorthand resets
+  // background-size/position to their defaults, which (being inline) then
+  // wins over the .swatch stylesheet rule that makes the image actually
+  // cover the circle instead of showing its raw top-left corner at 1:1.
+  el("role-d1-swatch").style.backgroundColor = DETECTIVE_COLORS[0];
   el("role-d1-swatch").style.backgroundImage = `url('${DETECTIVE_IMAGES[0]}')`;
-  el("role-d2-swatch").style.background = DETECTIVE_COLORS[1];
+  el("role-d2-swatch").style.backgroundColor = DETECTIVE_COLORS[1];
   el("role-d2-swatch").style.backgroundImage = `url('${DETECTIVE_IMAGES[1]}')`;
 
   let code = null;
@@ -69,9 +73,8 @@ export function initLobby(board, controller) {
     }
 
     // Must run after the populateForm sync above -- role visibility depends
-    // on live settings (detectiveCount, sharedDetectiveTurn), and a joining
-    // client's form starts out at defaults until populateForm pulls in the
-    // room's real values.
+    // on live settings (detectiveCount), and a joining client's form starts
+    // out at defaults until populateForm pulls in the room's real values.
     renderMyRoleCheckboxes(room.players || {});
     updateStartButtonState(room);
     renderHowToPlay(sync.decodeSettings(room.settings));
@@ -130,18 +133,18 @@ export function initLobby(board, controller) {
 
   // A role checkbox is grayed out (disabled, "(taken)") whenever some OTHER
   // player already holds it -- this is what actually prevents conflicts at
-  // the UI level, rather than the settings-driven show/hide alone.
+  // the UI level, rather than the settings-driven show/hide alone. Crew 1
+  // and Crew 2 are always shown as separate checkboxes -- one device
+  // checking both is exactly "sharing a turn and a device," no separate
+  // setting needed to pick between the two.
   function renderMyRoleCheckboxes(players) {
     const mine = (players[sync.clientId] && players[sync.clientId].roles) || [];
     const settings = settingsFromForm(settingsForm);
     const twoDetectives = settings.detectiveCount === 2;
-    const useSharedUI = twoDetectives && settings.sharedDetectiveTurn;
 
-    el("shared-turn-label").classList.toggle("hidden", !twoDetectives);
     el("lobby-shared-pool-label").classList.toggle("hidden", !twoDetectives);
-    el("role-crew-shared-label").classList.toggle("hidden", !useSharedUI);
-    el("role-d1-label").classList.toggle("hidden", useSharedUI);
-    el("role-d2-label").classList.toggle("hidden", !twoDetectives || useSharedUI);
+    el("role-d1-label").classList.remove("hidden");
+    el("role-d2-label").classList.toggle("hidden", !twoDetectives);
 
     const claimedBy = {};
     for (const [pid, p] of Object.entries(players)) {
@@ -160,30 +163,15 @@ export function initLobby(board, controller) {
     }
 
     applyRoleCheckbox("role-mrx", "role-mrx-status", "mrx", mine.includes("mrx"));
-    if (useSharedUI) {
-      const bothMine = mine.includes("d1") && mine.includes("d2");
-      const taken = takenByOther("d1") || takenByOther("d2");
-      const checkbox = el("role-crew-shared");
-      checkbox.checked = bothMine;
-      checkbox.disabled = taken && !bothMine;
-      el("role-crew-shared-status").textContent = taken ? " (taken)" : "";
-    } else {
-      applyRoleCheckbox("role-d1", "role-d1-status", "d1", mine.includes("d1"));
-      applyRoleCheckbox("role-d2", "role-d2-status", "d2", mine.includes("d2"));
-    }
+    applyRoleCheckbox("role-d1", "role-d1-status", "d1", mine.includes("d1"));
+    applyRoleCheckbox("role-d2", "role-d2-status", "d2", mine.includes("d2"));
   }
 
   function currentMyRoles() {
     const roles = [];
     if (el("role-mrx").checked) roles.push("mrx");
-    const settings = settingsFromForm(settingsForm);
-    const useSharedUI = settings.detectiveCount === 2 && settings.sharedDetectiveTurn;
-    if (useSharedUI) {
-      if (el("role-crew-shared").checked) roles.push("d1", "d2");
-    } else {
-      if (el("role-d1").checked) roles.push("d1");
-      if (el("role-d2").checked) roles.push("d2");
-    }
+    if (el("role-d1").checked) roles.push("d1");
+    if (el("role-d2").checked) roles.push("d2");
     return roles;
   }
 
@@ -218,7 +206,7 @@ export function initLobby(board, controller) {
     el("lobby-start-hint").textContent = problem || "";
   }
 
-  for (const id of ["role-mrx", "role-crew-shared", "role-d1", "role-d2"]) {
+  for (const id of ["role-mrx", "role-d1", "role-d2"]) {
     el(id).addEventListener("change", () => {
       if (!code) return;
       sync.setMyRoles(code, currentMyRoles());

@@ -91,17 +91,16 @@
       <fieldset id="role-fieldset">
         <legend>Your role(s)</legend>
         <label id="role-mrx-label"><input type="checkbox" id="role-mrx" /> Fugitive<span class="role-status" id="role-mrx-status"></span></label>
-        <label id="role-crew-shared-label"><input type="checkbox" id="role-crew-shared" /> Enterprise Crew (both)<span class="role-status" id="role-crew-shared-status"></span></label>
         <label id="role-d1-label"><input type="checkbox" id="role-d1" /> <span class="swatch" id="role-d1-swatch"></span>Crew 1<span class="role-status" id="role-d1-status"></span></label>
         <label id="role-d2-label"><input type="checkbox" id="role-d2" /> <span class="swatch" id="role-d2-swatch"></span>Crew 2<span class="role-status" id="role-d2-status"></span></label>
       </fieldset>
+      <p class="hint">Checking both Crew 1 and Crew 2 shares them on one device; checking just one is for separate devices.</p>
 
       <form id="lobby-settings-form">
         <fieldset>
           <legend>Players</legend>
           <label><input type="radio" name="detectiveCount" value="1" /> One crew member</label>
           <label><input type="radio" name="detectiveCount" value="2" checked /> Two crew members (shared spawn)</label>
-          <label id="shared-turn-label"><input type="checkbox" name="sharedDetectiveTurn" checked /> Crew shares a turn and a device (uncheck for one device per crew member)</label>
           <label id="lobby-shared-pool-label"><input type="checkbox" name="sharedDetectivePool" /> Two crew members share one movement pool (default: each gets their own)</label>
         </fieldset>
 
