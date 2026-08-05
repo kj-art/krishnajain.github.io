@@ -16,7 +16,13 @@ const BOARD_ASPECT = 1100 / 620;
 // picking "auto" from actual live DOM measurements would mean the layout
 // could flip mid-game as those wiggle -- jarring. A fixed estimate keeps
 // the choice stable for a given window size instead.
-const RESERVED_GUI_HEIGHT = 300;
+//
+// 150, not the first guess of 300 -- an iPad Pro 13" landscape (~1376x1032
+// points) makes a full-width board ~776px tall on its own, so anything
+// above ~150-200 here made "right" win on real tablets in landscape even
+// though "top" fits comfortably in practice (round-info + a Pass/End Turn
+// row + the ticker is nowhere near 300px most turns).
+const RESERVED_GUI_HEIGHT = 150;
 
 // "auto" resolves to "top" if a full-width board would still leave enough
 // vertical room underneath for the controls (i.e. the board is limited by
