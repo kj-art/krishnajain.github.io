@@ -44,6 +44,10 @@ export const DEFAULT_SETTINGS = {
 };
 
 export const DETECTIVE_COLORS = ["#a855f7", "#c2703d"]; // purple, fox orange
+// Same index as DETECTIVE_COLORS/state.detectives -- badge art (256x256,
+// transparent PNG, art already includes its own circular frame) shown on the
+// map token, the side-panel swatch, and the lobby role checkbox.
+export const DETECTIVE_IMAGES = ["assets/crew-purple.png", "assets/crew-orange.png"];
 
 export function parseRevealRounds(str) {
   if (Array.isArray(str)) return str.slice().sort((a, b) => a - b);

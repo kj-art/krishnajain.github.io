@@ -1,4 +1,4 @@
-import { getReachableSets } from "./engine.js";
+import { getReachableSets, DETECTIVE_IMAGES } from "./engine.js";
 import { ticketColor } from "./ticket-theme.js";
 
 const STATION_RADIUS = 14;
@@ -42,6 +42,15 @@ export class BoardView {
         this.requestDraw();
       };
     }
+    // Loaded once per app lifetime, indexed the same as DETECTIVE_COLORS/
+    // state.detectives -- drawn instead of a flat color fill once ready,
+    // with the flat color as a fallback while still loading (or if missing).
+    this.detectiveImages = DETECTIVE_IMAGES.map((src) => {
+      const detImg = new Image();
+      detImg.src = src;
+      detImg.onload = () => this.requestDraw();
+      return detImg;
+    });
     this._lastState = null;
     this._viewerRoles = new Set(); // subset of "mrx" | "d1" | "d2" this device controls/sees as
   }
@@ -253,21 +262,37 @@ export class BoardView {
     }
   }
 
+  // True once an image has actually finished loading -- checked before
+  // every draw rather than cached, since it can flip false->true mid-game
+  // (loaded lazily, see the constructor) and every draw call after that
+  // point should immediately start using it.
+  _detectiveImageReady(index) {
+    const img = this.detectiveImages[index];
+    return img && img.complete && img.naturalWidth > 0;
+  }
+
   _drawGhosts(state) {
     if (state.phase !== "detectives") return;
     const { ctx } = this;
-    for (const d of state.detectives) {
-      if (!state.staging[d.id]) continue;
+    state.detectives.forEach((d, i) => {
+      if (!state.staging[d.id]) return;
       const s = this.board.stations[String(d.position)];
-      if (!s) continue;
+      if (!s) return;
       const [x, y] = this.boardToCanvas(s.x, s.y);
-      ctx.beginPath();
-      ctx.arc(x, y, STATION_RADIUS - 3, 0, Math.PI * 2);
-      ctx.fillStyle = d.color;
+      const r = STATION_RADIUS - 3;
+      ctx.save();
       ctx.globalAlpha = GHOST_ALPHA;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    }
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      if (this._detectiveImageReady(i)) {
+        ctx.clip();
+        ctx.drawImage(this.detectiveImages[i], x - r, y - r, r * 2, r * 2);
+      } else {
+        ctx.fillStyle = d.color;
+        ctx.fill();
+      }
+      ctx.restore();
+    });
   }
 
   // Only ever populated on MrX's own device (see gameplay.js) -- a dashed
@@ -292,21 +317,36 @@ export class BoardView {
 
   _drawTokens(state) {
     const { ctx } = this;
-    for (const d of state.detectives) {
+    state.detectives.forEach((d, i) => {
       const pos = state.staging[d.id] ? state.staging[d.id].to : d.position;
       const s = this.board.stations[String(pos)];
-      if (!s) continue;
+      if (!s) return;
       const [x, y] = this.boardToCanvas(s.x, s.y);
-      ctx.beginPath();
-      ctx.arc(x, y, STATION_RADIUS - 3, 0, Math.PI * 2);
-      ctx.fillStyle = d.color;
+      const r = STATION_RADIUS - 3;
+      const ready = this._detectiveImageReady(i);
+      ctx.save();
       ctx.globalAlpha = state.staging[d.id] ? 0.9 : 1;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.strokeStyle = "#0f172a";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    }
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      if (ready) {
+        ctx.clip();
+        ctx.drawImage(this.detectiveImages[i], x - r, y - r, r * 2, r * 2);
+      } else {
+        ctx.fillStyle = d.color;
+        ctx.fill();
+      }
+      ctx.restore();
+      // The badge art already has its own circular frame baked in -- only
+      // the flat-color fallback (pre-load, or if an image fails) needs this
+      // outline to read as a token against the board.
+      if (!ready) {
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    });
 
     if (this._shouldShowMrX(state)) {
       const s = this.board.stations[String(state.mrx.position)];

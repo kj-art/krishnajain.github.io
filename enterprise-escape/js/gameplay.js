@@ -20,6 +20,7 @@ import {
   currentExitOpportunity,
   commitToExit,
   isGameOver,
+  DETECTIVE_IMAGES,
 } from "./engine.js";
 import { BoardView } from "./render.js";
 import { ticketSpan, ticketLabel } from "./ticket-theme.js";
@@ -503,8 +504,9 @@ export class GameplayController {
       const capText = pool.capEnabled ? `/${pool.cap}` : "";
       const sharedNote = this.state.settings.sharedDetectivePool ? " (shared)" : "";
       const blackHtml = this.state.settings.tickets.detective.black > 0 ? ` &nbsp; Black: ${t.black}` : "";
+      const image = DETECTIVE_IMAGES[Number(d.id.slice(1)) - 1];
       row.innerHTML = `
-        <span class="swatch" style="background:${d.color}"></span>
+        <span class="swatch" style="background:${d.color};background-image:url('${image}')"></span>
         <strong>Crew ${d.id.slice(1)}</strong> — at station ${d.position}
         <div>Movement: ${d.movement}${capText}${sharedNote}${blackHtml}</div>
         ${statusHtml}

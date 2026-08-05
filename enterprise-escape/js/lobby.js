@@ -1,4 +1,4 @@
-import { createGame, parseRevealRounds, DETECTIVE_COLORS } from "./engine.js";
+import { createGame, parseRevealRounds, DETECTIVE_COLORS, DETECTIVE_IMAGES } from "./engine.js";
 import { settingsFromForm, populateForm, wireCapToggle } from "./settings-form.js";
 import * as sync from "./sync.js";
 import { startNetworkedGame } from "./networked.js";
@@ -22,10 +22,12 @@ export function initLobby(board, controller) {
   wireCapToggle(settingsForm, "det_movement_cap_enabled", "det_movement_cap");
   wireCapToggle(settingsForm, "mrx_movement_cap_enabled", "mrx_movement_cap");
 
-  // Same colors the in-game crew swatches/tokens use, so picking a role here
-  // already tells you which color you'll be playing as.
+  // Same colors/badge art the in-game crew swatches and map tokens use, so
+  // picking a role here already shows you who you'll be playing as.
   el("role-d1-swatch").style.background = DETECTIVE_COLORS[0];
+  el("role-d1-swatch").style.backgroundImage = `url('${DETECTIVE_IMAGES[0]}')`;
   el("role-d2-swatch").style.background = DETECTIVE_COLORS[1];
+  el("role-d2-swatch").style.backgroundImage = `url('${DETECTIVE_IMAGES[1]}')`;
 
   let code = null;
   let isHost = false;
