@@ -2,6 +2,7 @@ import { createGame, parseRevealRounds, DETECTIVE_COLORS, DETECTIVE_IMAGES, TNG_
 import { settingsFromForm, populateForm, wireCapToggle } from "./settings-form.js";
 import * as sync from "./sync.js";
 import { startNetworkedGame } from "./networked.js";
+import { wireGuiLayoutSelect } from "./layout-pref.js";
 
 const el = (id) => document.getElementById(id);
 
@@ -13,6 +14,8 @@ function showScreen(id) {
 const ROLE_LABELS = { mrx: "Fugitive", d1: "Crew 1", d2: "Crew 2" };
 
 export function initLobby(board, controller) {
+  wireGuiLayoutSelect(el("lobby-gui-layout"));
+
   const settingsForm = el("lobby-settings-form");
   const unlimitedField = settingsForm.querySelector('[name="maxCapturesUnlimited"]');
   const maxCapturesField = settingsForm.querySelector('[name="maxCaptures"]');

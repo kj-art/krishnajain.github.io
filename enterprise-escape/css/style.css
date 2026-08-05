@@ -89,12 +89,24 @@ body {
   max-width: 480px;
 }
 
+/* ==========================================================================
+   Game screen layout -- three modes, picked per-device (see layout-pref.js,
+   never synced): "bottom" (default/base styles below -- board fills the
+   width, controls sit under it), "right" (board maximizes HEIGHT instead,
+   controls sit beside it in a fixed column -- better on a wide, short
+   window like a Windows PC), and "auto", which behaves like "bottom" until
+   the @media block further down matches a wide-enough aspect ratio, at
+   which point it behaves like "right". The reveal-schedule ticker always
+   stays a full-width bar at the very bottom, in every mode.
+   ========================================================================== */
 #game-screen {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
+  box-sizing: border-box;
 }
+#game-layout { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
 #board-wrap { width: 100%; }
 #board-canvas {
   background: #1e293b;
@@ -108,9 +120,8 @@ body {
 }
 #game-controls h3 { margin-top: 0; }
 /* Each crew member's own block (swatch, movement, buttons, ...) is
-   untouched internally -- this only arranges the blocks themselves
-   side by side instead of stacked, now that they're not squeezed into
-   a narrow side column anymore. */
+   untouched internally -- this only arranges the blocks themselves side by
+   side instead of stacked, when there's a full-width board above them. */
 #detective-rows { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 #detective-rows .detective-row { flex: 1; min-width: 220px; margin-bottom: 0; }
 
@@ -129,6 +140,57 @@ body {
 #reveal-schedule .label { color: #64748b; margin-right: 0.2rem; flex-shrink: 0; white-space: nowrap; }
 #reveal-schedule .round { padding: 0.1rem 0.5rem; border-radius: 999px; flex-shrink: 0; }
 #reveal-schedule .round.now { background: #f97316; color: #1e293b; font-weight: 700; }
+
+/* --- "right" layout, forced --- */
+#game-screen.layout-right { height: 100vh; }
+#game-screen.layout-right #game-layout { flex: 1; flex-direction: row; min-height: 0; }
+#game-screen.layout-right #board-wrap {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#game-screen.layout-right #board-canvas {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+}
+#game-screen.layout-right #game-controls { width: 300px; flex-shrink: 0; overflow-y: auto; }
+#game-screen.layout-right #detective-rows { flex-direction: column; }
+#game-screen.layout-right #detective-rows .detective-row { min-width: 0; }
+
+/* --- "auto": same as "right", but only once the window is wide enough
+   relative to its height that maximizing the board's height still leaves
+   room for a side column -- narrower/taller than this (most tablets in
+   portrait, or in landscape too) falls through to the base "bottom"
+   styles above instead. 3/2 approximates "wider than the board's own
+   ~1.77:1 shape, with slack left over for the controls." --- */
+@media (min-aspect-ratio: 3/2) {
+  #game-screen.layout-auto { height: 100vh; }
+  #game-screen.layout-auto #game-layout { flex: 1; flex-direction: row; min-height: 0; }
+  #game-screen.layout-auto #board-wrap {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #game-screen.layout-auto #board-canvas {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+  }
+  #game-screen.layout-auto #game-controls { width: 300px; flex-shrink: 0; overflow-y: auto; }
+  #game-screen.layout-auto #detective-rows { flex-direction: column; }
+  #game-screen.layout-auto #detective-rows .detective-row { min-width: 0; }
+}
 
 .role-status {
   color: #94a3b8;

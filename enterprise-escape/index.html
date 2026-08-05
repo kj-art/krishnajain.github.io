@@ -16,6 +16,16 @@
 
   <section id="setup-screen" class="screen hidden">
     <h1>Enterprise Escape — Setup</h1>
+    <fieldset>
+      <legend>Display (this device only)</legend>
+      <label>Map/controls layout
+        <select id="setup-gui-layout">
+          <option value="auto">Auto (based on screen shape)</option>
+          <option value="right">Controls on the right</option>
+          <option value="bottom">Controls below the map</option>
+        </select>
+      </label>
+    </fieldset>
     <form id="setup-form">
       <fieldset>
         <legend>Players</legend>
@@ -98,6 +108,17 @@
         <label id="role-d2-label"><input type="checkbox" id="role-d2" /> <span class="swatch" id="role-d2-swatch"></span>Crew 2<span class="role-status" id="role-d2-status"></span></label>
       </fieldset>
       <p class="hint">Checking both Crew 1 and Crew 2 shares them on one device; checking just one is for separate devices.</p>
+
+      <fieldset>
+        <legend>Display (this device only)</legend>
+        <label>Map/controls layout
+          <select id="lobby-gui-layout">
+            <option value="auto">Auto (based on screen shape)</option>
+            <option value="right">Controls on the right</option>
+            <option value="bottom">Controls below the map</option>
+          </select>
+        </label>
+      </fieldset>
 
       <form id="lobby-settings-form">
         <fieldset>
@@ -182,32 +203,34 @@
     </div>
   </section>
 
-  <section id="game-screen" class="screen hidden">
-    <div id="board-wrap">
-      <canvas id="board-canvas" width="1100" height="620"></canvas>
-    </div>
-    <div id="reveal-schedule"></div>
-    <div id="game-controls">
-      <div id="round-info"></div>
-      <div id="transport-log"></div>
-      <div id="capture-banner" class="hidden"></div>
-      <div id="mrx-panel" class="hidden">
-        <h3>Fugitive's turn</h3>
-        <div id="mrx-tickets"></div>
-        <div id="mrx-controls">
-          <label id="mrx-double-wrap"><input type="checkbox" id="mrx-double-toggle" /> Use a double-move ticket</label>
-          <div id="mrx-double-status"></div>
-          <div id="mrx-plan-rows"></div>
-          <button id="mrx-pass-btn">Pass (stay put)</button>
-          <button id="mrx-clear-btn" class="hidden">Clear selection</button>
-          <button id="mrx-end-turn-btn" disabled>End Turn</button>
+  <section id="game-screen" class="screen hidden layout-auto">
+    <div id="game-layout">
+      <div id="board-wrap">
+        <canvas id="board-canvas" width="1100" height="620"></canvas>
+      </div>
+      <div id="game-controls">
+        <div id="round-info"></div>
+        <div id="transport-log"></div>
+        <div id="capture-banner" class="hidden"></div>
+        <div id="mrx-panel" class="hidden">
+          <h3>Fugitive's turn</h3>
+          <div id="mrx-tickets"></div>
+          <div id="mrx-controls">
+            <label id="mrx-double-wrap"><input type="checkbox" id="mrx-double-toggle" /> Use a double-move ticket</label>
+            <div id="mrx-double-status"></div>
+            <div id="mrx-plan-rows"></div>
+            <button id="mrx-pass-btn">Pass (stay put)</button>
+            <button id="mrx-clear-btn" class="hidden">Clear selection</button>
+            <button id="mrx-end-turn-btn" disabled>End Turn</button>
+          </div>
+        </div>
+        <div id="detectives-panel" class="hidden">
+          <h3>Enterprise Crew's turn</h3>
+          <div id="detective-rows"></div>
         </div>
       </div>
-      <div id="detectives-panel" class="hidden">
-        <h3>Enterprise Crew's turn</h3>
-        <div id="detective-rows"></div>
-      </div>
     </div>
+    <div id="reveal-schedule"></div>
   </section>
 
   <section id="end-screen" class="screen hidden">

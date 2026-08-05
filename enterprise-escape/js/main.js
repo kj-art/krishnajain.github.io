@@ -1,6 +1,7 @@
 import { GameplayController } from "./gameplay.js";
 import { startHotseat } from "./hotseat.js";
 import { initLobby } from "./lobby.js";
+import { applyGuiLayoutPref } from "./layout-pref.js";
 
 const el = (id) => document.getElementById(id);
 
@@ -18,6 +19,7 @@ async function main() {
   // a time (by reassigning controller.onLocalMove), since the user picks
   // exactly one mode per session.
   const controller = new GameplayController(el("board-canvas"), board, { onLocalMove: () => {} });
+  applyGuiLayoutPref();
 
   startHotseat(board, controller);
   initLobby(board, controller);

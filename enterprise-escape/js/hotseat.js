@@ -1,5 +1,6 @@
 import { createGame, isGameOver } from "./engine.js";
 import { settingsFromForm, wireCapToggle } from "./settings-form.js";
+import { wireGuiLayoutSelect } from "./layout-pref.js";
 
 const el = (id) => document.getElementById(id);
 
@@ -13,6 +14,8 @@ function showScreen(id) {
 // #game-screen DOM, so only one controller may ever be attached to it at a
 // time, with onLocalMove reassigned depending on which mode is active.
 export function startHotseat(board, controller) {
+  wireGuiLayoutSelect(el("setup-gui-layout"));
+
   const setupForm = el("setup-form");
   const maxCapturesUnlimited = setupForm.querySelector('[name="maxCapturesUnlimited"]');
   const maxCapturesInput = setupForm.querySelector('[name="maxCaptures"]');
