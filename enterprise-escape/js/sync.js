@@ -97,6 +97,7 @@ export async function createRoom(initialSettings) {
   const code = randomRoomCode();
   await set(ref(db, `rooms/${code}`), {
     phase: "lobby",
+    hostId: clientId,
     settings: encodeSettings(initialSettings),
     players: { [clientId]: { roles: [], joinedAt: Date.now() } },
   });

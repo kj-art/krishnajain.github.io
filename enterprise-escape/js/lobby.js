@@ -1,4 +1,4 @@
-import { createGame, parseRevealRounds, DETECTIVE_COLORS, DETECTIVE_IMAGES } from "./engine.js";
+import { createGame, parseRevealRounds, DETECTIVE_COLORS, DETECTIVE_IMAGES, TNG_CREW_COLORS } from "./engine.js";
 import { settingsFromForm, populateForm, wireCapToggle } from "./settings-form.js";
 import * as sync from "./sync.js";
 import { startNetworkedGame } from "./networked.js";
@@ -22,16 +22,23 @@ export function initLobby(board, controller) {
   wireCapToggle(settingsForm, "det_movement_cap_enabled", "det_movement_cap");
   wireCapToggle(settingsForm, "mrx_movement_cap_enabled", "mrx_movement_cap");
 
-  // Same colors/badge art the in-game crew swatches and map tokens use, so
-  // picking a role here already shows you who you'll be playing as.
-  // backgroundColor, not the "background" shorthand -- the shorthand resets
-  // background-size/position to their defaults, which (being inline) then
-  // wins over the .swatch stylesheet rule that makes the image actually
-  // cover the circle instead of showing its raw top-left corner at 1:1.
-  el("role-d1-swatch").style.backgroundColor = DETECTIVE_COLORS[0];
-  el("role-d1-swatch").style.backgroundImage = `url('${DETECTIVE_IMAGES[0]}')`;
-  el("role-d2-swatch").style.backgroundColor = DETECTIVE_COLORS[1];
-  el("role-d2-swatch").style.backgroundImage = `url('${DETECTIVE_IMAGES[1]}')`;
+  // Badge art only makes sense once the host is playing Fugitive (it's the
+  // host's nieces' characters, shown when the nieces are the ones playing
+  // Crew) -- otherwise plain TNG red/gold, same as the eventual game will
+  // use. Reactive to every room update (see renderCrewSwatches below), not
+  // set once here, since it tracks the host's LIVE role pick, not a fixed
+  // value -- backgroundColor, not the "background" shorthand, because the
+  // shorthand resets background-size/position to their defaults, which
+  // (being inline) then wins over the .swatch stylesheet rule that makes
+  // the image actually cover the circle instead of showing its raw
+  // top-left corner at 1:1.
+  function renderCrewSwatches(hostIsFugitive) {
+    const colors = hostIsFugitive ? DETECTIVE_COLORS : TNG_CREW_COLORS;
+    el("role-d1-swatch").style.backgroundColor = colors[0];
+    el("role-d1-swatch").style.backgroundImage = hostIsFugitive ? `url('${DETECTIVE_IMAGES[0]}')` : "";
+    el("role-d2-swatch").style.backgroundColor = colors[1];
+    el("role-d2-swatch").style.backgroundImage = hostIsFugitive ? `url('${DETECTIVE_IMAGES[1]}')` : "";
+  }
 
   let code = null;
   let isHost = false;
@@ -78,6 +85,9 @@ export function initLobby(board, controller) {
     renderMyRoleCheckboxes(room.players || {});
     updateStartButtonState(room);
     renderHowToPlay(sync.decodeSettings(room.settings));
+
+    const hostRoles = (room.hostId && room.players && room.players[room.hostId] && room.players[room.hostId].roles) || [];
+    renderCrewSwatches(hostRoles.includes("mrx"));
   }
 
   // Only the parts of the rules that were vague placeholders before ("a
@@ -254,7 +264,10 @@ export function initLobby(board, controller) {
     // or not -- the host edits it directly, everyone else has it kept in
     // sync via populateForm even while it's hidden from their view.
     const settings = settingsFromForm(settingsForm);
-    const state = createGame(board, settings);
+    // This button only ever exists on the host's own device (see enterRoom
+    // above), so currentMyRoles() here IS the host's roles.
+    const hostIsFugitive = currentMyRoles().includes("mrx");
+    const state = createGame(board, settings, { hostIsFugitive });
     await sync.startGame(code, state);
   });
 }

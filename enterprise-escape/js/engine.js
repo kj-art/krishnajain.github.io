@@ -42,8 +42,15 @@ export const DEFAULT_SETTINGS = {
 export const DETECTIVE_COLORS = ["#a855f7", "#c2703d"]; // purple, fox orange
 // Same index as DETECTIVE_COLORS/state.detectives -- badge art (256x256,
 // transparent PNG, art already includes its own circular frame) shown on the
-// map token, the side-panel swatch, and the lobby role checkbox.
+// map token, the side-panel swatch, and the lobby role checkbox, but only
+// when the host is playing Fugitive (see createGame's hostIsFugitive option)
+// -- the badges are the host's nieces' characters, which only makes sense
+// to show when the nieces are the ones actually playing Crew.
 export const DETECTIVE_IMAGES = ["assets/crew-purple.png", "assets/crew-orange.png"];
+// Used instead of DETECTIVE_COLORS (and instead of the badge images) when
+// the host is playing Crew rather than Fugitive -- classic TNG uniform
+// colors: command red, operations gold.
+export const TNG_CREW_COLORS = ["#b22222", "#b8860b"];
 
 export function parseRevealRounds(str) {
   if (Array.isArray(str)) return str.slice().sort((a, b) => a - b);
@@ -73,16 +80,23 @@ function mergeSettings(overrides = {}) {
   };
 }
 
-export function createGame(board, settingsOverrides = {}) {
+// hostIsFugitive picks which of the two crew color/art treatments gets
+// baked into this game for good: badge images + their purple/orange
+// (host playing Fugitive, so Crew are the host's nieces) or flat TNG
+// red/gold (host playing Crew instead, no badge art). Baked once here
+// rather than decided per-render, so every synced client renders crew
+// identically regardless of that device's own role.
+export function createGame(board, settingsOverrides = {}, { hostIsFugitive = false } = {}) {
   const settings = mergeSettings(settingsOverrides);
   const detectiveCount = settings.detectiveCount === 2 ? 2 : 1;
   const spawn = board.roles.detective;
+  const detectiveColors = hostIsFugitive ? DETECTIVE_COLORS : TNG_CREW_COLORS;
 
   const detectives = [];
   for (let i = 0; i < detectiveCount; i++) {
     detectives.push({
       id: `d${i + 1}`,
-      color: DETECTIVE_COLORS[i],
+      color: detectiveColors[i],
       position: spawn,
       movement: settings.movementPools.detective.start,
       tickets: { ...settings.tickets.detective },
@@ -93,6 +107,7 @@ export function createGame(board, settingsOverrides = {}) {
   return {
     board,
     settings,
+    crewBadgeImages: hostIsFugitive,
     round: 1,
     phase: "mrx", // "mrx" | "detectives" | "ended"
     mrx: {

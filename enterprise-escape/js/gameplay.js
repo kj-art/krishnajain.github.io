@@ -504,9 +504,10 @@ export class GameplayController {
       const capText = pool.capEnabled ? `/${pool.cap}` : "";
       const sharedNote = this.state.settings.sharedDetectivePool ? " (shared)" : "";
       const blackHtml = this.state.settings.tickets.detective.black > 0 ? ` &nbsp; Black: ${t.black}` : "";
-      const image = DETECTIVE_IMAGES[Number(d.id.slice(1)) - 1];
+      const image = this.state.crewBadgeImages ? DETECTIVE_IMAGES[Number(d.id.slice(1)) - 1] : null;
+      const imageHtml = image ? `background-image:url('${image}')` : "";
       row.innerHTML = `
-        <span class="swatch" style="background-color:${d.color};background-image:url('${image}')"></span>
+        <span class="swatch" style="background-color:${d.color};${imageHtml}"></span>
         <strong>Crew ${d.id.slice(1)}</strong> — at station ${d.position}
         <div>Movement: ${d.movement}${capText}${sharedNote}${blackHtml}</div>
         ${statusHtml}

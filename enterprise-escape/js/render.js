@@ -272,11 +272,15 @@ export class BoardView {
     }
   }
 
-  // True once an image has actually finished loading -- checked before
-  // every draw rather than cached, since it can flip false->true mid-game
-  // (loaded lazily, see the constructor) and every draw call after that
-  // point should immediately start using it.
-  _detectiveImageReady(index) {
+  // True once an image has actually finished loading AND this game has
+  // badge images turned on at all -- crewBadgeImages is baked into state at
+  // creation (see engine.js's createGame), true only when the host is
+  // playing Fugitive. Checked before every draw rather than cached, since
+  // load state can flip false->true mid-game (loaded lazily, see the
+  // constructor) and every draw call after that point should immediately
+  // start using it.
+  _detectiveImageReady(state, index) {
+    if (!state.crewBadgeImages) return false;
     const img = this.detectiveImages[index];
     return img && img.complete && img.naturalWidth > 0;
   }
@@ -294,7 +298,7 @@ export class BoardView {
       ctx.globalAlpha = GHOST_ALPHA;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
-      if (this._detectiveImageReady(i)) {
+      if (this._detectiveImageReady(state, i)) {
         ctx.clip();
         ctx.drawImage(this.detectiveImages[i], x - r, y - r, r * 2, r * 2);
       } else {
@@ -335,10 +339,13 @@ export class BoardView {
       const pos = state.staging[d.id] ? state.staging[d.id].to : d.position;
       const s = this.board.stations[String(pos)];
       if (!s) return;
-      occupied.add(String(pos));
       const [x, y] = this.boardToCanvas(s.x, s.y);
       const r = DETECTIVE_TOKEN_RADIUS;
-      const ready = this._detectiveImageReady(i);
+      const ready = this._detectiveImageReady(state, i);
+      // Only badge art needs its station's number left out -- a flat color
+      // token (no images this game, or still loading) reads fine with the
+      // number on top, same as it always did.
+      if (ready) occupied.add(String(pos));
       ctx.save();
       ctx.globalAlpha = state.staging[d.id] ? 0.9 : 1;
       ctx.beginPath();

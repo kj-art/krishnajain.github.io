@@ -90,7 +90,10 @@ export function startHotseat(board, controller) {
   setupForm.addEventListener("submit", (evt) => {
     evt.preventDefault();
     const settings = settingsFromForm(setupForm);
-    const state = createGame(board, settings);
+    // Hotseat has no "host picked a role" concept -- one shared device
+    // passes back and forth playing both sides, so there's no fixed
+    // identity to check. Always the flat TNG colors, never the badge art.
+    const state = createGame(board, settings, { hostIsFugitive: false });
     currentPhase = state.phase;
 
     goToAirlock("Setup complete. Hand the device to the Fugitive to begin.", () => {
