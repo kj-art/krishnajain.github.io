@@ -17,7 +17,10 @@ const DETECTIVE_TOKEN_RADIUS = STATION_RADIUS;
 // recognize at a glance. A shape change doesn't have that problem.
 const EXIT_TIER = {
   exit1: { color: "#facc15" },
-  exit2: { color: "#cbd5e1" },
+  // Was #cbd5e1 -- too close to the white (#f8fafc) of every regular
+  // station to read as "silver" rather than "not colored at all."
+  // Pushed toward a clearly blue-tinted steel color instead.
+  exit2: { color: "#60a5fa" },
   exit3: { color: "#cd7f32" },
 };
 
