@@ -117,7 +117,19 @@ export class BoardView {
     // counter has already advanced by the time this renders (commit ticks
     // it), so the comparison is against round - 1, not round.
     if (state.lastCapture && state.lastCapture.round === state.round - 1) return true;
-    if (state.lastReveal && state.lastReveal.round === state.round && state.phase === "detectives") return true;
+    // A reveal is a glimpse at the START of the round, not a live tracker
+    // for the whole turn -- it stops being shown the moment any detective
+    // stages a move, so the crew can look, plan, and commit, but can't keep
+    // re-checking the exact position while they finish deciding everyone
+    // else's moves too.
+    if (
+      state.lastReveal &&
+      state.lastReveal.round === state.round &&
+      state.phase === "detectives" &&
+      Object.keys(state.staging).length === 0
+    ) {
+      return true;
+    }
     return false;
   }
 
