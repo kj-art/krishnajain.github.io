@@ -21,6 +21,7 @@ import {
   commitToExit,
   isGameOver,
   DETECTIVE_IMAGES,
+  upcomingRevealRounds,
 } from "./engine.js";
 import { BoardView } from "./render.js";
 import { ticketSpan, ticketLabel } from "./ticket-theme.js";
@@ -375,7 +376,22 @@ export class GameplayController {
     this._renderCaptureBanner();
     this._renderMrxPanel();
     this._renderDetectivesPanel();
+    this._renderRevealSchedule();
     this._renderBoard();
+  }
+
+  // Public to both sides -- the SCHEDULE of when the Fugitive's position
+  // gets shown is common knowledge either way, only the position itself is
+  // sometimes hidden. Shows a scrolling window starting at the current
+  // round, so it always reads as "what's coming up" rather than a fixed
+  // list that becomes stale/irrelevant once the game runs past it.
+  _renderRevealSchedule() {
+    const upcoming = upcomingRevealRounds(this.state.round, this.state.settings, 6);
+    const parts = upcoming.map((r) => {
+      const isNow = r === this.state.round;
+      return `<span class="round${isNow ? " now" : ""}">${r}${isNow ? " (now)" : ""}</span>`;
+    });
+    el("reveal-schedule").innerHTML = `<span class="label">Fugitive exposed on rounds:</span>${parts.join("")}`;
   }
 
   _renderBoard() {

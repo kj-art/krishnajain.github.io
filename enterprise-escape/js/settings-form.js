@@ -49,6 +49,7 @@ export function settingsFromForm(form) {
       mrx: { black: num("mrx_black"), double: num("mrx_double") },
     },
     revealRounds: fd.get("revealRounds"),
+    revealRoundsInterval: num("revealRoundsInterval"),
     stunDuration: num("stunDuration"),
     stunnedDetectiveBehavior: fd.get("stunnedDetectiveBehavior"),
     maxCaptures: unlimited ? Infinity : num("maxCaptures"),
@@ -98,6 +99,7 @@ export function populateForm(form, settings) {
   set("mrx_black", settings.tickets.mrx.black);
   set("mrx_double", settings.tickets.mrx.double);
   set("revealRounds", Array.isArray(settings.revealRounds) ? settings.revealRounds.join(",") : settings.revealRounds);
+  set("revealRoundsInterval", settings.revealRoundsInterval);
   set("stunDuration", settings.stunDuration);
   const behaviorField = form.querySelector('[name="stunnedDetectiveBehavior"]');
   if (behaviorField) behaviorField.value = settings.stunnedDetectiveBehavior;

@@ -33,6 +33,12 @@ export const DEFAULT_SETTINGS = {
     mrx: { black: 5, double: 0 },
   },
   revealRounds: [3, 8, 13, 18, 24],
+  // The game has no round limit, so the manually-listed rounds above can't
+  // be the whole story -- once the round count runs past the last listed
+  // one, reveals repeat every N rounds forever. Defaults to 5 to continue
+  // the same cadence the default list above already uses (each entry is +5
+  // from the last). 0 means "never reveal again" once the list is used up.
+  revealRoundsInterval: 5,
   stunDuration: 2,
   stunnedDetectiveBehavior: "stay", // "stay" | "respawn"
   maxCaptures: Infinity,
@@ -59,6 +65,40 @@ export function parseRevealRounds(str) {
     .map((s) => parseInt(s.trim(), 10))
     .filter((n) => Number.isFinite(n))
     .sort((a, b) => a - b);
+}
+
+// Round 1 is always a reveal, unconditionally -- MrX starts in the brig, a
+// fixed, narratively public location, so there's nothing to hide about it.
+// This is a rule, not a setting: it doesn't consume or shift the manually
+// configured revealRounds list below it.
+export function isRevealRound(round, settings) {
+  if (round === 1) return true;
+  const rounds = parseRevealRounds(settings.revealRounds);
+  if (rounds.includes(round)) return true;
+  const interval = settings.revealRoundsInterval;
+  if (!interval || interval <= 0) return false;
+  const last = rounds.length ? rounds[rounds.length - 1] : 0;
+  if (round <= last) return false;
+  return (round - last) % interval === 0;
+}
+
+// The next `count` reveal rounds at or after fromRound, in order -- used to
+// render a running "next exposure" schedule that naturally scrolls forward
+// as fromRound (the current round) advances, without needing to enumerate
+// the whole (potentially endless) reveal timeline up front.
+export function upcomingRevealRounds(fromRound, settings, count = 6) {
+  const result = [];
+  const start = Math.max(1, fromRound);
+  const rounds = parseRevealRounds(settings.revealRounds);
+  const last = rounds.length ? rounds[rounds.length - 1] : 0;
+  // Once the manual list is exhausted and repeating is off, nothing further
+  // will ever be a reveal round -- stop instead of scanning forever.
+  const noMoreEver = !(settings.revealRoundsInterval > 0) && start > last;
+  const limit = noMoreEver ? start : start + 100000; // bounded scan otherwise
+  for (let r = start; result.length < count && r < limit; r++) {
+    if (isRevealRound(r, settings)) result.push(r);
+  }
+  return result;
 }
 
 function mergeSettings(overrides = {}) {
@@ -239,7 +279,7 @@ function cappedRegen(current, poolSettings) {
 // for anyone routing through the area without meaning to end the game there.
 function afterMrxMoveResolved(state) {
   let lastReveal = state.lastReveal;
-  if (state.settings.revealRounds.includes(state.round)) {
+  if (isRevealRound(state.round, state.settings)) {
     lastReveal = { round: state.round, position: state.mrx.position };
   }
   // Regen fires at the START of the side whose turn it now is -- detectives

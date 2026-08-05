@@ -119,10 +119,11 @@ export function initLobby(board, controller) {
         : ` If that happens ${maxCaptures} time${maxCaptures === 1 ? "" : "s"}, the Fugitive wins by default.`;
 
     const rounds = parseRevealRounds(settings.revealRounds);
-    el("htp-reveals").textContent =
-      rounds.length > 0
-        ? `Every so often, the Fugitive's real location gets shown to everyone automatically -- rounds ${rounds.join(", ")}.`
-        : `The Fugitive's real location is never shown automatically.`;
+    const interval = settings.revealRoundsInterval;
+    let revealText = "The Fugitive's real location is always shown on round 1 (they start in the brig, so there's nothing to hide yet)";
+    if (rounds.length > 0) revealText += `, then again on rounds ${rounds.join(", ")}`;
+    revealText += interval > 0 ? `, then every ${interval} round${interval === 1 ? "" : "s"} after that.` : ", and never again after that.";
+    el("htp-reveals").textContent = revealText;
   }
 
   function renderPlayers(players) {
