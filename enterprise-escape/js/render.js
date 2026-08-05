@@ -11,27 +11,31 @@ const GHOST_ALPHA = 0.35;
 // token smaller than the station it's standing on.
 const DETECTIVE_TOKEN_RADIUS = STATION_RADIUS;
 
-const EXIT_RING = {
-  exit1: { color: "#facc15", label: "E1" },
-  exit2: { color: "#cbd5e1", label: "E2" },
-  exit3: { color: "#cd7f32", label: "E3" },
+// Exit stations are drawn as colored squares instead of the usual white
+// circle (see _drawStationCircles) -- a ring/border around a still-round
+// station read too similarly to the legal-move highlight rings to
+// recognize at a glance. A shape change doesn't have that problem.
+const EXIT_TIER = {
+  exit1: { color: "#facc15" },
+  exit2: { color: "#cbd5e1" },
+  exit3: { color: "#cd7f32" },
 };
 
 function rgb(arr, alpha = 1) {
   return `rgba(${arr[0]}, ${arr[1]}, ${arr[2]}, ${alpha})`;
 }
 
-function exitRingFor(board, stationKey) {
+function exitTierFor(board, stationKey) {
   // board.roles values are JSON numbers, but stationKey here always comes
   // from Object.keys(board.stations) -- a string, even for numeric-looking
   // keys -- so this has to normalize both sides or every comparison is a
   // silent string-vs-number false.
   const key = String(stationKey);
   const roles = board.roles;
-  if (key === String(roles.exit1)) return EXIT_RING.exit1;
-  if (key === String(roles.exit2)) return EXIT_RING.exit2;
+  if (key === String(roles.exit1)) return EXIT_TIER.exit1;
+  if (key === String(roles.exit2)) return EXIT_TIER.exit2;
   for (let i = 0; i < 5; i++) {
-    if (key === String(roles[`exit3_${i}`])) return EXIT_RING.exit3;
+    if (key === String(roles[`exit3_${i}`])) return EXIT_TIER.exit3;
   }
   return null;
 }
@@ -169,7 +173,6 @@ export class BoardView {
 
     this._drawStationCircles();
     this._drawEdges();
-    this._drawExitRings();
     this._drawHighlights(state, opts);
     this._drawGhosts(state);
     const detectiveOccupied = this._drawDetectiveTokens(state);
@@ -248,35 +251,26 @@ export class BoardView {
     ctx.stroke();
   }
 
+  // Exit stations render as a colored rounded square instead of the usual
+  // white circle -- everything else about them (edges terminating on them,
+  // the number label, highlight rings, tokens) works exactly the same,
+  // since this is purely a base-shape swap in the same layer/pass.
   _drawStationCircles() {
     const { ctx, board } = this;
     for (const [key, s] of Object.entries(board.stations)) {
       const [x, y] = this.boardToCanvas(s.x, s.y);
+      const tier = exitTierFor(board, key);
       ctx.beginPath();
-      ctx.arc(x, y, STATION_RADIUS, 0, Math.PI * 2);
-      ctx.fillStyle = "#f8fafc";
+      if (tier) {
+        ctx.roundRect(x - STATION_RADIUS, y - STATION_RADIUS, STATION_RADIUS * 2, STATION_RADIUS * 2, 4);
+        ctx.fillStyle = tier.color;
+      } else {
+        ctx.arc(x, y, STATION_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = "#f8fafc";
+      }
       ctx.fill();
       ctx.strokeStyle = "#475569";
       ctx.lineWidth = 1.5;
-      ctx.stroke();
-    }
-  }
-
-  // Drawn AFTER edges (see render()), not bundled into the circle layer --
-  // a 2px ring sitting right where edges converge got buried under the
-  // connection lines, the same legibility problem the white-stroke labels
-  // solved for station numbers.
-  _drawExitRings() {
-    const { ctx, board } = this;
-    for (const key of Object.keys(board.stations)) {
-      const ring = exitRingFor(board, key);
-      if (!ring) continue;
-      const s = board.stations[key];
-      const [x, y] = this.boardToCanvas(s.x, s.y);
-      ctx.beginPath();
-      ctx.arc(x, y, STATION_RADIUS + 3, 0, Math.PI * 2);
-      ctx.strokeStyle = ring.color;
-      ctx.lineWidth = 3;
       ctx.stroke();
     }
   }
