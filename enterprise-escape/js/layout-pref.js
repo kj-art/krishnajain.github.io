@@ -48,9 +48,27 @@ export function setGuiLayoutPref(value) {
   applyGuiLayoutPref();
 }
 
+// Shown next to the layout <select> on both the setup and lobby screens
+// (any element with this class) -- lets anyone read off the actual
+// detected viewport size and decision without needing dev tools, which
+// isn't an option at all on an iPad.
+function renderDebugInfo() {
+  const pref = getGuiLayoutPref();
+  const resolved = pref === "auto" ? resolveAutoDirection() : pref;
+  const mapHeightAtFullWidth = Math.round(window.innerWidth / BOARD_ASPECT);
+  const text =
+    pref === "auto"
+      ? `viewport ${window.innerWidth}×${window.innerHeight}, full-width board would be ${mapHeightAtFullWidth}px tall (+${RESERVED_GUI_HEIGHT} budget) → auto picked "${resolved}"`
+      : `viewport ${window.innerWidth}×${window.innerHeight}, forced to "${resolved}"`;
+  document.querySelectorAll(".gui-layout-debug").forEach((el) => {
+    el.textContent = text;
+  });
+}
+
 // Safe to call any time, including before #game-screen exists (e.g. at app
 // boot) -- it's a no-op until the element shows up.
 export function applyGuiLayoutPref() {
+  renderDebugInfo();
   const screen = document.getElementById("game-screen");
   if (!screen) return;
   const pref = getGuiLayoutPref();
