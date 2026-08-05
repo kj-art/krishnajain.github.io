@@ -17,12 +17,15 @@ const BOARD_ASPECT = 1100 / 620;
 // could flip mid-game as those wiggle -- jarring. A fixed estimate keeps
 // the choice stable for a given window size instead.
 //
-// 150, not the first guess of 300 -- an iPad Pro 13" landscape (~1376x1032
-// points) makes a full-width board ~776px tall on its own, so anything
-// above ~150-200 here made "right" win on real tablets in landscape even
-// though "top" fits comfortably in practice (round-info + a Pass/End Turn
-// row + the ticker is nowhere near 300px most turns).
-const RESERVED_GUI_HEIGHT = 150;
+// Measured, not guessed: an actual iPad Pro 13" in landscape Safari
+// reports innerHeight 900 (not the full 1032 points -- Safari's chrome
+// eats more than expected) against a 776px-tall full-width board. 150
+// left only a 26px margin and still lost (776+150=926 > 900); 100 clears
+// it with real margin to spare while still protecting genuinely short
+// windows. Reference points that must keep resolving correctly:
+// 1600x900 desktop -> right, 768x1024 tablet portrait -> top,
+// 1376x900 iPad Pro 13" landscape -> top.
+const RESERVED_GUI_HEIGHT = 100;
 
 // "auto" resolves to "top" if a full-width board would still leave enough
 // vertical room underneath for the controls (i.e. the board is limited by
