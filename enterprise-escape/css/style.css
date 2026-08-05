@@ -90,16 +90,17 @@ body {
 }
 
 /* ==========================================================================
-   Game screen layout -- five modes, picked per-device (see layout-pref.js,
-   never synced): "bottom" (base styles below -- board fills the width,
-   controls sit under it), "top" (same stacking, controls first so the
-   status/buttons you use every turn don't need a scroll past the board to
-   reach), "right"/"left" (board maximizes HEIGHT instead, controls sit
-   beside it in a fixed column -- better on a wide, short window like a
-   Windows PC), and "auto", which behaves like "top" until the @media block
-   further down matches a wide-enough aspect ratio, at which point it
-   behaves like "right". The reveal-schedule ticker always stays a
-   full-width bar at the very bottom, in every mode.
+   Game screen layout -- four concrete modes, picked per-device (see
+   layout-pref.js, never synced): "bottom" (base styles below -- board
+   fills the width, controls sit under it), "top" (same stacking, controls
+   first so the status/buttons you use every turn don't need a scroll past
+   the board to reach), "right"/"left" (board maximizes HEIGHT instead,
+   controls sit beside it in a fixed column -- better on a wide, short
+   window like a Windows PC). "auto" isn't a CSS mode at all -- layout-
+   pref.js resolves it to "top" or "right" in JS (the choice depends on the
+   actual viewport pixels, not just their ratio -- see resolveAutoDirection)
+   and applies that class directly. The reveal-schedule ticker always stays
+   a full-width bar at the very bottom, in every mode.
 
    right/left and top/bottom are each just a flex-direction away from their
    mirror image (row <-> row-reverse, column <-> column-reverse) -- same
@@ -146,11 +147,9 @@ body {
 #reveal-schedule .round { padding: 0.1rem 0.5rem; border-radius: 999px; flex-shrink: 0; }
 #reveal-schedule .round.now { background: #f97316; color: #1e293b; font-weight: 700; }
 
-/* --- "top", forced, and "auto" by default (before the wide-screen media
-   query below can override it) -- same stacking as the base "bottom"
-   styles above, just reversed so controls render first. --- */
-#game-screen.layout-top #game-layout,
-#game-screen.layout-auto #game-layout {
+/* --- "top" -- same stacking as the base "bottom" styles above, just
+   reversed so controls render first. --- */
+#game-screen.layout-top #game-layout {
   flex-direction: column-reverse;
 }
 
@@ -197,35 +196,6 @@ body {
 #game-screen.layout-right #detective-rows .detective-row,
 #game-screen.layout-left #detective-rows .detective-row {
   min-width: 0;
-}
-
-/* --- "auto", once the window is wide enough relative to its height that
-   maximizing the board's height still leaves room for a side column, picks
-   up the same rules as "right" above -- narrower/taller than this (most
-   tablets, in either orientation) stays on the column-reverse ("top")
-   rule further up instead. 3/2 approximates "wider than the board's own
-   ~1.77:1 shape, with slack left over for the controls." --- */
-@media (min-aspect-ratio: 3/2) {
-  #game-screen.layout-auto { height: 100vh; }
-  #game-screen.layout-auto #game-layout { flex: 1; flex-direction: row; min-height: 0; }
-  #game-screen.layout-auto #board-wrap {
-    flex: 1;
-    min-width: 0;
-    min-height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #game-screen.layout-auto #board-canvas {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-    margin: 0;
-  }
-  #game-screen.layout-auto #game-controls { width: 300px; flex-shrink: 0; overflow-y: auto; }
-  #game-screen.layout-auto #detective-rows { flex-direction: column; }
-  #game-screen.layout-auto #detective-rows .detective-row { min-width: 0; }
 }
 
 .role-status {
