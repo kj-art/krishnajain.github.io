@@ -117,6 +117,15 @@ export class BoardView {
     // counter has already advanced by the time this renders (commit ticks
     // it), so the comparison is against round - 1, not round.
     if (state.lastCapture && state.lastCapture.round === state.round - 1) return true;
+    // Round 1 is the one exception to "reveals show the post-move
+    // position": everyone already knows MrX starts in the brig, so that
+    // starting position is visible during MrX's own round-1 turn, before
+    // they've moved at all -- not a live tracker following their cursor
+    // (position/phase both only change at the atomic moment a move
+    // commits, so this can't "watch them pick"), and it's gone the instant
+    // phase flips to "detectives" for round 1. Nothing about their actual
+    // round-1 move is ever exposed this way.
+    if (state.round === 1 && state.phase === "mrx") return true;
     // A reveal is a glimpse at the START of the round, not a live tracker
     // for the whole turn -- it stops being shown the moment any detective
     // stages a move, so the crew can look, plan, and commit, but can't keep

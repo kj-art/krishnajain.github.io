@@ -120,8 +120,9 @@ export function initLobby(board, controller) {
 
     const rounds = parseRevealRounds(settings.revealRounds);
     const interval = settings.revealRoundsInterval;
-    let revealText = "The Fugitive's real location is always shown on round 1 (they start in the brig, so there's nothing to hide yet)";
-    if (rounds.length > 0) revealText += `, then again on rounds ${rounds.join(", ")}`;
+    let revealText =
+      "The Fugitive's starting position is shown on round 1, while everyone waits for their first move (they start in the brig, so there's nothing to hide yet) -- it disappears again the moment their turn ends";
+    if (rounds.length > 0) revealText += `, then their location is shown again (this time after they've moved) on rounds ${rounds.join(", ")}`;
     revealText += interval > 0 ? `, then every ${interval} round${interval === 1 ? "" : "s"} after that.` : ", and never again after that.";
     el("htp-reveals").textContent = revealText;
   }

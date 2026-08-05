@@ -67,10 +67,17 @@ export function parseRevealRounds(str) {
     .sort((a, b) => a - b);
 }
 
-// Round 1 is always a reveal, unconditionally -- MrX starts in the brig, a
-// fixed, narratively public location, so there's nothing to hide about it.
-// This is a rule, not a setting: it doesn't consume or shift the manually
-// configured revealRounds list below it.
+// Round 1 always counts as an exposure round, unconditionally -- MrX starts
+// in the brig, a fixed, narratively public location, so there's nothing to
+// hide about it. This is a rule, not a setting: it doesn't consume or shift
+// the manually configured revealRounds list below it.
+//
+// NOTE: this only answers "does this round count as an exposure round" for
+// display purposes (the schedule bar, How-to-Play text). Round 1's exposure
+// works differently in *mechanism* than every other reveal round -- see the
+// round-1 special case in render.js's _shouldShowMrX and the guard in
+// afterMrxMoveResolved below, which deliberately does NOT call this for
+// round 1.
 export function isRevealRound(round, settings) {
   if (round === 1) return true;
   const rounds = parseRevealRounds(settings.revealRounds);
@@ -279,7 +286,13 @@ function cappedRegen(current, poolSettings) {
 // for anyone routing through the area without meaning to end the game there.
 function afterMrxMoveResolved(state) {
   let lastReveal = state.lastReveal;
-  if (isRevealRound(state.round, state.settings)) {
+  // Round 1 deliberately excluded -- its exposure is the STARTING position,
+  // shown live during MrX's own round-1 turn (see render.js's
+  // _shouldShowMrX), not a post-move lastReveal like every other reveal
+  // round. Setting lastReveal here too would leak round 1's post-move
+  // position to the crew as well, which isn't what "they start in the
+  // brig" was ever supposed to mean.
+  if (state.round !== 1 && isRevealRound(state.round, state.settings)) {
     lastReveal = { round: state.round, position: state.mrx.position };
   }
   // Regen fires at the START of the side whose turn it now is -- detectives
