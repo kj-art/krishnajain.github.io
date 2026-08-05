@@ -542,6 +542,16 @@ export class GameplayController {
           }
           const destDescription = staged ? `moving to ${staged.to}` : "staying put";
           if (!window.confirm(`Lock in Crew ${d.id.slice(1)}, ${destDescription}? The turn ends once everyone's locked in.`)) return;
+          // Hand the board straight to whichever other crew member hasn't
+          // locked in yet -- saves an extra tap to switch on a shared device.
+          const next = this.state.detectives.find(
+            (other) =>
+              other.id !== d.id &&
+              this.viewerRoles.has(other.id) &&
+              !isStunned(other, this.state.round) &&
+              !this.state.readyDetectives.includes(other.id)
+          );
+          if (next) this.activeDetectiveId = next.id;
           this._applyMove((s) => lockInDetective(s, d.id));
         };
         row.appendChild(lockBtn);

@@ -113,10 +113,14 @@ export class BoardView {
   }
 
   // Layering (bottom to top): station circles, then connection paths drawn
-  // OVER them, then everything else, then station number labels drawn last
-  // with a white halo -- with 53 stations packed densely, paths crossing
-  // through circles and numbers always staying legible on top of everything
-  // reads far better than circles/edges/text fighting for the same layer.
+  // over them, then everything else including the detective/MrX tokens,
+  // then station number labels drawn last with a white halo -- except a
+  // station with a detective badge image on it skips its own label
+  // entirely (see _drawStationLabels), since the label would otherwise
+  // still land on top and cover the art. With 53 stations packed densely,
+  // paths crossing through circles and numbers staying legible on top of
+  // everything (tokens included) reads far better than fighting for the
+  // same layer.
   render(state, opts = {}) {
     this._lastState = state;
     this._computeTransform();
@@ -138,9 +142,10 @@ export class BoardView {
     this._drawExitRings();
     this._drawHighlights(state, opts);
     this._drawGhosts(state);
-    this._drawTokens(state);
+    const detectiveOccupied = this._drawDetectiveTokens(state);
+    this._drawMrxToken(state);
     this._drawMrxPending(opts.mrxPending);
-    this._drawStationLabels();
+    this._drawStationLabels(detectiveOccupied);
   }
 
   _drawEdges() {
@@ -246,13 +251,14 @@ export class BoardView {
     }
   }
 
-  _drawStationLabels() {
+  _drawStationLabels(skipKeys) {
     const { ctx, board } = this;
     ctx.font = "10px sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.lineJoin = "round";
     for (const [key, s] of Object.entries(board.stations)) {
+      if (skipKeys && skipKeys.has(key)) continue;
       const [x, y] = this.boardToCanvas(s.x, s.y);
       ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 3;
@@ -315,12 +321,17 @@ export class BoardView {
     ctx.setLineDash([]);
   }
 
-  _drawTokens(state) {
+  // Returns the set of station keys drawn on, so _drawStationLabels knows
+  // which numbers to leave out (a station's badge image and its number
+  // label would otherwise land in the same spot).
+  _drawDetectiveTokens(state) {
     const { ctx } = this;
+    const occupied = new Set();
     state.detectives.forEach((d, i) => {
       const pos = state.staging[d.id] ? state.staging[d.id].to : d.position;
       const s = this.board.stations[String(pos)];
       if (!s) return;
+      occupied.add(String(pos));
       const [x, y] = this.boardToCanvas(s.x, s.y);
       const r = STATION_RADIUS - 3;
       const ready = this._detectiveImageReady(i);
@@ -347,24 +358,26 @@ export class BoardView {
         ctx.stroke();
       }
     });
+    return occupied;
+  }
 
-    if (this._shouldShowMrX(state)) {
-      const s = this.board.stations[String(state.mrx.position)];
-      if (s) {
-        const [x, y] = this.boardToCanvas(s.x, s.y);
-        ctx.beginPath();
-        ctx.arc(x, y, STATION_RADIUS - 2, 0, Math.PI * 2);
-        ctx.fillStyle = MRX_COLOR;
-        ctx.fill();
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 11px sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("X", x, y);
-      }
-    }
+  _drawMrxToken(state) {
+    if (!this._shouldShowMrX(state)) return;
+    const { ctx } = this;
+    const s = this.board.stations[String(state.mrx.position)];
+    if (!s) return;
+    const [x, y] = this.boardToCanvas(s.x, s.y);
+    ctx.beginPath();
+    ctx.arc(x, y, STATION_RADIUS - 2, 0, Math.PI * 2);
+    ctx.fillStyle = MRX_COLOR;
+    ctx.fill();
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("X", x, y);
   }
 }
