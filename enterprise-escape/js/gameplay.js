@@ -382,11 +382,13 @@ export class GameplayController {
 
   // Public to both sides -- the SCHEDULE of when the Fugitive's position
   // gets shown is common knowledge either way, only the position itself is
-  // sometimes hidden. Shows a scrolling window starting at the current
-  // round, so it always reads as "what's coming up" rather than a fixed
-  // list that becomes stale/irrelevant once the game runs past it.
+  // sometimes hidden. Reads like a dial: the current/upcoming round is
+  // always first, and it shifts forward as rounds pass. Renders a generous
+  // batch (far more than could ever fit, even on an ultrawide screen) and
+  // lets the row's own overflow:hidden clip it to whatever actually fits --
+  // no resize listener needed, it just adapts on its own at every width.
   _renderRevealSchedule() {
-    const upcoming = upcomingRevealRounds(this.state.round, this.state.settings, 6);
+    const upcoming = upcomingRevealRounds(this.state.round, this.state.settings, 40);
     const parts = upcoming.map((r) => {
       const isNow = r === this.state.round;
       return `<span class="round${isNow ? " now" : ""}">${r}${isNow ? " (now)" : ""}</span>`;
