@@ -95,8 +95,7 @@ body {
   gap: 1rem;
   padding: 1rem;
 }
-#game-main { display: flex; gap: 1rem; }
-#board-wrap { flex: 1; min-width: 0; }
+#board-wrap { width: 100%; }
 #board-canvas {
   background: #1e293b;
   border-radius: 8px;
@@ -105,12 +104,15 @@ body {
   height: auto;
   touch-action: manipulation;
   display: block;
+  margin: 0 auto;
 }
-#side-panel {
-  width: 280px;
-  flex-shrink: 0;
-}
-#side-panel h3 { margin-top: 0; }
+#game-controls h3 { margin-top: 0; }
+/* Each crew member's own block (swatch, movement, buttons, ...) is
+   untouched internally -- this only arranges the blocks themselves
+   side by side instead of stacked, now that they're not squeezed into
+   a narrow side column anymore. */
+#detective-rows { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+#detective-rows .detective-row { flex: 1; min-width: 220px; margin-bottom: 0; }
 
 #reveal-schedule {
   display: flex;
@@ -127,11 +129,6 @@ body {
 #reveal-schedule .label { color: #64748b; margin-right: 0.2rem; flex-shrink: 0; white-space: nowrap; }
 #reveal-schedule .round { padding: 0.1rem 0.5rem; border-radius: 999px; flex-shrink: 0; }
 #reveal-schedule .round.now { background: #f97316; color: #1e293b; font-weight: 700; }
-
-@media (max-width: 900px) {
-  #game-main { flex-direction: column; }
-  #side-panel { width: 100%; }
-}
 
 .role-status {
   color: #94a3b8;
