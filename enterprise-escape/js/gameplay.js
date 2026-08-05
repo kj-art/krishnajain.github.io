@@ -558,7 +558,15 @@ export class GameplayController {
             return;
           }
           const destDescription = staged ? `moving to ${staged.to}` : "staying put";
-          if (!window.confirm(`Lock in Crew ${d.id.slice(1)}, ${destDescription}? The turn ends once everyone's locked in.`)) return;
+          // Only the lock-in that actually ends the turn needs a confirm --
+          // locking in while someone else still hasn't is fully reversible
+          // (there's an Unlock button right there), so a popup on every
+          // single lock-in is just friction on a shared device where both
+          // crew members are clicking through the same screen in a row.
+          const wouldEndTurn = allDetectivesReady({ ...this.state, readyDetectives: [...this.state.readyDetectives, d.id] });
+          if (wouldEndTurn && !window.confirm(`Lock in Crew ${d.id.slice(1)}, ${destDescription}? This ends the turn -- the Fugitive goes next.`)) {
+            return;
+          }
           // Hand the board straight to whichever other crew member hasn't
           // locked in yet -- saves an extra tap to switch on a shared device.
           const next = this.state.detectives.find(
