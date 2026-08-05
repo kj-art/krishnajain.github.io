@@ -48,12 +48,20 @@ export function initLobby(board, controller) {
   let unsubscribe = null;
   let lastKnownSettingsJSON = null;
   let suppressFormEvents = false;
+  // True once this subscription has seen the room in "lobby" phase --
+  // distinguishes "I was already here when the host started" (auto-jump
+  // straight in, unchanged from before) from "I just joined/rejoined a
+  // game that was already in progress" (needs the rejoin gate below,
+  // since this device never got a chance to confirm/pick a role for it).
+  let sawLobbyPhase = false;
 
   function enterRoom(roomCode) {
     code = roomCode;
+    sawLobbyPhase = false;
     el("lobby-join-box").classList.add("hidden");
     el("lobby-room-box").classList.remove("hidden");
     el("lobby-room-code").textContent = code;
+    el("lobby-rejoin-box").classList.add("hidden");
     // Only the host edits the ruleset and starts the game; everyone else
     // just picks a role against whatever the host has configured.
     settingsForm.classList.toggle("hidden", !isHost);
@@ -62,14 +70,44 @@ export function initLobby(board, controller) {
     unsubscribe = sync.subscribeRoom(code, onRoomUpdate);
   }
 
+  // Shown once, the first time this device encounters a room that's
+  // already "playing" -- lets a rejoining player confirm or pick a role
+  // before dropping into the board, instead of silently resuming with
+  // whatever they last had (or nothing, for a genuinely new device).
+  //
+  // There's no presence/heartbeat system here (that'd need something like
+  // Firebase's onDisconnect hooks), so the app has no way to tell "this
+  // role's claim is stale, its device is really gone" from "someone's
+  // just idle for a minute" -- rather than risk permanently locking a
+  // role because of that unknowable difference, this gate lets a role be
+  // claimed even if it's currently held by someone else. That's a
+  // deliberate trust call, fine for a family game with nobody adversarial;
+  // it would NOT be fine for a version of this meant for strangers.
+  function renderRejoinGate(room) {
+    renderPlayers(room.players || {});
+    suppressFormEvents = true;
+    populateForm(settingsForm, sync.decodeSettings(room.settings));
+    suppressFormEvents = false;
+    renderMyRoleCheckboxes(room.players || {}, { allowStealing: true });
+    settingsForm.classList.add("hidden");
+    el("lobby-start-btn").classList.add("hidden");
+    el("lobby-start-hint").classList.add("hidden");
+    el("lobby-rejoin-box").classList.remove("hidden");
+  }
+
   function onRoomUpdate(room) {
     if (!room) return;
     if (room.phase === "playing") {
+      if (!sawLobbyPhase) {
+        renderRejoinGate(room);
+        return;
+      }
       if (unsubscribe) unsubscribe();
       const myRoles = (room.players && room.players[sync.clientId] && room.players[sync.clientId].roles) || [];
       startNetworkedGame(board, code, myRoles, controller);
       return;
     }
+    sawLobbyPhase = true;
     renderPlayers(room.players || {});
 
     const settingsJSON = JSON.stringify(room.settings);
@@ -152,7 +190,14 @@ export function initLobby(board, controller) {
   // and Crew 2 are always shown as separate checkboxes -- one device
   // checking both is exactly "sharing a turn and a device," no separate
   // setting needed to pick between the two.
-  function renderMyRoleCheckboxes(players) {
+  // allowStealing: true (used only by the rejoin gate, see renderRejoinGate
+  // above) drops the disabled state entirely -- there's no way to tell a
+  // stale claim from someone who's just idle, so a late joiner can claim
+  // ANY role, including ones that already show as held by someone else.
+  // Pre-game, this stays off: a soft "(taken)" block is still useful there
+  // to catch accidental double-claims while everyone's actively setting up
+  // together, a genuinely different situation from rejoining mid-game.
+  function renderMyRoleCheckboxes(players, { allowStealing = false } = {}) {
     const mine = (players[sync.clientId] && players[sync.clientId].roles) || [];
     const settings = settingsFromForm(settingsForm);
     const twoDetectives = settings.detectiveCount === 2;
@@ -173,8 +218,8 @@ export function initLobby(board, controller) {
       const checkbox = el(id);
       const taken = takenByOther(roleKey);
       checkbox.checked = checked;
-      checkbox.disabled = taken && !checked;
-      el(statusId).textContent = taken ? " (taken)" : "";
+      checkbox.disabled = taken && !checked && !allowStealing;
+      el(statusId).textContent = taken ? (allowStealing ? " (also claimed elsewhere)" : " (taken)") : "";
     }
 
     applyRoleCheckbox("role-mrx", "role-mrx-status", "mrx", mine.includes("mrx"));
@@ -274,5 +319,10 @@ export function initLobby(board, controller) {
     const hostIsFugitive = currentMyRoles().includes("mrx");
     const state = createGame(board, settings, { hostIsFugitive });
     await sync.startGame(code, state);
+  });
+
+  el("lobby-rejoin-continue-btn").addEventListener("click", () => {
+    if (unsubscribe) unsubscribe();
+    startNetworkedGame(board, code, currentMyRoles(), controller);
   });
 }
