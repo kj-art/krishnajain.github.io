@@ -99,6 +99,10 @@ export function startHotseat(board, controller) {
     const state = createGame(board, settings, { hostIsFugitive: false });
     currentPhase = state.phase;
 
+    // Defensive -- hotseat has no room code at all, and this DOM is shared
+    // with networked.js (only one mode is ever actually used per session).
+    el("game-room-code").classList.add("hidden");
+
     goToAirlock("Setup complete. Hand the device to the Fugitive to begin.", () => {
       controller.setViewerRoles(["mrx"]);
       controller.setState(state);

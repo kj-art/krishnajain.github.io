@@ -104,13 +104,19 @@ export async function createRoom(initialSettings) {
   return code;
 }
 
+// sessionStorage keeps the same clientId across an accidental page refresh
+// (it only resets on a closed tab), so "join" doubles as "rejoin" for free
+// -- but only if it doesn't stomp the role that clientId already claimed.
+// Wiping to roles: [] unconditionally would silently kick a refreshed
+// player back to spectator on an in-progress game.
 export async function joinRoom(code) {
   const roomRef = ref(db, `rooms/${code}`);
   const snap = await get(roomRef);
   if (!snap.exists()) throw new Error("Room not found");
+  const existing = snap.val().players && snap.val().players[clientId];
   await update(ref(db, `rooms/${code}/players/${clientId}`), {
-    roles: [],
-    joinedAt: Date.now(),
+    roles: existing ? existing.roles : [],
+    joinedAt: existing ? existing.joinedAt : Date.now(),
   });
   return snap.val();
 }

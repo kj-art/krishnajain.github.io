@@ -20,6 +20,14 @@ export function startNetworkedGame(board, code, myRoles, controller) {
   controller.setViewerRoles(myRoles); // best-known roles at hand-off, corrected below on every update
   showScreen("game-screen");
 
+  // Visible for the rest of the game (not just the lobby) so that if
+  // someone's device refreshes or drops, whoever's still connected can
+  // just read the code back to them to rejoin -- see sync.js's joinRoom,
+  // which now preserves an existing player's role instead of resetting it.
+  const roomCodeEl = el("game-room-code");
+  roomCodeEl.textContent = `Room code: ${code}`;
+  roomCodeEl.classList.remove("hidden");
+
   // Role claims are async writes (see lobby.js's setMyRoles), so the
   // snapshot lobby.js had at the moment Start Game was pressed can be
   // stale for whichever device's claim hadn't landed yet -- that device
