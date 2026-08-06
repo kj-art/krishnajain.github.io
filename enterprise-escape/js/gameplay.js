@@ -548,7 +548,17 @@ export class GameplayController {
           const clearBtn = document.createElement("button");
           clearBtn.textContent = "Stay put instead";
           clearBtn.onclick = () => {
-            this._applyMove((s) => unstageDetectiveMove(s, d.id));
+            // Reverting to your own real station isn't always legal
+            // anymore -- someone else may have since staged (or locked
+            // in) a move that lands them exactly there. The map's click
+            // targets are pre-filtered to only ever offer legal moves, so
+            // this is the one detective action that can still hit an
+            // engine-level rejection through completely normal use.
+            try {
+              this._applyMove((s) => unstageDetectiveMove(s, d.id));
+            } catch (err) {
+              window.alert(err.message);
+            }
           };
           row.appendChild(clearBtn);
         }

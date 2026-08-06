@@ -399,8 +399,26 @@ export function stageDetectiveMove(state, detectiveId, to, ticket) {
   return { ...state, staging, readyDetectives };
 }
 
+// "Stay put instead" is really "move back to my own real station" -- and
+// that station isn't necessarily still free. While this detective was
+// staged elsewhere, another detective could have staged (or already
+// locked in) a move that lands them exactly there.
+//
+// Deliberately NOT the same check stationClaimedThisTurn/
+// stationOccupiedByAnyDetective use for a real move: those also treat
+// another detective's unstaged REAL position as "occupied", which is
+// exactly right when picking a NEW destination, but wrong here -- two
+// detectives sharing a station is the normal, allowed starting condition
+// (shared spawn), not a conflict, right up until someone actually STAGES
+// a move onto it. Only an explicit staged claim onto this exact station
+// blocks reverting to it.
 export function unstageDetectiveMove(state, detectiveId) {
   if (!state.staging[detectiveId] && !state.readyDetectives.includes(detectiveId)) return state;
+  const d = state.detectives.find((x) => x.id === detectiveId);
+  const claimedByOther = d && Object.entries(state.staging).some(([id, move]) => id !== detectiveId && move.to === d.position);
+  if (claimedByOther) {
+    throw new Error(`Can't stay at station ${d.position} -- another crew member is moving there this turn.`);
+  }
   const staging = { ...state.staging };
   delete staging[detectiveId];
   const readyDetectives = state.readyDetectives.filter((id) => id !== detectiveId);
