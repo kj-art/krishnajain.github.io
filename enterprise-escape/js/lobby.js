@@ -150,14 +150,30 @@ export function initLobby(board, controller) {
         `The Fugitive also has ${mrxDouble} double-move ticket${mrxDouble === 1 ? "" : "s"}, letting them take two moves in a single turn.`;
     }
 
-    const stun = settings.stunDuration;
-    el("htp-stun").textContent = `${stun} round${stun === 1 ? "" : "s"}`;
+    // Which exit tiers are actually live this game -- a tier that's off is
+    // just an ordinary station, so the description only ever names the
+    // tier(s) currently switched on (see engine.js's isActiveExitStation).
+    const tiers = settings.enabledExitTiers || { exit1: true, exit2: false, exit3: false };
+    const tierNames = [];
+    if (tiers.exit1) tierNames.push("gold (gain)");
+    if (tiers.exit2) tierNames.push("blue (maintain)");
+    if (tiers.exit3) tierNames.push("bronze (lose)");
+    el("htp-exit-tiers").textContent =
+      tierNames.length === 0
+        ? "No Exit type is currently switched on -- every station is an ordinary stop until the host turns at least one on."
+        : `Exit stations are the colored squares on the map -- right now that's ${tierNames.join(", ")}.`;
 
+    const stun = settings.stunDuration;
+    const stunText = `${stun} round${stun === 1 ? "" : "s"}`;
     const maxCaptures = settings.maxCaptures;
-    el("htp-max-captures").textContent =
-      maxCaptures === Infinity
-        ? ""
-        : ` If that happens ${maxCaptures} time${maxCaptures === 1 ? "" : "s"}, the Fugitive wins by default.`;
+    // maxCaptures of 0 or 1 both end the game on the very first capture
+    // (captureCount reaches either threshold immediately) -- there's no
+    // "keep playing, stunned for N rounds" phase to describe in that case.
+    el("htp-caught-detail").textContent =
+      maxCaptures !== Infinity && maxCaptures <= 1
+        ? "Go have your showdown at the table -- but that's it: a single capture ends the game right there, and the Fugitive wins by default."
+        : `Go have your showdown at the table, then keep playing -- the Crew member who caught them is stunned for ${stunText}.` +
+          (maxCaptures === Infinity ? "" : ` If that happens ${maxCaptures} times total, the Fugitive wins by default.`);
 
     const rounds = parseRevealRounds(settings.revealRounds);
     const interval = settings.revealRoundsInterval;

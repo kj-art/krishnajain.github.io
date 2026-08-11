@@ -28,17 +28,25 @@ function rgb(arr, alpha = 1) {
   return `rgba(${arr[0]}, ${arr[1]}, ${arr[2]}, ${alpha})`;
 }
 
-function exitTierFor(board, stationKey) {
+// Only a tier turned on in settings.enabledExitTiers actually renders as an
+// exit square -- a disabled tier's stations fall through to the plain white
+// circle, same as any ordinary station (see engine.js's isActiveExitStation,
+// the same settings-gated notion used for win conditions and the "crew
+// can't linger on an exit" rule).
+function exitTierFor(board, settings, stationKey) {
   // board.roles values are JSON numbers, but stationKey here always comes
   // from Object.keys(board.stations) -- a string, even for numeric-looking
   // keys -- so this has to normalize both sides or every comparison is a
   // silent string-vs-number false.
   const key = String(stationKey);
   const roles = board.roles;
-  if (key === String(roles.exit1)) return EXIT_TIER.exit1;
-  if (key === String(roles.exit2)) return EXIT_TIER.exit2;
-  for (let i = 0; i < 5; i++) {
-    if (key === String(roles[`exit3_${i}`])) return EXIT_TIER.exit3;
+  const tiers = (settings && settings.enabledExitTiers) || { exit1: true, exit2: true, exit3: true };
+  if (tiers.exit1 && key === String(roles.exit1)) return EXIT_TIER.exit1;
+  if (tiers.exit2 && key === String(roles.exit2)) return EXIT_TIER.exit2;
+  if (tiers.exit3) {
+    for (let i = 0; i < 5; i++) {
+      if (key === String(roles[`exit3_${i}`])) return EXIT_TIER.exit3;
+    }
   }
   return null;
 }
@@ -117,36 +125,23 @@ export class BoardView {
     return best;
   }
 
-  _shouldShowMrX(state) {
-    if (this._viewerRoles.has("mrx")) return true;
-    if (state.phase === "ended") return true;
-    // lastCapture.round is the round the capture happened IN, but the round
-    // counter has already advanced by the time this renders (commit ticks
-    // it), so the comparison is against round - 1, not round.
-    if (state.lastCapture && state.lastCapture.round === state.round - 1) return true;
-    // Round 1 is the one exception to "reveals show the post-move
-    // position": everyone already knows MrX starts in the brig, so that
-    // starting position is visible during MrX's own round-1 turn, before
-    // they've moved at all -- not a live tracker following their cursor
-    // (position/phase both only change at the atomic moment a move
-    // commits, so this can't "watch them pick"), and it's gone the instant
-    // phase flips to "detectives" for round 1. Nothing about their actual
-    // round-1 move is ever exposed this way.
-    if (state.round === 1 && state.phase === "mrx") return true;
-    // A reveal is a glimpse at the START of the round, not a live tracker
-    // for the whole turn -- it stops being shown the moment any detective
-    // stages a move, so the crew can look, plan, and commit, but can't keep
-    // re-checking the exact position while they finish deciding everyone
-    // else's moves too.
-    if (
-      state.lastReveal &&
-      state.lastReveal.round === state.round &&
-      state.phase === "detectives" &&
-      Object.keys(state.staging).length === 0
-    ) {
-      return true;
+  // For the crew's view: where the Fugitive was last actually seen, and
+  // which round that sighting happened in. There's always at least one
+  // sighting to fall back on -- everyone knows MrX starts in the brig
+  // (board.roles.mrx is a fixed spawn, not something a move could leak) --
+  // so the crew's marker never has nothing to show, it just goes stale.
+  // lastCapture counts as a sighting too (you just watched them get
+  // caught), exposed for one full round after the capture round, matching
+  // how lastReveal is exposed for the round it fires in.
+  _mrxSighting(state) {
+    let best = { round: 1, position: state.board.roles.mrx };
+    if (state.lastReveal && state.lastReveal.round >= best.round) {
+      best = { round: state.lastReveal.round, position: state.lastReveal.position };
     }
-    return false;
+    if (state.lastCapture && state.lastCapture.round + 1 >= best.round) {
+      best = { round: state.lastCapture.round + 1, position: state.lastCapture.position };
+    }
+    return best;
   }
 
   // Layering (bottom to top): station circles, then connection paths drawn
@@ -174,7 +169,7 @@ export class BoardView {
       ctx.globalAlpha = 1;
     }
 
-    this._drawStationCircles();
+    this._drawStationCircles(state.settings);
     this._drawEdges(state.settings.movementCosts);
     this._drawHighlights(state, opts);
     this._drawGhosts(state);
@@ -304,11 +299,11 @@ export class BoardView {
   // white circle -- everything else about them (edges terminating on them,
   // the number label, highlight rings, tokens) works exactly the same,
   // since this is purely a base-shape swap in the same layer/pass.
-  _drawStationCircles() {
+  _drawStationCircles(settings) {
     const { ctx, board } = this;
     for (const [key, s] of Object.entries(board.stations)) {
       const [x, y] = this.boardToCanvas(s.x, s.y);
-      const tier = exitTierFor(board, key);
+      const tier = exitTierFor(board, settings, key);
       ctx.beginPath();
       if (tier) {
         ctx.roundRect(x - STATION_RADIUS, y - STATION_RADIUS, STATION_RADIUS * 2, STATION_RADIUS * 2, 4);
@@ -441,12 +436,28 @@ export class BoardView {
     return occupied;
   }
 
+  // MrX's own device (and anyone once the game's over) always sees the real,
+  // live position at full opacity. Everyone else -- the crew's normal view
+  // -- sees a marker that never disappears: it sits at the last station MrX
+  // was actually sighted at (see _mrxSighting), full opacity during the
+  // round of that sighting itself, then fading to half opacity for every
+  // round after, staying put there until the next sighting moves it.
   _drawMrxToken(state) {
-    if (!this._shouldShowMrX(state)) return;
-    const { ctx } = this;
-    const s = this.board.stations[String(state.mrx.position)];
+    let position, alpha;
+    if (this._viewerRoles.has("mrx") || state.phase === "ended") {
+      position = state.mrx.position;
+      alpha = 1;
+    } else {
+      const sighting = this._mrxSighting(state);
+      position = sighting.position;
+      alpha = state.round === sighting.round ? 1 : 0.5;
+    }
+    const s = this.board.stations[String(position)];
     if (!s) return;
     const [x, y] = this.boardToCanvas(s.x, s.y);
+    const { ctx } = this;
+    ctx.save();
+    ctx.globalAlpha = alpha;
     ctx.beginPath();
     ctx.arc(x, y, STATION_RADIUS - 2, 0, Math.PI * 2);
     ctx.fillStyle = MRX_COLOR;
@@ -459,5 +470,6 @@ export class BoardView {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("X", x, y);
+    ctx.restore();
   }
 }

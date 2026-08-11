@@ -60,8 +60,16 @@
         <label>Regen per round <input type="number" name="mrx_movement_regen" value="1" min="0" /></label>
         <label><input type="checkbox" name="mrx_movement_cap_enabled" checked /> Cap how high it can build up</label>
         <label>Cap <input type="number" name="mrx_movement_cap" value="15" min="0" /></label>
-        <label>Black <input type="number" name="mrx_black" value="5" min="0" /></label>
+        <label>Black <input type="number" name="mrx_black" value="3" min="0" /></label>
         <label>Double <input type="number" name="mrx_double" value="0" min="0" /></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Exit types in play</legend>
+        <label><input type="checkbox" name="exit_tier_1_enabled" checked /> Exit 1 (gold) -- gain</label>
+        <label><input type="checkbox" name="exit_tier_2_enabled" /> Exit 2 (blue) -- maintain</label>
+        <label><input type="checkbox" name="exit_tier_3_enabled" /> Exit 3 (bronze) -- lose</label>
+        <p class="hint">A type that's off behaves as an ordinary station -- not a win condition, and the Crew can stand on it freely.</p>
       </fieldset>
 
       <fieldset>
@@ -81,9 +89,9 @@
             <option value="respawn">Return to spawn</option>
           </select>
         </label>
-        <label><input type="checkbox" name="maxCapturesUnlimited" checked /> Unlimited captures (game only ends via exit)</label>
+        <label><input type="checkbox" name="maxCapturesUnlimited" /> Unlimited captures (game only ends via exit)</label>
         <label>Max captures before game over
-          <input type="number" name="maxCaptures" value="3" min="1" disabled />
+          <input type="number" name="maxCaptures" value="0" min="0" />
         </label>
       </fieldset>
 
@@ -162,8 +170,16 @@
           <label>Regen per round <input type="number" name="mrx_movement_regen" value="1" min="0" /></label>
           <label><input type="checkbox" name="mrx_movement_cap_enabled" checked /> Cap how high it can build up</label>
           <label>Cap <input type="number" name="mrx_movement_cap" value="15" min="0" /></label>
-          <label>Black <input type="number" name="mrx_black" value="5" min="0" /></label>
+          <label>Black <input type="number" name="mrx_black" value="3" min="0" /></label>
           <label>Double <input type="number" name="mrx_double" value="0" min="0" /></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Exit types in play</legend>
+          <label><input type="checkbox" name="exit_tier_1_enabled" checked /> Exit 1 (gold) -- gain</label>
+          <label><input type="checkbox" name="exit_tier_2_enabled" /> Exit 2 (blue) -- maintain</label>
+          <label><input type="checkbox" name="exit_tier_3_enabled" /> Exit 3 (bronze) -- lose</label>
+          <p class="hint">A type that's off behaves as an ordinary station -- not a win condition, and the Crew can stand on it freely.</p>
         </fieldset>
 
         <fieldset>
@@ -183,9 +199,9 @@
               <option value="respawn">Return to spawn</option>
             </select>
           </label>
-          <label><input type="checkbox" name="maxCapturesUnlimited" checked /> Unlimited captures (game only ends via exit)</label>
+          <label><input type="checkbox" name="maxCapturesUnlimited" /> Unlimited captures (game only ends via exit)</label>
           <label>Max captures before game over
-            <input type="number" name="maxCaptures" value="3" min="1" disabled />
+            <input type="number" name="maxCaptures" value="0" min="0" />
           </label>
         </fieldset>
       </form>
@@ -199,8 +215,8 @@
         <p><strong>Each round:</strong> the Fugitive secretly moves first, then the Crew moves. The Crew can't see where the Fugitive actually is -- only what kind of route they used to get there, or nothing at all if the Fugitive used a Black ticket (or didn't move) to stay hidden.</p>
         <p><strong>Moving:</strong> tap a highlighted station to go there. <span id="htp-movement-summary"></span></p>
         <p id="htp-double-move" class="hidden"></p>
-        <p><strong>Reaching an Exit</strong> lets the Fugitive choose to end the game right there -- Exit stations are the colored squares on the map (gold is worth the most, bronze the least), everything else is a round station. Any Exit is a win for the Fugitive; passing through one doesn't end the game unless the Fugitive says so.</p>
-        <p><strong>Getting caught:</strong> if a Crew member lands exactly on the Fugitive, that's a capture! Go have your showdown at the table, then keep playing -- the Crew member who caught them is stunned for <span id="htp-stun"></span>.<span id="htp-max-captures"></span></p>
+        <p><strong>Reaching an Exit</strong> lets the Fugitive choose to end the game right there. <span id="htp-exit-tiers"></span> Passing through an Exit doesn't end the game unless the Fugitive says so -- but the Crew can't ever stand still on one; they can only pass through.</p>
+        <p><strong>Getting caught:</strong> if a Crew member lands exactly on the Fugitive, that's a capture! <span id="htp-caught-detail"></span></p>
         <p id="htp-reveals"></p>
       </section>
     </div>

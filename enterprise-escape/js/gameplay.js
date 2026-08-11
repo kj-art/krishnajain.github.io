@@ -20,6 +20,7 @@ import {
   currentExitOpportunity,
   commitToExit,
   isGameOver,
+  isActiveExitStation,
   DETECTIVE_IMAGES,
   upcomingRevealRounds,
 } from "./engine.js";
@@ -502,6 +503,17 @@ export class GameplayController {
         row.style.borderColor = d.color;
       }
 
+      // A detective who started this turn on an active Exit station can't
+      // lock in without a staged move -- passing through an exit is fine,
+      // lingering on one isn't (see engine.js's lockInDetective). Exempt if
+      // they have no legal move at all, same guard the engine itself uses,
+      // so this never shows for a detective who's genuinely boxed in.
+      const stuckOnExit =
+        !stunned &&
+        !staged &&
+        isActiveExitStation(this.board, this.state.settings, d.position) &&
+        legalMovesForDetective(this.state, d.id).length > 0;
+
       const t = d.tickets;
       let statusHtml;
       if (stunned) {
@@ -510,6 +522,8 @@ export class GameplayController {
         statusHtml = `<div>Moving to ${staged.to} via ${ticketSpan(this.board, staged.ticket)}</div>`;
       } else if (ready) {
         statusHtml = `<div>Staying put</div>`;
+      } else if (stuckOnExit) {
+        statusHtml = `<div>On an Exit station — must move off it this turn.</div>`;
       } else if (controllable && active) {
         statusHtml = `<div>Tap a highlighted station to move…</div>`;
       } else if (controllable) {
@@ -564,6 +578,12 @@ export class GameplayController {
         }
         const lockBtn = document.createElement("button");
         lockBtn.textContent = ready ? "Unlock" : "Lock In";
+        // Proactive, matching the status hint above -- but state can still
+        // shift between this render and the actual click (e.g. a synced
+        // update on a networked game), so the engine-level throw below is
+        // the real guard; this is just the everyday case not even having to
+        // hit it.
+        if (!ready && stuckOnExit) lockBtn.disabled = true;
         lockBtn.onclick = () => {
           if (ready) {
             this._applyMove((s) => unlockDetective(s, d.id));
@@ -589,7 +609,11 @@ export class GameplayController {
               !this.state.readyDetectives.includes(other.id)
           );
           if (next) this.activeDetectiveId = next.id;
-          this._applyMove((s) => lockInDetective(s, d.id));
+          try {
+            this._applyMove((s) => lockInDetective(s, d.id));
+          } catch (err) {
+            window.alert(err.message);
+          }
         };
         row.appendChild(lockBtn);
       }

@@ -48,6 +48,11 @@ export function settingsFromForm(form) {
       detective: { black: num("det_black"), double: num("det_double") },
       mrx: { black: num("mrx_black"), double: num("mrx_double") },
     },
+    enabledExitTiers: {
+      exit1: checkbox("exit_tier_1_enabled", true),
+      exit2: checkbox("exit_tier_2_enabled", false),
+      exit3: checkbox("exit_tier_3_enabled", false),
+    },
     revealRounds: fd.get("revealRounds"),
     revealRoundsInterval: num("revealRoundsInterval"),
     stunDuration: num("stunDuration"),
@@ -98,6 +103,12 @@ export function populateForm(form, settings) {
   set("det_double", settings.tickets.detective.double);
   set("mrx_black", settings.tickets.mrx.black);
   set("mrx_double", settings.tickets.mrx.double);
+
+  const tiers = settings.enabledExitTiers || { exit1: true, exit2: false, exit3: false };
+  setChecked("exit_tier_1_enabled", tiers.exit1);
+  setChecked("exit_tier_2_enabled", tiers.exit2);
+  setChecked("exit_tier_3_enabled", tiers.exit3);
+
   set("revealRounds", Array.isArray(settings.revealRounds) ? settings.revealRounds.join(",") : settings.revealRounds);
   set("revealRoundsInterval", settings.revealRoundsInterval);
   set("stunDuration", settings.stunDuration);

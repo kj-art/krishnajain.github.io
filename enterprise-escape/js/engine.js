@@ -30,8 +30,14 @@ export const DEFAULT_SETTINGS = {
     // round of detective movement) is enough to flip a barely-interceptable
     // exit into an uncatchable one. Black tickets don't touch round-count,
     // so they're unaffected and keep the classic default.
-    mrx: { black: 5, double: 0 },
+    mrx: { black: 3, double: 0 },
   },
+  // Which exit tiers actually behave as exits (color-coded, win-eligible,
+  // and off-limits for crew to linger on) this game. A tier that's off
+  // still exists as a station -- edges, number label, everything -- it just
+  // draws and behaves exactly like any other ordinary station. Only exit1
+  // (gold) is on by default; exit2/exit3 are opt-in.
+  enabledExitTiers: { exit1: true, exit2: false, exit3: false },
   revealRounds: [3, 8, 13, 18, 24],
   // The game has no round limit, so the manually-listed rounds above can't
   // be the whole story -- once the round count runs past the last listed
@@ -41,7 +47,10 @@ export const DEFAULT_SETTINGS = {
   revealRoundsInterval: 5,
   stunDuration: 2,
   stunnedDetectiveBehavior: "stay", // "stay" | "respawn"
-  maxCaptures: Infinity,
+  // 0 means a single capture ends the game immediately (captureCount
+  // reaches the threshold on the very first one) -- capture is a real
+  // failure state by default, not a homebrew stun-and-continue mechanic.
+  maxCaptures: 0,
   detectiveCount: 2, // 1 or 2, sharing the board's single detective spawn
 };
 
@@ -121,6 +130,7 @@ function mergeSettings(overrides = {}) {
       detective: { ...DEFAULT_SETTINGS.tickets.detective, ...(overrides.tickets && overrides.tickets.detective) },
       mrx: { ...DEFAULT_SETTINGS.tickets.mrx, ...(overrides.tickets && overrides.tickets.mrx) },
     },
+    enabledExitTiers: { ...DEFAULT_SETTINGS.enabledExitTiers, ...overrides.enabledExitTiers },
     revealRounds: overrides.revealRounds
       ? parseRevealRounds(overrides.revealRounds)
       : DEFAULT_SETTINGS.revealRounds.slice(),
@@ -275,14 +285,34 @@ export function legalMovesForDetective(state, detectiveId) {
   return moves.filter((m) => !stationClaimedThisTurn(state, m.to, detectiveId));
 }
 
-function checkExitOutcome(board, position) {
+// Whether `position` is currently acting as an exit at all, i.e. its tier
+// is turned on in settings.enabledExitTiers. A tier that's off behaves as
+// an ordinary station -- not an exit for MrX's win condition, not subject
+// to the "crew can't linger on an exit" rule, not drawn as a colored square.
+export function isActiveExitStation(board, settings, position) {
   const roles = board.roles;
-  if (position === roles.exit1) return { type: "gain", exitKey: "exit1", label: "Exit 1 (gain)" };
-  if (position === roles.exit2) return { type: "maintain", exitKey: "exit2", label: "Exit 2 (maintain)" };
-  for (let i = 0; i < 5; i++) {
-    const key = `exit3_${i}`;
-    if (position === roles[key]) {
-      return { type: "lose", exitKey: key, label: `Exit 3.${i} (lose)` };
+  const tiers = (settings && settings.enabledExitTiers) || DEFAULT_SETTINGS.enabledExitTiers;
+  if (tiers.exit1 && position === roles.exit1) return true;
+  if (tiers.exit2 && position === roles.exit2) return true;
+  if (tiers.exit3) {
+    for (let i = 0; i < 5; i++) {
+      if (position === roles[`exit3_${i}`]) return true;
+    }
+  }
+  return false;
+}
+
+function checkExitOutcome(board, settings, position) {
+  const roles = board.roles;
+  const tiers = (settings && settings.enabledExitTiers) || DEFAULT_SETTINGS.enabledExitTiers;
+  if (tiers.exit1 && position === roles.exit1) return { type: "gain", exitKey: "exit1", label: "Exit 1 (gain)" };
+  if (tiers.exit2 && position === roles.exit2) return { type: "maintain", exitKey: "exit2", label: "Exit 2 (maintain)" };
+  if (tiers.exit3) {
+    for (let i = 0; i < 5; i++) {
+      const key = `exit3_${i}`;
+      if (position === roles[key]) {
+        return { type: "lose", exitKey: key, label: `Exit 3.${i} (lose)` };
+      }
     }
   }
   return null;
@@ -324,7 +354,7 @@ function afterMrxMoveResolved(state) {
 // What MrX would win/lose by committing to an exit right now, or null if
 // the current station isn't an exit at all.
 export function currentExitOpportunity(state) {
-  return checkExitOutcome(state.board, state.mrx.position);
+  return checkExitOutcome(state.board, state.settings, state.mrx.position);
 }
 
 export function commitToExit(state) {
@@ -426,9 +456,26 @@ export function unstageDetectiveMove(state, detectiveId) {
 }
 
 // A detective can lock in with no staged move at all -- that's a valid
-// explicit choice to stay put this turn.
+// explicit choice to stay put this turn. The one exception: a detective who
+// STARTED this turn on an active exit station may not choose to stay --
+// they can pass through an exit freely (nothing stops them moving onto one
+// this turn), but they can't end a turn sitting on one, so if they haven't
+// staged a move away from it, locking in is refused. Exempt if they have no
+// legal move available at all (movement pool exhausted, boxed in by another
+// detective's claim, etc.) -- refusing then would be an unwinnable deadlock,
+// not an enforceable rule.
 export function lockInDetective(state, detectiveId) {
   if (state.readyDetectives.includes(detectiveId)) return state;
+  const d = state.detectives.find((x) => x.id === detectiveId);
+  const stuckOnExit =
+    d &&
+    !isDetectiveStunned(d, state.round) &&
+    !state.staging[detectiveId] &&
+    isActiveExitStation(state.board, state.settings, d.position) &&
+    legalMovesForDetective(state, detectiveId).length > 0;
+  if (stuckOnExit) {
+    throw new Error(`Can't stay put on an Exit station -- must move off station ${d.position} this turn.`);
+  }
   return { ...state, readyDetectives: [...state.readyDetectives, detectiveId] };
 }
 
@@ -455,6 +502,7 @@ export function commitDetectiveTurn(state) {
   const log = [...state.log];
   let captureCount = state.captureCount;
   let lastCapture = state.lastCapture;
+  let capturesThisTurn = 0;
   const nextRound = state.round + 1;
   const shared = state.settings.sharedDetectivePool;
   let totalSharedCost = 0;
@@ -476,6 +524,7 @@ export function commitDetectiveTurn(state) {
 
     if (move.to === state.mrx.position) {
       captureCount += 1;
+      capturesThisTurn += 1;
       lastCapture = { round: state.round, detectiveId: d.id, position: move.to };
       d.stunnedUntilRound = nextRound + state.settings.stunDuration;
       if (state.settings.stunnedDetectiveBehavior === "respawn") {
@@ -499,7 +548,11 @@ export function commitDetectiveTurn(state) {
 
   let outcome = state.outcome;
   let phase = "mrx";
-  if (captureCount >= state.settings.maxCaptures) {
+  // Gated on an actual capture happening THIS turn, not just re-evaluated
+  // every commit -- with maxCaptures: 0 (the default: any capture ends the
+  // game), captureCount(0) >= maxCaptures(0) would otherwise be true from
+  // the very first turn, before anyone has ever been captured at all.
+  if (capturesThisTurn > 0 && captureCount >= state.settings.maxCaptures) {
     outcome = { type: "failure", label: "Captured too many times" };
     phase = "ended";
   }
