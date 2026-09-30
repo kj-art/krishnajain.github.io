@@ -173,6 +173,11 @@ window.PORTFOLIO = {
   // ─── DEVLOG ──────────────────────────────────────────────────────
   // Most recent first. To add a post, prepend a new entry.
   devlogEntries: [
+    { tag: ['Unity', '3D', 'Lighting', 'Scripting'], date: 'Sep 27, 2026', title: 'Restarting in 3D',
+      desc: "2D lighting was too limiting for a ghost story's mood, so I rebuilt in 3D. Billboarded sprites sit in front of the geometry, with X-ray silhouettes when she's behind scenery. A day/night cycle drives the lighting, and her dialogue portrait samples the light her map sprite is catching. New Python tools auto-export portraits, tiles, and character sprites.",
+      media: 'https://img.youtube.com/vi/zkjrPSQ6FQ8/hqdefault.jpg', mediaType: 'img', youtube: 'zkjrPSQ6FQ8',
+      extraMedia: [{ src: 'assets/python_exporter_tools.png', label: 'Python export tools: iso characters, tiles, dialogue portraits' }],
+      itchUrl: 'https://bluebeezle.itch.io/mitama-ji/devlog/1679720/restarting-in-3d-and-some-thoughts-on-ai' },
     { tag: ['Pixel Art', 'Scripting', 'Pixquare', 'Aseprite'], date: 'Jun 20, 2026', title: 'Miya traditional pixel animation in Pixquare',
       desc: "Sometimes the old ways are the best. I created a speed line script in Aseprite to make that part of the process easier. As much as possible, I've kept different lighting on different layers in case I want to use dynamic lighting. This is particularly important with the rim lighting, which is actively destructive to the art underneath it.",
       media: 'assets/miya_portrait_pixel.gif', mediaType: 'gif',

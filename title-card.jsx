@@ -358,7 +358,9 @@ function Devlog() {
         <div className="devlog-grid">
           {devlogEntries.map((e, i) => (
             <div className="devlog-card" key={i} onClick={() => setOpen(e)}>
-              {e.media
+              {e.media && /\.(mp4|webm|mov)$/i.test(e.media)
+                ? <video className="devlog-media" src={e.media} muted loop playsInline autoPlay preload="metadata" />
+                : e.media
                 ? <img className="devlog-media" src={e.media} alt={e.title} loading="lazy" onError={ev => ev.currentTarget.style.display = 'none'} />
                 : <div className="devlog-media-placeholder">IMAGE COMING SOON</div>}
               <div className="devlog-body">
@@ -397,16 +399,24 @@ function Devlog() {
                 READ FULL DEVLOG ON ITCH.IO →
               </a>
             )}
-            <div className="modal-gallery">
-              {[{ src: open.media, label: open.title }, ...(open.extraMedia || [])].map((m, j) => (
+            {open.youtube && (
+              <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', marginBottom: 20, border: '3px solid var(--ink)', boxShadow: '6px 6px 0 var(--ink)', background: '#000' }}>
+                <iframe src={`https://www.youtube-nocookie.com/embed/${open.youtube}?rel=0`} title={open.title} referrerPolicy="strict-origin-when-cross-origin" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+              </div>
+            )}
+            {open.youtube && (
+              <a href={`https://www.youtube.com/watch?v=${open.youtube}`} target="_blank" rel="noopener" style={{ display: 'inline-block', marginBottom: 20 }}>Video not loading? Watch on YouTube →</a>
+            )}
+            {(!open.youtube || (open.extraMedia || []).length > 0) && <div className="modal-gallery">
+              {(open.youtube ? (open.extraMedia || []).map(m => ({ ...m, _cap: true })) : [{ src: open.media, label: open.title }, ...(open.extraMedia || [])]).map((m, j) => (
                 <div className="gi" key={j} onClick={() => setLightbox(m)}>
                   {/\.(mp4|webm|mov)$/i.test(m.src)
                     ? <video src={m.src} muted loop playsInline autoPlay />
                     : <img src={m.src} alt={m.label} loading="lazy" />}
-                  {m.label && j > 0 && <div className="gi-cap">{m.label}</div>}
+                  {m.label && (j > 0 || m._cap) && <div className="gi-cap">{m.label}</div>}
                 </div>
               ))}
-            </div>
+            </div>}
           </div>
         </div>
       )}
