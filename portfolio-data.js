@@ -75,10 +75,10 @@ window.PORTFOLIO = {
 
   // ─── PIPELINE WORK ───────────────────────────────────────────────
   pipelineWork: [
-    { tag: 'After Effects scripting', title: 'Keylighting Automation', selfInitiated: true,
+    { tag: 'After Effects scripting', title: 'Keylighting Database', selfInitiated: true,
       body: "Retrieves preset character compositions from a database and applies them based on scene and character. Also enables bulk saving of new, location-specific comps. Eliminated manual searching and setup across hundreds of shots.",
       tools: ['ExtendScript', 'After Effects', 'JSON Database'] },
-    { tag: 'Toon Boom + AE scripting', title: 'Lighting Pass System', selfInitiated: true,
+    { tag: 'Toon Boom + AE scripting', title: 'Auto Tone-Map System', selfInitiated: true,
       body: "Replaced frame-by-frame manual tone coloring with a fully automated pipeline. Exports separate light and shadow sequences from Harmony, then imports and composites them in After Effects with correct timing. No re-coloring needed for lighting adjustments.",
       tools: ['Qt Script', 'ExtendScript', 'Toon Boom Harmony', 'After Effects'] },
     { tag: 'Animate scripting', title: 'Chain Animation Tool', selfInitiated: true,

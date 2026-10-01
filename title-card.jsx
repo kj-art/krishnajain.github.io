@@ -224,17 +224,43 @@ function Credits() {
 
 // ─── PIPELINE ───────────────────────────────────────────────────────
 function Pipeline() {
+  const [hl, setHl] = useState(null);
+  const [copied, setCopied] = useState(null);
+  const pslug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  useEffect(() => {
+    const go = () => {
+      const m = window.location.hash.match(/^#pipeline\/(.+)$/);
+      if (!m) return;
+      const s = decodeURIComponent(m[1]);
+      setTimeout(() => {
+        const el = document.getElementById(`pipeline-${s}`);
+        if (!el) return;
+        window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 110, behavior: 'smooth' });
+        setHl(s); setTimeout(() => setHl(null), 2200);
+      }, 300);
+    };
+    go();
+    window.addEventListener('hashchange', go);
+    return () => window.removeEventListener('hashchange', go);
+  }, []);
+  const copy = (s) => {
+    const url = `${window.location.origin}${window.location.pathname}#pipeline/${s}`;
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).catch(() => {});
+    history.replaceState(null, '', `#pipeline/${s}`);
+    setCopied(s); setTimeout(() => setCopied(null), 1600);
+  };
   return (
     <section id="pipeline" className="section tan-wash">
       <div className="wrap">
         <div className="plaque tan"><span className="n">03</span>BEHIND THE SCENES</div>
         <p className="pipeline-intro">{parseEmphasis(P.pipelineIntro)}</p>
         <div className="pipeline-grid">
-          {pipelineWork.map((p, i) => (
-            <div className="pipeline-card" key={i}>
+          {pipelineWork.map((p, i) => { const s = pslug(p.title); return (
+            <div className={`pipeline-card${hl === s ? ' is-hl' : ''}`} id={`pipeline-${s}`} key={i}>
               <div className="top">
                 <span className="p-tag">{p.tag}</span>
                 {p.selfInitiated && <span className="p-self">SELF-INITIATED</span>}
+                <button className="p-link" onClick={() => copy(s)} title="Copy link to this project" aria-label="Copy link">{copied === s ? 'COPIED' : 'LINK'}</button>
               </div>
               <h3>{p.title}</h3>
               <p>{p.body}</p>
@@ -242,7 +268,7 @@ function Pipeline() {
                 {p.tools.map((t, j) => <span className="tool-chip" key={j}>{t}</span>)}
               </div>
             </div>
-          ))}
+          ); })}
         </div>
       </div>
     </section>

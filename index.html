@@ -311,7 +311,14 @@
     transition: transform 0.1s, box-shadow 0.1s;
   }
   .pipeline-card:hover { transform: translate(-1px, -1px); box-shadow: 7px 7px 0 var(--ink); }
-  .pipeline-card .top { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+  .pipeline-card .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+  .p-link { margin-left: auto; font-family: var(--font-d); font-size: 10px; letter-spacing: 0.08em; color: var(--ink); background: transparent; border: 2px solid var(--ink); padding: 3px 8px; cursor: pointer; opacity: 0; transition: opacity 0.15s, background 0.15s; white-space: nowrap; }
+  .p-self + .p-link { margin-left: 0; }
+  .pipeline-card:hover .p-link, .p-link:focus-visible { opacity: 1; }
+  .p-link:hover { background: var(--tan); }
+  @media (hover: none) { .p-link { opacity: 1; } }
+  .pipeline-card.is-hl { animation: pcard-hl 2.2s ease-out; }
+  @keyframes pcard-hl { 0%, 35% { box-shadow: 6px 6px 0 var(--ink), 0 0 0 5px var(--magenta); } 100% { box-shadow: 6px 6px 0 var(--ink), 0 0 0 0 transparent; } }
   .p-tag {
     font-family: var(--font-d); font-size: 11px; letter-spacing: 0.08em;
     color: var(--on-color); background: var(--cobalt-deep);
