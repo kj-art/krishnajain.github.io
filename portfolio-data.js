@@ -157,7 +157,7 @@ window.PORTFOLIO = {
     ]},
     { src: 'assets/leaf2_color.png',        label: 'Leaf and the Twisted Root, illustration' },
     { label: 'Miya, RPG dialogue portrait', items: [
-      { src: 'assets/miya_portrait_pixel.gif',     label: 'Miya, RPG dialogue portrait (Pixquare)' },
+      { src: 'https://github.com/kj-art/public/blob/main/miya_portrait_pixel.gif?raw=true',     label: 'Miya, RPG dialogue portrait (Pixquare)' },
       { src: 'assets/miya_portrait_animation.gif', label: 'Miya, RPG dialogue portrait (After Effects)' },
       { src: 'assets/miya_spine.gif',              label: 'Miya, RPG dialogue portrait (Spine)' },
       { src: 'assets/miya_spine_bones.gif',        label: 'Miya, Spine skeleton view' },
@@ -177,6 +177,19 @@ window.PORTFOLIO = {
   // ─── DEVLOG ──────────────────────────────────────────────────────
   // Most recent first. To add a post, prepend a new entry.
   devlogEntries: [
+    { tag: ['Unity', 'Pixel Art', 'Scripting', 'Animation'], date: 'Oct 15, 2026', title: 'Customizable Pixel Art Player Dialogue Portrait',
+      desc: "A fully customizable player portrait built from as few hand-drawn assets as possible. Pixel-safe transforms turn the head around a virtual spheroid while keeping outlines clean, and face shapes tween for fine-grained customization. Layered hair parallaxes and casts shadows, the portrait reacts to scene lighting, and follow-through physics adds secondary motion. Plus lip sync for dialogue.",
+      media: 'https://img.youtube.com/vi/Z0XUB54bRD0/hqdefault.jpg', mediaType: 'img', youtube: 'Z0XUB54bRD0', pinned: true,
+      extraMedia: [
+        { src: 'https://github.com/kj-art/public/blob/main/techDemo02_lipSync.gif?raw=true', label: 'Lip sync and blinks' },
+        { src: 'https://github.com/kj-art/public/blob/main/techDemo02_move.gif?raw=true', label: 'Head turns from a single asset' },
+        { src: 'https://github.com/kj-art/public/blob/main/techDemo02_customize.gif?raw=true', label: 'Layer swaps, hair depth, and color controls' },
+        { src: 'https://github.com/kj-art/public/blob/main/techDemo02_eyeGap.gif?raw=true', label: 'Eye gap adjustment' },
+        { src: 'https://github.com/kj-art/public/blob/main/techDemo02_faceTween.gif?raw=true', label: 'Face shape tweening' },
+        { src: 'https://github.com/kj-art/public/blob/main/techDemo02_lighting.gif?raw=true', label: 'Responding to scene lighting' },
+        { src: 'https://github.com/kj-art/public/blob/main/techDemo02_physics.gif?raw=true', label: 'Secondary motion and follow-through' },
+      ],
+      itchUrl: 'https://bluebeezle.itch.io/mitama-ji/devlog/1709823/customizable-pixel-art-player-dialogue-portrait' },
     { tag: ['Unity', '3D', 'Lighting', 'Scripting'], date: 'Sep 27, 2026', title: 'Restarting in 3D',
       desc: "2D lighting was too limiting for a ghost story's mood, so I rebuilt in 3D. Billboarded sprites sit in front of the geometry, with X-ray silhouettes when she's behind scenery. A day/night cycle drives the lighting, and her dialogue portrait samples the light her map sprite is catching. New Python tools auto-export portraits, tiles, and character sprites.",
       media: 'https://img.youtube.com/vi/zkjrPSQ6FQ8/hqdefault.jpg', mediaType: 'img', youtube: 'zkjrPSQ6FQ8', pinned: true,
@@ -184,7 +197,7 @@ window.PORTFOLIO = {
       itchUrl: 'https://bluebeezle.itch.io/mitama-ji/devlog/1679720/restarting-in-3d-and-some-thoughts-on-ai' },
     { tag: ['Pixel Art', 'Scripting', 'Pixquare', 'Aseprite'], date: 'Jun 20, 2026', title: 'Miya traditional pixel animation in Pixquare',
       desc: "Sometimes the old ways are the best. I created a speed line script in Aseprite to make that part of the process easier. As much as possible, I've kept different lighting on different layers in case I want to use dynamic lighting. This is particularly important with the rim lighting, which is actively destructive to the art underneath it.",
-      media: 'assets/miya_portrait_pixel.gif', mediaType: 'gif',
+      media: 'https://github.com/kj-art/public/blob/main/miya_portrait_pixel.gif?raw=true', mediaType: 'gif',
       extraMedia: [
         { src: 'assets/Miya_angry_pixel_timelapse.mp4', label: 'Timelapse' },
         { src: 'assets/speed_lines_script.png', label: 'Speed line script in Aseprite' },

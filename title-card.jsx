@@ -131,30 +131,54 @@ function Hero() {
 
 // ─── REEL ───────────────────────────────────────────────────────────
 const slugifyTitle = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-function ComingAttraction({ e }) {
-  const go = () => {
-    const lab = document.getElementById('lab');
-    if (lab) window.scrollTo({ top: lab.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
-    window.location.hash = `lab/${slugifyTitle(e.title)}`;
-  };
+const goToPost = (e) => {
+  const lab = document.getElementById('lab');
+  if (lab) window.scrollTo({ top: lab.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
+  window.location.hash = `lab/${slugifyTitle(e.title)}`;
+};
+function ComingMedia({ e }) {
   const yt = e.youtube;
   return (
-    <div className="reel-frame coming-frame" onClick={go} role="link" tabIndex={0} onKeyDown={ev => ev.key === 'Enter' && go()}>
-      <div className="marquee-strip">
-        <span><span className="bulb"></span> COMING ATTRACTIONS</span>
+    <div className="coming-media">
+      {yt
+        ? <iframe src={`https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&mute=1&loop=1&playlist=${yt}&controls=0&modestbranding=1&playsinline=1&rel=0`} title={e.title} referrerPolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media" tabIndex={-1}></iframe>
+        : /\.(mp4|webm|mov)$/i.test(e.media)
+        ? <video src={e.media} muted loop playsInline autoPlay></video>
+        : <img src={e.media} alt={e.title} />}
+      <div className="coming-hit"></div>
+    </div>
+  );
+}
+const comingKicker = (e) => `${(e.project || 'Mitama-ji').toUpperCase()} · ${e.date.toUpperCase()}`;
+function ComingAttractions({ pins }) {
+  const strip = <div className="marquee-strip"><span><span className="bulb"></span> COMING ATTRACTIONS</span></div>;
+  if (pins.length === 1) {
+    const e = pins[0];
+    return (
+      <div className="reel-frame coming-frame" onClick={() => goToPost(e)} role="link" tabIndex={0} onKeyDown={ev => ev.key === 'Enter' && goToPost(e)}>
+        {strip}
+        <ComingMedia e={e} />
+        <div className="coming-body">
+          <div className="coming-kicker">{comingKicker(e)}</div>
+          <div className="coming-title">{e.title}</div>
+          <div className="coming-cta">READ THE DEVLOG →</div>
+        </div>
       </div>
-      <div className="coming-media">
-        {yt
-          ? <iframe src={`https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&mute=1&loop=1&playlist=${yt}&controls=0&modestbranding=1&playsinline=1&rel=0`} title={e.title} referrerPolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media" tabIndex={-1}></iframe>
-          : /\.(mp4|webm|mov)$/i.test(e.media)
-          ? <video src={e.media} muted loop playsInline autoPlay></video>
-          : <img src={e.media} alt={e.title} />}
-        <div className="coming-hit"></div>
-      </div>
-      <div className="coming-body">
-        <div className="coming-kicker">{(e.project || 'Mitama-ji').toUpperCase()} · {e.date.toUpperCase()}</div>
-        <div className="coming-title">{e.title}</div>
-        <div className="coming-cta">READ THE DEVLOG →</div>
+    );
+  }
+  return (
+    <div className="reel-frame coming-frame coming-duo">
+      {strip}
+      <div className="coming-pair">
+        {pins.map((e, i) => (
+          <div className="coming-item" key={i} onClick={() => goToPost(e)} role="link" tabIndex={0} onKeyDown={ev => ev.key === 'Enter' && goToPost(e)}>
+            <ComingMedia e={e} />
+            <div className="coming-cap">
+              <div className="coming-kicker">{comingKicker(e)}</div>
+              <div className="coming-cap-title">{e.title}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -162,7 +186,8 @@ function ComingAttraction({ e }) {
 
 function Reel() {
   const [playing, setPlaying] = useState(false);
-  const pinned = devlogEntries.find(d => d.pinned);
+  const pins = devlogEntries.filter(d => d.pinned).slice(0, 2);
+  const pinned = pins.length > 0;
   return (
     <section id="reel" className="section cobalt-wash">
       <div className="wrap">
@@ -185,7 +210,7 @@ function Reel() {
           )}
           <div className="reel-caption">★ Eighteen Years of Animation &amp; Pipeline Work ★ Click to Play ★</div>
         </div>
-        {pinned && <ComingAttraction e={pinned} />}
+        {pinned && <ComingAttractions pins={pins} />}
         </div>
       </div>
     </section>

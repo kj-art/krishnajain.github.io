@@ -265,6 +265,16 @@
   .coming-title { font-family: var(--font-d); font-size: 28px; line-height: 1.1; text-wrap: pretty; }
   .coming-cta { font-family: var(--font-d); font-size: 13px; letter-spacing: 0.08em; color: var(--tan); margin-top: 6px; }
   .coming-frame:hover .coming-cta { text-decoration: underline; }
+  .coming-duo { display: block; cursor: default; }
+  .coming-duo:hover { transform: none; box-shadow: 7px 7px 0 var(--cobalt-deep); }
+  .coming-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .coming-item { cursor: pointer; display: flex; flex-direction: column; gap: 10px; }
+  .coming-item .coming-media { outline: 3px solid transparent; outline-offset: 0; transition: outline-color 0.15s; }
+  .coming-item:hover .coming-media, .coming-item:focus-visible .coming-media { outline-color: var(--tan); }
+  .coming-cap { color: var(--cream-2); display: flex; flex-direction: column; gap: 4px; padding: 0 2px 2px; }
+  .coming-cap .coming-kicker { font-size: 11px; }
+  .coming-cap-title { font-family: var(--font-d); font-size: 17px; line-height: 1.15; text-wrap: pretty; }
+  .coming-item:hover .coming-cap-title { text-decoration: underline; }
   .reel-caption {
     margin-top: 18px; font-family: var(--font-b); font-size: 13px;
     color: var(--cream-2); text-align: center; opacity: 0.85; letter-spacing: 0.06em;
@@ -529,6 +539,7 @@
     .coming-frame { grid-template-columns: minmax(0, 1fr); }
     .coming-body { padding: 14px 4px 4px; }
     .coming-title { font-size: 22px; }
+    .coming-pair { grid-template-columns: minmax(0, 1fr); gap: 22px; }
     .reel-frame .marquee-strip { font-size: 11px; padding: 6px 12px; }
 
     footer { padding: 48px 22px 32px; }
