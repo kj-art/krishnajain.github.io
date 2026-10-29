@@ -102,7 +102,7 @@ function Hero() {
         <div className="hero-grid">
           <div>
             <div className="presenting">PRESENTING</div>
-            <h1 className="hero-name"><span>Krishna</span><br/>Ramos <span>Jain!</span></h1>
+            <h1 className="hero-name"><span className="hl">Krishna</span><br/>Ramos <span className="hl">Jain!</span></h1>
             <div className="hero-role">{P.role}</div>
             <p className="hero-desc">{parseEmphasis(P.heroBlurb)}</p>
             <div className="hero-ctas">
@@ -132,9 +132,9 @@ function Hero() {
 // ─── REEL ───────────────────────────────────────────────────────────
 const slugifyTitle = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const goToPost = (e) => {
-  const lab = document.getElementById('lab');
-  if (lab) window.scrollTo({ top: lab.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
-  window.location.hash = `lab/${slugifyTitle(e.title)}`;
+  const sec = document.getElementById('devlog');
+  if (sec) window.scrollTo({ top: sec.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
+  window.location.hash = `devlog/${slugifyTitle(e.title)}`;
 };
 function ComingMedia({ e }) {
   const yt = e.youtube;
@@ -191,7 +191,7 @@ function Reel() {
   return (
     <section id="reel" className="section cobalt-wash">
       <div className="wrap">
-        <div className="plaque cobalt"><span className="n">01</span>FEATURE PRESENTATION</div>
+        <div className="plaque-row"><div className="plaque cobalt"><span className="n">01</span>REEL</div><span className="plaque-sub">Feature Presentation</span></div>
         <div className={pinned ? 'reel-row' : undefined}>
         <div className="reel-frame">
           <div className="marquee-strip">
@@ -222,7 +222,7 @@ function Credits() {
   return (
     <section id="credits" className="section">
       <div className="wrap">
-        <div className="plaque brown"><span className="n">02</span>ALSO STARRING</div>
+        <div className="plaque-row"><div className="plaque brown"><span className="n">02</span>CREDITS</div><span className="plaque-sub">Also Starring</span></div>
         <div className="employer-stack">
           {employers.map((e, i) => (
             <div className={`employer-card ${i % 2 === 0 ? 'tilt-l' : 'tilt-r'}`} key={i}>
@@ -233,12 +233,20 @@ function Credits() {
               </div>
               <div className="employer-body">
                 {e.projects.map((p, j) => (
-                  <div className="project" key={j}>
-                    <div className="client">{p.client}</div>
-                    <div className="title">{p.title}</div>
-                  </div>
+                  <figure className="poster" key={j}>
+                    <div className={`poster-art${p.poster ? '' : ' is-blank'}`}>
+                      {p.poster
+                        ? <img src={p.poster} alt={`${p.title} poster`} loading="lazy" style={p.posterFit ? { objectFit: p.posterFit, background: p.posterBg } : undefined} />
+                        : <div className="poster-blank"><span className="pb-client">{p.client}</span><span className="pb-title">{p.title}</span><span className="pb-studio">{e.studio}</span></div>}
+                    </div>
+                    <figcaption>
+                      <div className="client">{p.client}</div>
+                      <div className="title">{p.title}</div>
+                    </figcaption>
+                  </figure>
                 ))}
               </div>
+              {e.andMore && <div className="employer-foot">…and more!</div>}
             </div>
           ))}
         </div>
@@ -250,7 +258,6 @@ function Credits() {
 // ─── PIPELINE ───────────────────────────────────────────────────────
 function Pipeline() {
   const [hl, setHl] = useState(null);
-  const [copied, setCopied] = useState(null);
   const pslug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   useEffect(() => {
     const go = () => {
@@ -268,16 +275,10 @@ function Pipeline() {
     window.addEventListener('hashchange', go);
     return () => window.removeEventListener('hashchange', go);
   }, []);
-  const copy = (s) => {
-    const url = `${window.location.origin}${window.location.pathname}#pipeline/${s}`;
-    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).catch(() => {});
-    history.replaceState(null, '', `#pipeline/${s}`);
-    setCopied(s); setTimeout(() => setCopied(null), 1600);
-  };
   return (
     <section id="pipeline" className="section tan-wash">
       <div className="wrap">
-        <div className="plaque tan"><span className="n">03</span>BEHIND THE SCENES</div>
+        <div className="plaque-row"><div className="plaque tan"><span className="n">03</span>PIPELINE</div><span className="plaque-sub">Behind the Scenes</span></div>
         <p className="pipeline-intro">{parseEmphasis(P.pipelineIntro)}</p>
         <div className="pipeline-grid">
           {pipelineWork.map((p, i) => { const s = pslug(p.title); return (
@@ -285,7 +286,6 @@ function Pipeline() {
               <div className="top">
                 <span className="p-tag">{p.tag}</span>
                 {p.selfInitiated && <span className="p-self">SELF-INITIATED</span>}
-                <button className="p-link" onClick={() => copy(s)} title="Copy link to this project" aria-label="Copy link">{copied === s ? 'COPIED' : 'LINK'}</button>
               </div>
               <h3>{p.title}</h3>
               <p>{p.body}</p>
@@ -294,29 +294,6 @@ function Pipeline() {
               </div>
             </div>
           ); })}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── SKILLS ─────────────────────────────────────────────────────────
-function Skills() {
-  return (
-    <section id="skills" className="section">
-      <div className="wrap">
-        <div className="plaque deep"><span className="n">04</span>TOOLS OF THE TRADE</div>
-        <div className="skills-grid">
-          {skillGroups.map((g, i) => (
-            <div className="skill-block" key={i}>
-              <h4>{g.title.toUpperCase()}</h4>
-              <ul>
-                {g.skills.map((s, j) => (
-                  <li key={j} className={s.primary ? 'primary' : ''}>{s.name}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
         </div>
       </div>
     </section>
@@ -341,7 +318,7 @@ function Gallery() {
   return (
     <section id="art" className="section magenta-wash">
       <div className="wrap">
-        <div className="plaque magenta"><span className="n">05</span>ON DISPLAY</div>
+        <div className="plaque-row"><div className="plaque magenta"><span className="n">04</span>ART</div><span className="plaque-sub">On Display</span></div>
         <div className="gallery-grid">
           {galleryItems.map((it, i) => (
             Array.isArray(it.items) ? (
@@ -403,7 +380,7 @@ function Devlog() {
   const slugify = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const findBySlug = (slug) => devlogEntries.find(e => slugify(e.title) === slug) || null;
   const [open, setOpen] = useState(() => {
-    const m = window.location.hash.match(/^#lab\/(.+)$/);
+    const m = window.location.hash.match(/^#devlog\/(.+)$/);
     return m ? findBySlug(decodeURIComponent(m[1])) : null;
   });
   const [lightbox, setLightbox] = useState(null);
@@ -420,8 +397,8 @@ function Devlog() {
   // Keep the URL in sync with the open post
   useEffect(() => {
     if (open) {
-      history.replaceState(null, '', `#lab/${slugify(open.title)}`);
-    } else if (window.location.hash.startsWith('#lab/')) {
+      history.replaceState(null, '', `#devlog/${slugify(open.title)}`);
+    } else if (window.location.hash.startsWith('#devlog/')) {
       history.replaceState(null, '', window.location.pathname + window.location.search);
     }
   }, [open]);
@@ -429,7 +406,7 @@ function Devlog() {
   // Open the right post when someone pastes a link or uses back/forward
   useEffect(() => {
     const onHash = () => {
-      const m = window.location.hash.match(/^#lab\/(.+)$/);
+      const m = window.location.hash.match(/^#devlog\/(.+)$/);
       setOpen(m ? findBySlug(decodeURIComponent(m[1])) : null);
     };
     window.addEventListener('hashchange', onHash);
@@ -437,9 +414,9 @@ function Devlog() {
   }, []);
 
   return (
-    <section id="lab" className="section">
+    <section id="devlog" className="section">
       <div className="wrap">
-        <div className="plaque brown"><span className="n">06</span>FROM THE STUDIO</div>
+        <div className="plaque-row"><div className="plaque brown"><span className="n">05</span>DEVLOG</div><span className="plaque-sub">From the Studio</span></div>
         <div className="devlog-grid">
           {devlogEntries.map((e, i) => (
             <div className="devlog-card" key={i} onClick={() => setOpen(e)}>
@@ -523,7 +500,7 @@ function About() {
   return (
     <section id="about" className="section cobalt-wash">
       <div className="wrap">
-        <div className="plaque cobalt"><span className="n">07</span>MEET THE ANIMATOR</div>
+        <div className="plaque-row"><div className="plaque cobalt"><span className="n">06</span>ABOUT</div><span className="plaque-sub">Meet the Animator</span></div>
         <div className="about-grid">
           <div className="about-text">
             {P.aboutParagraphs.map((para, i) => (
@@ -534,6 +511,21 @@ function About() {
             <div className="about-stat"><div className="n">18</div><div className="l">Years in 2D animation production</div></div>
             <div className="about-stat"><div className="n">40+</div><div className="l">Pipeline tools written</div></div>
             <div className="about-stat"><div className="n">9+</div><div className="l">Productions credited</div></div>
+          </div>
+        </div>
+        <div className="about-skills">
+          <h3 className="about-skills-h">Skills</h3>
+          <div className="skills-grid">
+            {skillGroups.map((g, i) => (
+              <div className="skill-block" key={i}>
+                <h4>{g.title.toUpperCase()}</h4>
+                <ul>
+                  {g.skills.map((s, k) => (
+                    <li key={k} className={s.primary ? 'primary' : ''}>{s.name}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -578,7 +570,6 @@ function App() {
       <Reel />
       <Credits />
       <Pipeline />
-      <Skills />
       <Gallery />
       <Devlog />
       <About />

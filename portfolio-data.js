@@ -24,11 +24,9 @@ window.PORTFOLIO = {
     { id: 'reel',     label: 'Reel' },
     { id: 'credits',  label: 'Credits' },
     { id: 'pipeline', label: 'Pipeline' },
-    { id: 'skills',   label: 'Skills' },
     { id: 'art',      label: 'Art' },
-    { id: 'lab',      label: 'Lab' },
+    { id: 'devlog',   label: 'Devlog' },
     { id: 'about',    label: 'About' },
-    { id: 'contact',  label: 'Contact' },
   ],
 
   // ─── SOCIAL ──────────────────────────────────────────────────────
@@ -46,30 +44,31 @@ window.PORTFOLIO = {
 
   // ─── CREDITS ─────────────────────────────────────────────────────
   employers: [
-    { studio: 'Powerhouse Animation Studios', role: 'Lead Technical Artist', tenure: '2014 to 2025',
+    { studio: 'Powerhouse Animation Studios', role: 'Lead Technical Artist', tenure: '2014 to 2025', andMore: true,
       projects: [
-        { client: 'Netflix', title: 'Castlevania' },
-        { client: 'Netflix', title: 'Masters of the Universe: Revelation' },
-        { client: 'Netflix', title: 'Blood of Zeus' },
-        { client: 'Netflix', title: 'Tomb Raider' },
-        { client: 'Platform / Square Enix', title: "Final Fantasy XV: A King's Tale" },
-        { client: 'Platform / Deep Silver', title: 'Dead Island: Retro Revenge' },
-        { client: 'Stoic Studio', title: 'The Banner Saga' },
+        { client: 'Netflix', title: 'Castlevania', poster: 'assets/credits/castlevania.png' },
+        { client: 'Netflix', title: 'Castlevania: Nocturne', poster: 'assets/credits/castlevania_nocturne.jpg' },
+        { client: 'Netflix', title: 'Masters of the Universe: Revelation', poster: 'assets/credits/MOTU_revelation.jpg' },
+        { client: 'Netflix', title: 'Blood of Zeus', poster: 'assets/credits/blood_of_zeus.jpg' },
+        { client: 'Netflix', title: 'Tomb Raider', poster: 'assets/credits/tomb_raider.jpg' },
+        { client: 'Platform / Square Enix', title: "Final Fantasy XV: A King's Tale", poster: 'assets/credits/FFXV_kings_tale.jpg' },
+        { client: 'Platform / Deep Silver', title: 'Dead Island: Retro Revenge', poster: 'assets/credits/deadIsland_retroRevenge.jpg' },
+        { client: 'Stoic Studio', title: 'The Banner Saga', poster: 'assets/credits/banner_saga.png' },
     ]},
     { studio: 'Zynga', role: 'Senior Artist', tenure: '2010 to 2012',
       projects: [
-        { client: 'Facebook', title: 'Kingdoms and Quests' },
+        { client: 'Facebook', title: 'Kingdoms and Quests', poster: 'assets/credits/zynga_kingdoms.png', posterFit: 'contain', posterBg: '#fff' },
         { client: 'Facebook', title: 'The Ville' },
     ]},
     { studio: 'Team Chaos LLC', role: 'Freelance Animator', tenure: '2012 to 2013',
       projects: [
-        { client: 'iOS', title: 'Dragon Academy' },
+        { client: 'iOS', title: 'Dragon Academy', poster: 'assets/credits/dragon_academy.jpg' },
         { client: 'iOS', title: 'Elements: Broken Lands' },
     ]},
-    { studio: 'Powerhouse Animation Studios', role: 'Lead Flash Developer', tenure: '2006 to 2010',
+    { studio: 'Powerhouse Animation Studios', role: 'Lead Flash Developer', tenure: '2006 to 2010', andMore: true,
       projects: [
-        { client: 'Sony / Red 5', title: 'Freerealms' },
-        { client: 'Hothead Games', title: 'Penny Arcade Adventures' },
+        { client: 'Sony Online Entertainment', title: 'Free Realms' },
+        { client: 'Hothead Games', title: 'Penny Arcade Adventures', poster: 'assets/credits/pennyArcade.jpg' },
     ]},
   ],
 
@@ -112,7 +111,7 @@ window.PORTFOLIO = {
     ]},
     { title: 'Scripting Languages', skills: [
       { name: 'ExtendScript (AE, Photoshop)', primary: true },
-      { name: 'JSFL (Adobe Animate)', primary: true },
+      { name: 'JSFL (Animate)', primary: true },
       { name: 'Qt Script (Toon Boom suite)', primary: true },
       { name: 'Python 3', primary: true },
       { name: 'Google Apps Script' },

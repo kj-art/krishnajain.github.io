@@ -108,6 +108,11 @@
   .plaque.magenta  { background: var(--magenta);      color: var(--cream-2); transform: rotate(1.2deg); }
   .plaque.deep     { background: var(--cobalt-deep);  color: var(--cream-2); transform: rotate(-1deg); }
 
+  .plaque-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 18px; margin-bottom: 36px; }
+  .plaque-row .plaque { margin-bottom: 0; }
+  .plaque-sub { font-family: var(--font-s); font-weight: 600; font-style: italic; font-size: 18px; color: var(--ink-soft); }
+  .about-skills { margin-top: 56px; }
+  .about-skills-h { font-family: var(--font-d); font-weight: 400; font-size: 22px; letter-spacing: 0.04em; color: var(--ink); margin-bottom: 20px; }
   .plaque .n {
     display: inline-block; background: var(--cream-2); color: var(--ink);
     font-size: 12px; padding: 1px 7px; border: 2px solid var(--ink);
@@ -159,7 +164,7 @@
     margin: 18px 0 14px;
     text-shadow: 5px 5px 0 var(--cream-2), 5px 5px 0 var(--ink);
   }
-  .hero-name span { color: var(--cobalt); }
+  .hero-name .hl { color: var(--cobalt); }
   .hero-role {
     font-family: var(--font-d); font-size: 22px; color: var(--cream-2);
     background: var(--ink); display: inline-block;
@@ -297,7 +302,18 @@
                          letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.92; }
   .employer-head .tenure { margin-left: auto; font-family: var(--font-b);
                            font-size: 12px; font-weight: 700; letter-spacing: 0.1em; opacity: 0.85; }
-  .employer-body { display: flex; flex-wrap: wrap; }
+  .employer-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 22px 18px; padding: 22px 24px 24px; }
+  .poster { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .poster-art { aspect-ratio: 2 / 3; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); background: var(--ink); overflow: hidden; }
+  .poster-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .poster-blank { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 14px; text-align: center; background: var(--cobalt-deep); color: var(--cream-2); outline: 2px solid var(--tan); outline-offset: -9px; }
+  .employer-card:nth-child(even) .poster-blank { background: var(--brown); }
+  .pb-client { font-family: var(--font-s); font-weight: 700; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tan); }
+  .pb-title { font-family: var(--font-d); font-size: 19px; line-height: 1.1; text-wrap: balance; }
+  .pb-studio { font-family: var(--font-s); font-weight: 600; font-style: italic; font-size: 11px; opacity: 0.85; }
+  .employer-foot { background: var(--cobalt); color: var(--on-color); border-top: 3px solid var(--ink); padding: 8px 28px; text-align: right; font-family: var(--font-b); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .poster figcaption .client { font-family: var(--font-d); font-size: 10px; letter-spacing: 0.16em; color: var(--magenta); margin-bottom: 3px; }
+  .poster figcaption .title { font-family: var(--font-d); font-size: 14px; line-height: 1.25; color: var(--ink); text-wrap: pretty; }
   .project {
     padding: 16px 24px; border-right: 2px solid var(--ink);
     flex: 1 1 220px; min-width: 200px;
@@ -519,6 +535,9 @@
     .stat .l { font-size: 9.5px; }
 
     .plaque { font-size: 15px; padding: 6px 16px; margin-bottom: 28px; }
+    .plaque-row { margin-bottom: 28px; }
+    .plaque-sub { font-size: 15px; }
+    .about-skills { margin-top: 40px; }
     .plaque .n { font-size: 10px; padding: 1px 6px; margin-right: 7px; }
 
     .gallery-grid { columns: 2; column-gap: 12px; }
@@ -532,8 +551,7 @@
     .employer-head { padding: 14px 18px; gap: 6px 14px; }
     .employer-head .studio { font-size: 18px; }
     .employer-head .tenure { margin-left: 0; width: 100%; }
-    .project { padding: 12px 18px; min-width: 0; flex-basis: 100%; border-right: none; border-bottom: 2px solid var(--ink); }
-    .project:last-child { border-bottom: none; }
+    .employer-body { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 16px; gap: 18px 14px; }
 
     .reel-frame { padding: 14px; }
     .reel-row { gap: 22px; }
