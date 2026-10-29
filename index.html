@@ -112,6 +112,15 @@
   .plaque-row .plaque { margin-bottom: 0; }
   .plaque-sub { font-family: var(--font-s); font-weight: 600; font-style: italic; font-size: 18px; color: var(--ink-soft); }
   .about-skills { margin-top: 56px; }
+  .skills-pipeline-link { display: inline-flex; gap: 8px; align-items: baseline; margin-top: 22px; font-family: var(--font-s); font-weight: 700; font-size: 17px; color: var(--ink); text-decoration: underline; text-decoration-color: var(--magenta); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .skills-pipeline-link:hover { color: var(--magenta); }
+  .skill-strip { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+  .skill-row { display: flex; align-items: stretch; background: var(--cream-2); border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); }
+  .skill-row h4 { flex: 0 0 250px; box-sizing: border-box; display: flex; align-items: center; margin: 0; padding: 10px 16px; border-right: 3px solid var(--ink); background: var(--brown); color: var(--on-color); font-family: var(--font-s); font-weight: 700; font-size: 13px; letter-spacing: 0.1em; }
+  .skill-row ul { flex: 1 1 auto; list-style: none; margin: 0; padding: 12px 18px; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); align-content: center; gap: 8px 22px; }
+  .skill-row li { font-family: var(--font-b); font-size: 14.5px; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .skill-row li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-soft); flex-shrink: 0; }
+  @media (max-width: 720px) { .skill-row { flex-direction: column; } .skill-row h4 { flex-basis: auto; border-right: none; border-bottom: 3px solid var(--ink); } }
   .about-skills-h { font-family: var(--font-d); font-weight: 400; font-size: 22px; letter-spacing: 0.04em; color: var(--ink); margin-bottom: 20px; }
   .plaque .n {
     display: inline-block; background: var(--cream-2); color: var(--ink);
@@ -194,7 +203,8 @@
   .btn-big.cobalt  { background: var(--cobalt);  color: var(--on-color); }
   .btn-big.tan     { background: var(--tan);     color: var(--ink); }
   .btn-big.cream   { background: var(--cream-2); color: var(--ink); }
-  .hero-socials { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hero-socials { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .hero-socials .hero-resume { flex-basis: 100%; margin-bottom: 4px; }
 
   .portrait-wrap { position: relative; display: flex; align-items: center; justify-content: center; min-height: 560px; perspective: 1200px; }
   .portrait-hex {
@@ -381,12 +391,9 @@
   .skill-block ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
   .skill-block li { font-family: var(--font-b); font-size: 14px; color: var(--ink-soft);
                     display: flex; align-items: center; gap: 9px; }
-  .skill-block li::before {
-    content: ''; width: 9px; height: 9px; background: var(--cream);
-    border: 2px solid var(--ink); flex-shrink: 0;
-  }
-  .skill-block li.primary { color: var(--ink); font-weight: 600; }
-  .skill-block li.primary::before { background: var(--tan); }
+  .skill-block li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-soft); flex-shrink: 0; }
+  .skill-block li.primary { color: var(--ink); font-weight: 700; }
+  .skill-block li.primary::before { background: var(--ink); }
 
   /* ─── ART GALLERY ───────────────────────────────────────────── */
   .gallery-grid { columns: 3; column-gap: 16px; }
@@ -513,6 +520,12 @@
     letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase;
   }
   .footer-socials { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hero-resume { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-right: 8px; }
+  .fr-label { font-family: var(--font-s); font-weight: 700; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-right: 2px; }
+  .resume-chip { font-family: var(--font-d); font-size: 12px; letter-spacing: 0.06em; color: var(--ink); background: var(--tan); border: 2.5px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); padding: 6px 12px; text-decoration: none; transition: transform 0.1s, box-shadow 0.1s; }
+  .resume-chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+  .marquee-nav a.nav-resume { color: var(--tan); }
+  .marquee-nav a.nav-resume:hover { color: var(--cream-2); }
 
   /* ─── RESPONSIVE ────────────────────────────────────────────── */
   @media (max-width: 820px) {

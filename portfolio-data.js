@@ -29,6 +29,11 @@ window.PORTFOLIO = {
     { id: 'about',    label: 'About' },
   ],
 
+  resume: {
+    pdf:  'Krishna Ramos Jain Resume - full.pdf',
+    docx: 'Krishna Ramos Jain Resume - full.docx',
+  },
+
   // ─── SOCIAL ──────────────────────────────────────────────────────
   socials: [
     { id: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/krishna-jain-938b7222/' },
@@ -48,12 +53,12 @@ window.PORTFOLIO = {
       projects: [
         { client: 'Netflix', title: 'Castlevania', poster: 'assets/credits/castlevania.png' },
         { client: 'Netflix', title: 'Castlevania: Nocturne', poster: 'assets/credits/castlevania_nocturne.jpg' },
+        { client: 'Netflix', title: 'Tomb Raider', poster: 'assets/credits/tomb_raider.jpg' },
         { client: 'Netflix', title: 'Masters of the Universe: Revelation', poster: 'assets/credits/MOTU_revelation.jpg' },
         { client: 'Netflix', title: 'Blood of Zeus', poster: 'assets/credits/blood_of_zeus.jpg' },
-        { client: 'Netflix', title: 'Tomb Raider', poster: 'assets/credits/tomb_raider.jpg' },
+        { client: 'Stoic Studio', title: 'The Banner Saga', poster: 'assets/credits/banner_saga.png' },
         { client: 'Platform / Square Enix', title: "Final Fantasy XV: A King's Tale", poster: 'assets/credits/FFXV_kings_tale.jpg' },
         { client: 'Platform / Deep Silver', title: 'Dead Island: Retro Revenge', poster: 'assets/credits/deadIsland_retroRevenge.jpg' },
-        { client: 'Stoic Studio', title: 'The Banner Saga', poster: 'assets/credits/banner_saga.png' },
     ]},
     { studio: 'Zynga', role: 'Senior Artist', tenure: '2010 to 2012',
       projects: [
@@ -74,22 +79,22 @@ window.PORTFOLIO = {
 
   // ─── PIPELINE WORK ───────────────────────────────────────────────
   pipelineWork: [
-    { tag: 'After Effects scripting', title: 'Keylighting Database', selfInitiated: true,
+    { tag: 'Adobe After Effects scripting', title: 'Keylighting Database', selfInitiated: true,
       body: "Retrieves preset character compositions from a database and applies them based on scene and character. Also enables bulk saving of new, location-specific comps. Eliminated manual searching and setup across hundreds of shots.",
-      tools: ['ExtendScript', 'After Effects', 'JSON Database'] },
-    { tag: 'Toon Boom + AE scripting', title: 'Auto Tone Map System', selfInitiated: true,
+      tools: ['ExtendScript', 'Adobe After Effects', 'JSON Database'] },
+    { tag: 'Toon Boom Harmony + Adobe After Effects scripting', title: 'Auto Tone Map System', selfInitiated: true,
       body: "Bakes tone colors in After Effects from tone masks exported out of Harmony, so lighting can be its own pass without worrying about tone colors. Artists animate flat base colors and tones on separate layers instead of painting baked tones frame by frame.",
-      tools: ['Qt Script', 'ExtendScript', 'Toon Boom Harmony', 'After Effects'] },
-    { tag: 'Animate scripting', title: 'Chain Animation Tool', selfInitiated: true,
+      tools: ['Qt Script', 'ExtendScript', 'Toon Boom Harmony', 'Adobe After Effects'] },
+    { tag: 'Adobe Animate scripting', title: 'Chain Animation Tool', selfInitiated: true,
       body: "Assigned to draw final art for Castlevania's chain animations, I built a JSFL tool that places chain links along a drawn path, with controls for scaling and twisting. A tedious manual process became a one-click workflow.",
       tools: ['JSFL', 'Adobe Animate'] },
     { tag: 'Toon Boom + Python', title: 'Import/Export Scripts', selfInitiated: false,
       body: "A suite of scripts built across productions to move assets and scene data between software without losing information. The largest example exports Storyboard Pro scenes to Photoshop and Clip Studio Paint with camera movements intact, with render farm network integration. Many others handle similar cross-software handoffs throughout the pipeline.",
-      tools: ['Qt Script', 'Python', 'Storyboard Pro', 'Photoshop', 'Clip Studio Paint'] },
+      tools: ['Qt Script', 'Python', 'Toon Boom Storyboard Pro', 'Adobe Photoshop', 'Clip Studio Paint'] },
     { tag: 'Google Apps Script', title: 'Production Tracking Dashboard', selfInitiated: false,
       body: "Task-tracking tools built in Google Sheets and Apps Script, giving managers real-time visibility into deadlines and tasks across departments. No additional software licenses required.",
       tools: ['Google Apps Script', 'Google Sheets', 'ftrack API'] },
-    { tag: 'ActionScript / AIR', title: 'Sprite Sheet Export Tool', selfInitiated: true,
+    { tag: 'ActionScript / Adobe AIR', title: 'Sprite Sheet Export Tool', selfInitiated: true,
       body: "An Adobe AIR application that automated sprite sheet exports for a Zynga game team, reducing manual asset prep and accelerating delivery cycles for live social games.",
       tools: ['ActionScript 3', 'Adobe AIR'] },
   ],
@@ -101,37 +106,27 @@ window.PORTFOLIO = {
 
   // ─── SKILLS ──────────────────────────────────────────────────────
   skillGroups: [
-    { title: 'Animation Software', skills: [
-      { name: 'Adobe Animate', primary: true },
-      { name: 'Toon Boom Harmony', primary: true },
-      { name: 'Toon Boom Storyboard Pro', primary: true },
-      { name: 'Adobe After Effects' },
+    { title: 'Animation Software', section: 'about', skills: [
+      { name: 'Adobe Animate' },
       { name: 'Adobe Photoshop' },
       { name: 'Aseprite / Pixquare' },
+      { name: 'Adobe After Effects' },
     ]},
-    { title: 'Scripting Languages', skills: [
-      { name: 'ExtendScript (AE, Photoshop)', primary: true },
-      { name: 'JSFL (Animate)', primary: true },
-      { name: 'Qt Script (Toon Boom suite)', primary: true },
-      { name: 'Python 3', primary: true },
-      { name: 'Google Apps Script' },
-      { name: 'ActionScript 2 / 3' },
-    ]},
-    { title: 'Pipeline Coverage', skills: [
-      { name: 'Preproduction to delivery', primary: true },
-      { name: 'Asset management systems', primary: true },
-      { name: 'Cross-software workflows', primary: true },
-      { name: 'Render farm integration' },
-      { name: 'ftrack API' },
-      { name: 'Production tracking tools' },
-    ]},
-    { title: 'Animation Specialties', skills: [
-      { name: 'Character animation', primary: true },
-      { name: 'Effects animation', primary: true },
-      { name: 'Puppet / rigging', primary: true },
+    { title: 'Animation Specialties', section: 'about', skills: [
+      { name: 'Character animation' },
+      { name: 'Effects animation' },
+      { name: 'Puppet / rigging' },
       { name: 'Pixel / 8-bit animation' },
       { name: 'Motion comic styles' },
       { name: 'Traditional frame-by-frame' },
+    ]},
+    { title: 'Scripting Languages', section: 'about', skills: [
+      { name: 'ExtendScript (AE, Photoshop)' },
+      { name: 'JSFL (Animate)' },
+      { name: 'Qt Script (Toon Boom suite)' },
+      { name: 'Python 3' },
+      { name: 'Google Apps Script' },
+      { name: 'ActionScript 2 / 3' },
     ]},
   ],
 
@@ -226,14 +221,14 @@ window.PORTFOLIO = {
       desc: "A script for Aseprite that automatically adds self-colored outlines across all frames, based on a palette layer that maps each color to its outline equivalent. Outlines are added on a separate layer, so you can erase selectively where they don't work. The character above looks fine without outlines because of his thin design, but since the outlines are added as a separate layer, removing them where I see fit is trivial.",
       media: 'assets/self_colored_outline_before.jpg', mediaType: 'img',
       extraMedia: [{ src: 'assets/self_colored_outline_after.jpg', label: 'After, Self-Colored Outline layer active' }] },
-    { tag: ['Photoshop', 'Scripting'], date: 'Feb 19, 2024', title: 'Walk cycle consistency checker',
+    { tag: ['Adobe Photoshop', 'Scripting'], date: 'Feb 19, 2024', title: 'Walk cycle consistency checker',
       desc: "A Photoshop script that pulls the same frame of animation from all directional walk cycle PSDs and puts them side by side, so inconsistencies between views are immediately visible. The before/after above shows exactly the kind of discrepancies it surfaces.",
       media: 'assets/before.gif', mediaType: 'gif',
       extraMedia: [{ src: 'assets/after.gif', label: 'After edit pass' }] },
     { tag: 'Character Design', date: 'Jan 31, 2022', title: 'Ghost character, night and day',
       desc: "Character design for a ghost fairy NPC. I was playing with an idea where the day version of ghosts would appear weaker with less detail. Considering the extra work that entailed, I dropped the idea pretty quickly.",
       media: 'assets/ghost_character_rig.jpg', mediaType: 'img' },
-    { tag: 'After Effects', date: 'Feb 8, 2021', title: 'RPG portrait animation, Miya (angry)',
+    { tag: 'Adobe After Effects', date: 'Feb 8, 2021', title: 'RPG portrait animation, Miya (angry)',
       desc: "A looping RPG-style dialogue portrait built entirely in After Effects. Angry blink, wind-driven hair, anime speed lines in fore and background, broom held menacingly, subtle head rotation. Illustrated and animated from scratch.",
       media: 'assets/miya_portrait_animation.gif', mediaType: 'gif' },
   ],

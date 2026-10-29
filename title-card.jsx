@@ -107,10 +107,16 @@ function Hero() {
             <p className="hero-desc">{parseEmphasis(P.heroBlurb)}</p>
             <div className="hero-ctas">
               <a href="#reel" className="btn-big cobalt">WATCH MY REEL ▶</a>
-              <a href="#pipeline" className="btn-big tan">SEE PIPELINE WORK</a>
               <a href="#contact" className="btn-big cream">GET IN TOUCH</a>
             </div>
             <div className="hero-socials">
+              {P.resume && (
+                <div className="hero-resume">
+                  <span className="fr-label">Resume</span>
+                  <a className="resume-chip" href={encodeURI(P.resume.pdf)} target="_blank" rel="noopener">PDF ↓</a>
+                  <a className="resume-chip" href={encodeURI(P.resume.docx)} download>DOCX ↓</a>
+                </div>
+              )}
               <SocialChips />
             </div>
           </div>
@@ -196,7 +202,7 @@ function Reel() {
         <div className="reel-frame">
           <div className="marquee-strip">
             <span><span className="bulb"></span><span className="bulb"></span><span className="bulb"></span> NOW SHOWING</span>
-            <span style={{ fontSize: 11, letterSpacing: '0.18em' }}>DEMO REEL · 2026</span>
+            <span style={{ fontSize: 11, letterSpacing: '0.18em' }}>DEMO REEL</span>
           </div>
           {playing ? (
             <div style={{ aspectRatio: '16/9', background: '#000' }}>
@@ -252,6 +258,21 @@ function Credits() {
         </div>
       </div>
     </section>
+  );
+}
+
+function SkillStrip({ section }) {
+  const groups = skillGroups.filter(g => g.section === section);
+  if (!groups.length) return null;
+  return (
+    <div className="skill-strip">
+      {groups.map((g, i) => (
+        <div className="skill-row" key={i}>
+          <h4>{g.title.toUpperCase()}</h4>
+          <ul>{g.skills.map((s, k) => <li key={k}>{s.name}</li>)}</ul>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -515,18 +536,7 @@ function About() {
         </div>
         <div className="about-skills">
           <h3 className="about-skills-h">Skills</h3>
-          <div className="skills-grid">
-            {skillGroups.map((g, i) => (
-              <div className="skill-block" key={i}>
-                <h4>{g.title.toUpperCase()}</h4>
-                <ul>
-                  {g.skills.map((s, k) => (
-                    <li key={k} className={s.primary ? 'primary' : ''}>{s.name}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          <SkillStrip section="about" />
         </div>
       </div>
     </section>
@@ -538,7 +548,6 @@ function Footer() {
   return (
     <footer id="contact">
       <div className="footer-inner">
-        <div className="footer-end">THE END.</div>
         <div className="footer-top">
           <div>
             <h3>{P.name.toUpperCase()}</h3>
@@ -548,12 +557,9 @@ function Footer() {
             <a href={`mailto:${P.email}`}>{P.email}</a>
           </div>
         </div>
-        <div className="footer-socials">
-          <SocialChips variant="cobalt" />
-        </div>
         <div className="footer-bottom" style={{ marginTop: 28 }}>
-          <span>© 2026 Krishna Ramos Jain</span>
-          <span>Roll Credits ·</span>
+          <span>© Krishna Ramos Jain</span>
+          <span>Fin.</span>
         </div>
       </div>
     </footer>
