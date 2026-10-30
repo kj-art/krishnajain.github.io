@@ -441,7 +441,9 @@ function Devlog() {
         <div className="devlog-grid">
           {devlogEntries.map((e, i) => (
             <div className="devlog-card" key={i} onClick={() => setOpen(e)}>
-              {e.media && /\.(mp4|webm|mov)$/i.test(e.media)
+              {e.youtube
+                ? <div className="devlog-media devlog-yt"><iframe src={`https://www.youtube-nocookie.com/embed/${e.youtube}?autoplay=1&mute=1&loop=1&playlist=${e.youtube}&controls=0&modestbranding=1&playsinline=1&rel=0`} title={e.title} referrerPolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media" tabIndex={-1} loading="lazy"></iframe></div>
+                : e.media && /\.(mp4|webm|mov)$/i.test(e.media)
                 ? <video className="devlog-media" src={e.media} muted loop playsInline autoPlay preload="metadata" />
                 : e.media
                 ? <img className="devlog-media" src={e.media} alt={e.title} loading="lazy" onError={ev => ev.currentTarget.style.display = 'none'} />
@@ -449,7 +451,7 @@ function Devlog() {
               <div className="devlog-body">
                 <div className="devlog-meta">
                   <div className="devlog-tags">
-                    {(Array.isArray(e.tag) ? e.tag : [e.tag]).map((t, ti) => (
+                    {(Array.isArray(e.tag) ? e.tag : e.tag ? [e.tag] : []).map((t, ti) => (
                       <span className="devlog-tag" key={ti}>{t.toUpperCase()}</span>
                     ))}
                   </div>
@@ -469,7 +471,7 @@ function Devlog() {
             <button className="modal-close" onClick={() => setOpen(null)}>×</button>
             <div className="modal-meta">
               <div className="devlog-tags">
-                {(Array.isArray(open.tag) ? open.tag : [open.tag]).map((t, ti) => (
+                {(Array.isArray(open.tag) ? open.tag : open.tag ? [open.tag] : []).map((t, ti) => (
                   <span className="devlog-tag" key={ti}>{t.toUpperCase()}</span>
                 ))}
               </div>
@@ -484,7 +486,7 @@ function Devlog() {
             )}
             {open.youtube && (
               <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', marginBottom: 20, border: '3px solid var(--ink)', boxShadow: '6px 6px 0 var(--ink)', background: '#000' }}>
-                <iframe src={`https://www.youtube-nocookie.com/embed/${open.youtube}?rel=0`} title={open.title} referrerPolicy="strict-origin-when-cross-origin" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                <iframe src={`https://www.youtube-nocookie.com/embed/${open.youtube}?autoplay=1&mute=1&loop=1&playlist=${open.youtube}&playsinline=1&rel=0`} title={open.title} referrerPolicy="strict-origin-when-cross-origin" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
               </div>
             )}
             {open.youtube && (
